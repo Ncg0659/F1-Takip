@@ -1,0 +1,50 @@
+/* A3.4a — Pist türü performansı. Yalnızca #a34-pist kapsamı. */
+#a34-pist .a3-not { color:var(--soluk); font-size:.84rem; margin:0 0 10px; }
+.a34-kontrol { display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; margin:0 0 10px; }
+.a34-mod { display:inline-flex; border:1px solid var(--cizgi); border-radius:8px; overflow:hidden; }
+.a34-mod button { font:inherit; font-size:.84rem; padding:6px 14px; min-height:36px; border:0; background:var(--kart); color:var(--yazi); cursor:pointer; }
+.a34-mod button + button { border-left:1px solid var(--cizgi); }
+.a34-mod button[aria-pressed="true"] { background:var(--yazi); color:var(--kart); font-weight:700; }
+.a34-sec { display:flex; align-items:center; gap:8px; font-size:.84rem; color:var(--soluk); min-width:0; }
+.a34-sec select { font:inherit; padding:6px 8px; min-height:36px; max-width:100%; border:1px solid var(--cizgi); border-radius:6px; background:var(--kart); color:var(--yazi); }
+.a34-izgara { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+.a34-kart { background:var(--kart); border:1px solid var(--cizgi); border-radius:10px; padding:10px 12px; min-width:0; display:flex; flex-direction:column; gap:4px; }
+.a34-kart h3 { margin:0; font-size:.72rem; letter-spacing:.06em; color:var(--soluk); }
+.a34-bos { border-style:dashed; }
+.a34-say { margin:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px 8px; }
+.a34-say dt { font-size:.64rem; color:var(--soluk); }
+.a34-say dd { margin:0; font-size:1.05rem; font-weight:600; font-variant-numeric:tabular-nums; }
+.a34-alt { margin:0; font-size:.74rem; color:var(--soluk); overflow-wrap:anywhere; }
+.a34-kucuk { align-self:flex-start; font-size:.66rem; padding:1px 6px; border:1px dashed var(--soluk); border-radius:10px; color:var(--soluk); }
+.a34-alth { margin:14px 0 6px; font-size:.78rem; color:var(--soluk); letter-spacing:.04em; }
+.a34-barlar { display:flex; flex-direction:column; gap:6px; }
+.a34-bar { display:grid; grid-template-columns:7.5em minmax(0,1fr) auto; align-items:center; gap:8px; font-size:.84rem; }
+.a34-bar .a34-cu { display:block; height:8px; background:var(--cizgi); border-radius:4px; overflow:hidden; }
+.a34-bar .a34-cu i { display:block; height:100%; background:var(--a32-poz,#2f6db5); border-radius:4px; opacity:.55; }
+.a34-bar.a34-eniyi .a34-cu i { opacity:1; }
+.a34-bar.a34-eniyi .a34-bad, .a34-bar.a34-eniyi .a34-bd { font-weight:700; }
+.a34-bd { font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap; }
+.a34-bd small { color:var(--soluk); font-weight:400; }
+.a34-en { margin-top:10px; background:var(--kart); border:1px solid var(--cizgi); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:3px; }
+.a34-et { font-size:.68rem; font-weight:700; letter-spacing:.06em; color:var(--soluk); }
+.a34-uyari { margin:10px 0 0; font-size:.82rem; background:var(--kart); border:1px solid var(--a32-hata,#b3261e); border-radius:8px; padding:8px 10px; }
+.a34-sinif { margin-top:12px; }
+.a34-sinif summary { cursor:pointer; min-height:36px; display:flex; align-items:center; color:var(--vurgu); font-size:.88rem; }
+.a34-tanim { margin:6px 0; padding-left:18px; font-size:.78rem; color:var(--soluk); }
+.a34-kay { overflow-x:auto; }
+.a34-kay table { width:100%; border-collapse:collapse; font-size:.8rem; }
+.a34-kay th, .a34-kay td { padding:6px 8px; text-align:left; border-top:1px solid var(--cizgi); vertical-align:top; }
+.a34-kay th { font-size:.68rem; color:var(--soluk); border-top:0; }
+.a34-kay td:last-child { min-width:16em; color:var(--soluk); }
+.a34-sf td { color:var(--a32-hata,#b3261e); }
+.a34-tart { color:#d99a00; }
+@media (max-width:900px) { .a34-izgara { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width:640px) {
+  .a34-bar { grid-template-columns:5.6em minmax(0,1fr) auto; gap:6px; font-size:.78rem; }
+  .a34-kay th, .a34-kay td { padding:5px 4px; font-size:.74rem; }
+  .a34-kay td:last-child { min-width:13em; }
+}
+#a34-pist .a34-kay th, #a34-pist .a34-kay td { white-space:normal; overflow-wrap:anywhere; }
+#a34-pist .a34-kay td:first-child, #a34-pist .a34-kay th:first-child { white-space:nowrap; }
+.a34-yok { color:var(--soluk); font-size:.72rem; white-space:nowrap; }
+.a34-gel td { opacity:.8; }

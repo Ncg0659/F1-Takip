@@ -1,0 +1,54 @@
+/* A2.3 — Detay Paneli (Y1). Yalnızca .dp-* sınıfları ve #dp-panel. Renkler mevcut tema değişkenlerinden. */
+html.dp-kilit { overflow:hidden; }
+.dp-panel { padding:0; border:1px solid var(--cizgi); background:var(--kart); color:var(--yazi); box-shadow:0 0 40px rgba(0,0,0,.35); overflow:hidden; }
+.dp-panel::backdrop { background:rgba(8,12,18,.55); }
+.dp-ic { display:flex; flex-direction:column; height:100%; min-height:0; }
+
+/* masaüstü: sağ panel */
+@media (min-width:700px) {
+  .dp-panel { position:fixed; inset:0 0 0 auto; margin:0; width:min(560px, 92vw); max-width:none; height:100dvh; max-height:none; border-width:0 0 0 1px; border-radius:0; animation:dp-sag .18s ease-out; }
+}
+/* mobil: alttan açılan panel */
+@media (max-width:699px) {
+  .dp-panel { position:fixed; inset:auto 0 0 0; margin:0; width:100%; max-width:none; max-height:88dvh; border-width:1px 0 0; border-radius:14px 14px 0 0; animation:dp-alt .18s ease-out; }
+  .dp-panel::before { content:""; display:block; width:38px; height:4px; border-radius:2px; background:var(--cizgi); margin:8px auto 0; flex:none; }
+}
+@keyframes dp-sag { from { transform:translateX(24px); opacity:0; } to { transform:none; opacity:1; } }
+@keyframes dp-alt { from { transform:translateY(24px); opacity:0; } to { transform:none; opacity:1; } }
+@media (prefers-reduced-motion:reduce) { .dp-panel { animation:none; } }
+
+.dp-bas { display:flex; align-items:flex-start; gap:8px; padding:14px 14px 10px 16px; border-bottom:1px solid var(--cizgi); flex:none; }
+.dp-baslik-kutu { flex:1; min-width:0; }
+.dp-yol { font-size:.7rem; color:var(--soluk); margin-bottom:2px; overflow-wrap:anywhere; }
+.dp-baslik { margin:0; font-size:1.08rem; line-height:1.3; overflow-wrap:anywhere; }
+.dp-baslik:focus { outline:none; }
+.dp-baslik:focus-visible { outline:2px solid var(--vurgu); outline-offset:3px; border-radius:3px; }
+.dp-alt { font-size:.78rem; color:var(--soluk); margin-top:2px; }
+.dp-alt:empty { display:none; }
+.dp-geri, .dp-kapat { flex:none; width:32px; height:32px; font-size:1.3rem; line-height:1; border:1px solid var(--cizgi); border-radius:8px; background:var(--kart2); color:var(--yazi); cursor:pointer; padding:0; }
+.dp-geri[hidden] { display:none; }
+.dp-geri:hover, .dp-kapat:hover { border-color:var(--vurgu); color:var(--vurgu); }
+.dp-geri:focus-visible, .dp-kapat:focus-visible, .dp-eylem:focus-visible { outline:2px solid var(--vurgu); outline-offset:2px; }
+
+.dp-govde { padding:12px 16px 18px; overflow-y:auto; flex:1; min-height:0; overscroll-behavior:contain; }
+.dp-bolum { margin:0 0 16px; }
+.dp-bolum-baslik { margin:0 0 6px; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--soluk); font-family:var(--f-sayi); }
+.dp-metin { margin:0 0 8px; font-size:.9rem; line-height:1.5; }
+.dp-yuk { margin:6px 0; font-size:.84rem; color:var(--soluk); }
+.dp-hata { margin:6px 0; font-size:.86rem; }
+.dp-satirlar { margin:0; display:grid; gap:0; }
+.dp-satirlar > div { display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-top:1px solid var(--cizgi); font-size:.88rem; }
+.dp-satirlar > div:first-child { border-top:0; }
+.dp-satirlar dt { color:var(--soluk); flex:none; }
+.dp-satirlar dd { margin:0; text-align:right; font-weight:600; min-width:0; overflow-wrap:anywhere; }
+.dp-tablo-kap { overflow-x:auto; margin:0 -4px; }
+.dp-tablo { width:100%; border-collapse:collapse; font-size:.82rem; }
+.dp-tablo th { text-align:left; font-weight:600; font-size:.7rem; color:var(--soluk); padding:4px 6px; border-bottom:1px solid var(--cizgi); white-space:nowrap; }
+.dp-tablo td { padding:5px 6px; border-bottom:1px solid var(--cizgi); vertical-align:middle; }
+.dp-tablo tr:last-child td { border-bottom:0; }
+.dp-eylemler { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.dp-eylem { padding:6px 12px; font-size:.82rem; border:1px solid var(--cizgi); border-radius:999px; background:var(--kart2); color:var(--yazi); cursor:pointer; }
+.dp-eylem:hover { border-color:var(--vurgu); color:var(--vurgu); }
+
+/* kart içindeki eski satır içi detay: panel çalışırken görünmez (panel yoksa eski davranış sürer) */
+html.dp-var .st-detay-ic { display:none !important; }

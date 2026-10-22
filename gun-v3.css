@@ -1,0 +1,140 @@
+/* UI v3 — Yarış Günü / LIVE RACE CONTROL. Yalnız sunum. Kırmızı yalnız durum içindir; glow/animasyon/uppercase (sabit İngilizce terimlerde) yok.
+   Yüzey dili: divider + düşük kontrast panel + teknik satır (form/input kutusu hissi yok). */
+#sekme-gun { --g3-c:var(--cizgi); }
+:root[data-tema="acik"] #sekme-gun { --g3-c:rgba(15,23,42,.12); }
+#sekme-gun:not([hidden]) { display:flex; flex-direction:column; min-width:0; }
+#sekme-gun > * { min-width:0; }
+#sekme-gun > #gun-baslik { order:0; margin:0 0 6px; font-size:1.3rem; }
+#sekme-gun > #gun-kutu { order:1; }
+#sekme-gun > #gun-v3-ozet { order:2; }
+#sekme-gun > #gun-hava { order:4; }
+#sekme-gun > #gun-notlar-bolum { order:5; }
+#sekme-gun > #gun-detay { order:6; }
+#sekme-gun > #gun-ogren { order:8; }
+#sekme-gun > #gun-dev { order:9; }
+#sekme-gun > [data-lastik-yagmur] { order:10; }
+@media (max-width:760px) { #sekme-gun > #gun-hava { order:7; } }
+
+/* ---- hero: kompakt, editorial metadata ---- */
+#sekme-gun #gun-kutu.sonraki { background:transparent; border:0; box-shadow:none; padding:0; margin:0; border-radius:0; }
+#gun-kutu .yk.g3-hero { margin:0; padding:9px 0 9px 14px; border:0; border-top:1px solid var(--g3-c); border-bottom:1px solid var(--g3-c); border-left:2px solid var(--vurgu); border-radius:0; background:linear-gradient(90deg, rgba(225,6,0,.06), transparent 55%); box-shadow:none; }
+.g3-hero-g { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,230px); gap:6px 16px; align-items:center; }
+.g3-hero-sol { min-width:0; }
+.g3-hero .yk-ust { margin:0 0 6px; gap:8px; }
+.g3-hero .yk-tur { border:0; padding:0; font-size:.7rem; color:var(--v3-soluk); }
+.g3-hero .yk-yer b { font-size:1.08rem; }
+.g3-hero .yk-yer .bayrak { width:30px; height:22px; }
+.g3-meta { display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 8px; margin-top:6px; font-family:var(--f-sayi); font-size:.8rem; }
+.g3-meta span { font-size:.62rem; letter-spacing:.14em; color:var(--v3-soluk); }
+.g3-meta b { font-weight:600; }
+#gun-kutu .sayac#gun-sayac { display:none; }            /* metin durum şeridinde gösterilir; DOM'da kalır */
+#gun-kutu:has(#gun-bekle) .g3-meta { display:none; }     /* yarış öncesi: aynı bilgiyi #gun-bekle satırı taşır */
+#gun-kutu #gun-bekle { margin:6px 0 0 !important; padding:0; display:flex; flex-wrap:wrap; align-items:baseline; gap:0 10px; font-size:.78rem; color:var(--v3-soluk); }
+#gun-kutu #gun-bekle b { font-size:.78rem; font-weight:600; color:var(--yazi); }
+#gun-kutu #gun-bekle > div { display:inline; margin:0; }
+.g3-pist { display:flex; align-items:center; justify-content:flex-end; min-width:0; }
+.g3-pist[hidden] { display:none; }
+.g3-svg { width:100%; max-width:230px; height:auto; max-height:118px; display:block; fill:none; }
+.g3-hat-alt { fill:none; stroke:var(--v3-soluk); stroke-width:6; stroke-linejoin:round; stroke-linecap:round; opacity:.2; }
+.g3-hat { fill:none; stroke:var(--yazi); stroke-width:2.2; stroke-linejoin:round; stroke-linecap:round; opacity:.85; }
+@media (max-width:560px) {
+  .g3-hero-g { grid-template-columns:minmax(0,1fr) minmax(0,120px); gap:4px 10px; }
+  .g3-svg { max-width:120px; max-height:84px; }
+  #gun-kutu .yk.g3-hero { padding-left:12px; }
+}
+
+/* ---- tek durum bloğu: kod + başlık + alt satır + kritik bağlam ---- */
+#gun-v3-ozet { margin:10px 0 0; min-width:0; }
+#gun-v3-durum { padding:8px 12px; border:1px solid var(--g3-c); border-left:3px solid var(--g3-c); border-radius:3px; background:transparent; }
+#gun-v3-durum[data-ton="live"], #gun-v3-durum[data-ton="kirmizi"] { border-left-color:var(--vurgu); }
+#gun-v3-durum[data-ton="bekle"] { border-left-color:#f59e0b; }
+#gun-v3-serit { display:flex; flex-wrap:wrap; align-items:baseline; gap:1px 10px; }
+.g3-kod { font-family:var(--f-sayi); font-size:.66rem; font-weight:700; letter-spacing:.14em; color:var(--v3-soluk); }
+#gun-v3-durum[data-ton="kirmizi"] .g3-kod { color:#dc2626; }
+#gun-v3-durum[data-ton="live"] .g3-kod { color:var(--vurgu); }
+#gun-v3-durum[data-ton="bekle"] .g3-kod { color:#b45309; }
+:root[data-tema="koyu"] #gun-v3-durum[data-ton="bekle"] .g3-kod { color:#f59e0b; }
+.g3-baslik { font-family:var(--f-baslik); font-size:1.12rem; font-weight:700; line-height:1.2; }
+.g3-satir { flex-basis:100%; font-family:var(--f-sayi); font-size:.76rem; color:var(--v3-soluk); }
+.g3-satir:empty { display:none; }
+#gun-baglam:empty { display:none; }
+#gun-baglam .bk { margin:8px 0 0; padding:7px 0 0; border:0; border-top:1px solid var(--g3-c); border-radius:0; background:transparent; }
+#gun-baglam .bk-baslik { font-size:.8rem; }
+#gun-baglam .bk-metin { font-size:.82rem; color:var(--v3-soluk); }
+#gun-baglam .bk-ek, #gun-baglam .bk-eski, #gun-baglam .bk-kaynak { font-size:.7rem; }
+#gun-v3-durum[data-k="RED_FLAG"] .bk-baslik, #gun-v3-durum[data-k="STOPPED"] .bk-baslik, #gun-v3-durum[data-k="LIVE"] .bk-baslik,
+#gun-v3-durum[data-k="SAFETY_CAR"] .bk-baslik, #gun-v3-durum[data-k="VSC"] .bk-baslik, #gun-v3-durum[data-k="RESUMED"] .bk-baslik { display:none; }
+
+/* ---- özet çipleri ---- */
+#gun-v3-cipler .v3-cipler { margin:6px 0 0; gap:4px; }
+#gun-v3-cipler .v3-cip { padding:1px 6px; font-size:.7rem; border-color:var(--g3-c); }
+
+/* ---- hava: tek şerit ---- */
+#sekme-gun #gun-hava.sonuc { padding:7px 0; margin:8px 0 0; background:transparent; border:0; border-top:1px solid var(--g3-c); border-bottom:1px solid var(--g3-c); border-radius:0; box-shadow:none; }
+.g3-hava { display:flex; flex-wrap:wrap; align-items:center; gap:2px 14px; font-size:.82rem; min-width:0; }
+.g3-hava .ik { width:17px; height:17px; color:#38bdf8; vertical-align:-4px; }
+.g3-hava b { font-family:var(--f-sayi); }
+.g3-hava span { color:var(--v3-soluk); }
+.g3-hava-ad { display:inline-flex; align-items:center; gap:6px; text-transform:capitalize; }
+
+/* ---- Race Feed: race-control satırları (sabit zaman sütunu, teknik etiket, güçlü mesaj, soluk kaynak) ---- */
+#gun-notlar-bolum { margin:12px 0 0; min-width:0; }
+.g3-feed-ust { display:flex; flex-wrap:wrap; align-items:center; gap:4px 12px; padding-bottom:4px; }
+.g3-feed-ust b { font-family:var(--f-sayi); font-size:.66rem; letter-spacing:.14em; color:var(--v3-soluk); }
+.g3-feed-ust span { font-size:.76rem; color:var(--v3-soluk); }
+.g3-mini { appearance:none; background:transparent; color:var(--yazi); border:1px solid var(--g3-c); border-radius:3px; padding:2px 9px; min-height:28px; font-family:var(--f-sayi); font-size:.64rem; letter-spacing:.1em; cursor:pointer; }
+.g3-mini:hover { border-color:var(--v3-soluk); }
+.g3-mini:focus-visible { outline:2px solid var(--vurgu); outline-offset:1px; }
+.g3-feed-ust .g3-mini { margin-left:auto; }
+#sekme-gun #gun-notlar.sonuc { padding:0; margin:0; background:transparent; border:0; box-shadow:none; }
+#gun-notlar .tl { gap:0; max-height:none; padding:0; }
+#gun-notlar .tl-oge { display:grid; grid-template-columns:3.2rem minmax(0,1fr); column-gap:8px; padding:5px 0 6px 8px; background:transparent; border:0; border-top:1px solid var(--g3-c); border-left:2px solid var(--kc, var(--g3-c)); border-radius:0; box-shadow:none; }
+#gun-notlar .tl-oge:hover { box-shadow:none; }
+#gun-notlar .g3-t { grid-column:1; grid-row:1 / span 3; font-family:var(--f-sayi); font-size:.76rem; font-weight:700; color:var(--yazi); padding-top:1px; }
+#gun-notlar .tl-ust, #gun-notlar .tl-metin, #gun-notlar .tl-alt { grid-column:2; min-width:0; }
+#gun-notlar .tl-ust { font-size:.62rem; gap:6px; }
+#gun-notlar .tl-kat { letter-spacing:.12em; }
+#gun-notlar .tl-kat .ik { width:12px; height:12px; }
+#gun-notlar .tl-metin { margin:1px 0 2px; font-size:.95rem; font-weight:600; line-height:1.3; overflow-wrap:anywhere; }
+#gun-notlar .tl-alt { font-size:.68rem; gap:6px; opacity:.85; }
+#gun-notlar .tl-yedek { background:transparent; border:0; border-top:1px solid var(--g3-c); border-radius:0; padding:6px 0 0; }
+#gun-notlar .tl-yedek ul { margin:4px 0 0; padding-left:18px; }
+#gun-notlar .tl-yedek li { font-size:.84rem; margin:2px 0; overflow-wrap:anywhere; }
+
+/* ---- ayrıntı ---- */
+#gun-detay { margin:12px 0 0; padding-top:8px; border-top:1px solid var(--g3-c); min-width:0; }
+#gun-detay-baslik { font-family:var(--f-sayi); font-size:.66rem; letter-spacing:.14em; color:var(--v3-soluk); font-weight:600; }
+#gun-sonuc-metin { margin:6px 0 6px; font-size:.9rem; }
+#gun-detay .v3-sekmeler { margin-top:6px; border-bottom-color:var(--g3-c); }
+#gun-a7-panel .so-ac, #gun-a7-panel .ta-ac, #gun-a7-panel .gc-ac, #gun-a7-panel .pt-ac, #gun-a7-panel .sh-ac { display:none; }
+#gun-a7-panel[hidden], #gun-sonuc-panel[hidden] { display:none; }
+#gun-sonuc-panel .kap:has(tbody:empty) { display:none; }
+#gun-sonuc-panel .kap { background:transparent; border:0; border-top:1px solid var(--g3-c); border-bottom:1px solid var(--g3-c); border-radius:0; box-shadow:none; }
+#gun-sonuc-panel .ym { margin:8px 0; background:transparent; border:0; border-top:1px solid var(--g3-c); border-left:0; border-radius:0; padding:6px 0; }
+#gun-sonuc-panel .ui-daralt { background:transparent; border:0; border-bottom:1px solid var(--g3-c); border-radius:0; box-shadow:none; min-height:36px; }
+
+/* ---- izlerken öğren ---- */
+#gun-ogren { margin:12px 0 0; padding:8px 0 0; border-top:1px solid var(--g3-c); }
+#gun-ogren[hidden] { display:none; }
+.g3-ogr-b { display:block; font-family:var(--f-sayi); font-size:.64rem; letter-spacing:.12em; color:var(--v3-soluk); font-weight:600; }
+.g3-ogr-g { display:flex; gap:10px; align-items:flex-start; margin-top:3px; }
+.g3-ogr-g > div { flex:1; min-width:0; }
+.g3-ogr-g strong { font-size:.88rem; }
+.g3-ogr-g p { margin:2px 0 0; font-size:.82rem; color:var(--v3-soluk); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere; }
+
+/* ---- geliştirici / test ---- */
+#gun-dev { margin-top:16px; border-color:var(--g3-c); background:transparent; }
+#gun-dev .v3-ag > * { margin-top:8px; }
+#gun-dev .v3-ag > :first-child { margin-top:0; }
+/* production: geliştirici-only kontroller (test onay kutusu, debug) gizli; yalnız ?dev=1 ile görünür. Yenileme düğmeleri kalır. */
+html:not([data-dev]) #gun-dev label:has(#feed-test), html:not([data-dev]) #feed-debug { display:none !important; }
+
+/* ---- açık tema: form/kutu hissini azalt ---- */
+:root[data-tema="acik"] #gun-v3-durum { border-color:transparent; border-top:1px solid var(--g3-c); border-bottom:1px solid var(--g3-c); border-left:3px solid var(--g3-c); background:rgba(15,23,42,.025); }
+:root[data-tema="acik"] #gun-v3-durum[data-ton="live"], :root[data-tema="acik"] #gun-v3-durum[data-ton="kirmizi"] { border-left-color:var(--vurgu); }
+:root[data-tema="acik"] #gun-v3-durum[data-ton="bekle"] { border-left-color:#f59e0b; }
+:root[data-tema="acik"] #gun-v3-cipler .v3-cip { background:transparent; }
+:root[data-tema="acik"] #gun-notlar .tl-oge { background:transparent; }
+:root[data-tema="acik"] .g3-mini { background:transparent; }
+:root[data-tema="acik"] #gun-dev { border-color:transparent; border-top:1px solid var(--g3-c); border-radius:0; }
+:root[data-tema="acik"] #gun-kutu .yk.g3-hero { background:linear-gradient(90deg, rgba(225,6,0,.04), transparent 50%); }

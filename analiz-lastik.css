@@ -1,0 +1,26 @@
+/* A3.4b — Lastik stratejisi. Yalnızca #a34b-lastik kapsamı. Bileşik renkleri lastik rehberiyle aynı (yumuşak kırmızı, orta sarı, sert beyaz, ara yeşil, yağmur mavi). */
+#a34b-lastik { --l-soft:#e10600; --l-medium:#f5c400; --l-hard:#e9eef5; --l-inter:#2e9e4f; --l-wet:#2f7de1; margin:12px 0; background:var(--kart); border:1px solid var(--cizgi); border-radius:10px; padding:0 12px; }
+#a34b-lastik > summary { cursor:pointer; min-height:44px; display:flex; align-items:center; font-weight:700; font-size:1rem; }
+.a34b-ic { padding:0 0 12px; min-width:0; }
+.a34b-mesaj, .a34b-bilgi, .a34b-alt { margin:6px 0; font-size:.84rem; color:var(--soluk); }
+.a34b-rehber { margin:10px 0 0; }
+.a34b-liste { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+.a34b-p { border-top:1px solid var(--cizgi); padding-top:10px; min-width:0; }
+.a34b-ph { display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; }
+.a34b-oz { margin:4px 0 6px; font-size:.86rem; }
+.a34b-serit { display:flex; height:10px; border-radius:5px; overflow:hidden; gap:2px; margin:0 0 8px; }
+.a34b-serit i { display:block; min-width:4px; }
+.a34b-sl { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:6px; }
+.a34b-st { display:flex; flex-wrap:wrap; align-items:center; gap:2px 8px; font-size:.82rem; padding:6px 8px; border:1px solid var(--cizgi); border-radius:8px; min-width:0; }
+.a34b-ar { font-variant-numeric:tabular-nums; font-weight:600; }
+.a34b-uz { color:var(--soluk); }
+.a34b-yas { flex-basis:100%; font-size:.72rem; color:var(--soluk); }
+.a34b-bil { display:inline-block; padding:1px 8px; border-radius:10px; font-weight:700; font-size:.76rem; border:1px solid rgba(0,0,0,.25); }
+.a34b-soft { background:var(--l-soft); color:#fff; } .a34b-medium { background:var(--l-medium); color:#1a1a1a; } .a34b-hard { background:var(--l-hard); color:#1a1a1a; }
+.a34b-inter { background:var(--l-inter); color:#fff; } .a34b-wet { background:var(--l-wet); color:#fff; } .a34b-bilinmiyor { background:transparent; color:var(--soluk); border:1px dashed var(--soluk); }
+.a34b-serit .a34b-soft { background:var(--l-soft); } .a34b-serit .a34b-medium { background:var(--l-medium); } .a34b-serit .a34b-hard { background:var(--l-hard); box-shadow:inset 0 0 0 1px rgba(0,0,0,.25); }
+.a34b-serit .a34b-inter { background:var(--l-inter); } .a34b-serit .a34b-wet { background:var(--l-wet); } .a34b-serit .a34b-bilinmiyor { background:var(--cizgi); border:0; }
+.a34b-pit { margin:6px 0 0; font-size:.76rem; color:var(--soluk); }
+.a34b-fark { margin:4px 0 0; font-size:.76rem; color:#d99a00; }
+.a34b-btn { font:inherit; font-size:.84rem; min-height:40px; padding:6px 14px; border:1px solid var(--cizgi); border-radius:8px; background:var(--kart); color:var(--yazi); cursor:pointer; }
+@media (max-width:480px) { .a34b-sl { grid-template-columns:1fr; } }

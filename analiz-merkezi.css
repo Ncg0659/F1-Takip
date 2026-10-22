@@ -1,0 +1,74 @@
+/* A3.1 — Sezon Analiz Merkezi. Yalnızca .a3-* sınıfları, #a3-merkez ve #sekme-grafik[data-a3]. Mevcut stillere dokunmaz. */
+/* Takım çizgi renkleri (açık tema): beyaz zeminde okunur; koyu tema aşağıda */
+:root {
+  --a3-c-mercedes:#00a591; --a3-c-ferrari:#d40000; --a3-c-mclaren:#f07800; --a3-c-redbull:#2646d6; --a3-c-astonmartin:#0a7d5f;
+  --a3-c-williams:#0090d8; --a3-c-alpine:#e0529a; --a3-c-haas:#6b7280; --a3-c-racingbulls:#6c4fe0; --a3-c-audi:#7f9400; --a3-c-cadillac:#a3862c; --a3-c-diger:#566578;
+}
+:root[data-tema="koyu"] {
+  --a3-c-mercedes:#27f4d2; --a3-c-ferrari:#ff4b3e; --a3-c-mclaren:#ff9a2e; --a3-c-redbull:#5b86ff; --a3-c-astonmartin:#3ec9a1;
+  --a3-c-williams:#4cb8ff; --a3-c-alpine:#ff87bc; --a3-c-haas:#aab2bd; --a3-c-racingbulls:#9b87ff; --a3-c-audi:#c9f23a; --a3-c-cadillac:#d6bd7a; --a3-c-diger:#8a9db3;
+}
+/* A3 çalışırken eski puan grafiği gizlenir (şampiyonluk hesaplayıcı kalır). A3 başarısızsa data-a3 kalkar ve eski grafik görünür. */
+#sekme-grafik[data-a3="1"] > h1,
+#sekme-grafik[data-a3="1"] > #grafik-durum,
+#sekme-grafik[data-a3="1"] > .grafik { display:none; }
+#sekme-grafik[data-a3="1"] #a3-merkez { margin-bottom:26px; }
+
+#a3-merkez { min-width:0; }
+.a3-bas h1 { margin:0 0 2px; }
+.a3-altbaslik { margin:0 0 12px; color:var(--soluk); font-size:.84rem; }
+.a3-yuk p { color:var(--soluk); }
+.a3-iskelet { height:140px; border:1px solid var(--cizgi); border-radius:12px; background:linear-gradient(90deg, var(--kart) 0, var(--kart2) 50%, var(--kart) 100%); background-size:200% 100%; animation:a3-kay 1.4s linear infinite; }
+@keyframes a3-kay { to { background-position:-200% 0; } }
+@media (prefers-reduced-motion:reduce) { .a3-iskelet { animation:none; } }
+.a3-hata, .a3-uyari { border:1px solid var(--cizgi); border-left:3px solid var(--vurgu); border-radius:8px; background:var(--kart); padding:8px 12px; margin:0 0 10px; font-size:.84rem; }
+.a3-uyari p { margin:0; }
+
+/* ---- sezon özeti ---- */
+.a3-ozet { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:10px; margin:0 0 16px; }
+.a3-oz { background:var(--kart); border:1px solid var(--cizgi); border-radius:12px; padding:12px 14px; display:flex; flex-direction:column; gap:4px; min-width:0; }
+.a3-oz-et { font-size:.64rem; font-weight:600; letter-spacing:.1em; color:var(--soluk); }
+:root:not([data-tema="koyu"]) .a3-oz-et { color:#455465; }
+.a3-oz-ana { font-size:1.12rem; line-height:1.25; overflow-wrap:anywhere; }
+.a3-oz-alt { font-size:.78rem; color:var(--soluk); display:flex; flex-wrap:wrap; align-items:center; gap:4px 8px; }
+@media (max-width:760px) { .a3-ozet { grid-template-columns:repeat(2, minmax(0, 1fr)); } }
+
+/* ---- grafik kartları ---- */
+.a3-kart { background:var(--kart); border:1px solid var(--cizgi); border-radius:12px; padding:14px 16px 12px; margin:0 0 16px; min-width:0; }
+.a3-kart h2 { margin:0 0 4px; font-size:1.02rem; }
+.a3-not { margin:0 0 10px; font-size:.78rem; color:var(--soluk); }
+.a3-kontrol { display:flex; flex-wrap:wrap; gap:8px 12px; margin:0 0 8px; }
+.a3-kontrol:empty { display:none; }
+.a3-segment { display:inline-flex; border:1px solid var(--cizgi); border-radius:999px; overflow:hidden; }
+.a3-segment button { padding:5px 13px; font-size:.8rem; border:0; background:transparent; color:var(--yazi); cursor:pointer; }
+.a3-segment button + button { border-left:1px solid var(--cizgi); }
+.a3-segment button[aria-pressed="true"] { background:var(--vurgu); color:#fff; font-weight:600; }
+.a3-segment button:focus-visible, .a3-link:focus-visible, .a3-chip button:focus-visible, .a3-ekle:focus-visible { outline:2px solid var(--vurgu); outline-offset:2px; }
+.a3-chipler { display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; margin:0 0 8px; }
+.a3-chip { display:inline-flex; align-items:center; border:1px solid var(--cizgi); border-radius:999px; background:var(--kart2); overflow:hidden; }
+.a3-chip.vurgulu { border-color:var(--c); box-shadow:0 0 0 1px var(--c); }
+.a3-chip button { border:0; background:transparent; color:var(--yazi); cursor:pointer; font-size:.8rem; padding:4px 8px; display:inline-flex; align-items:center; gap:6px; }
+.a3-chip .a3-chip-x { padding:4px 8px 4px 2px; color:var(--soluk); font-size:1rem; line-height:1; }
+.a3-chip .a3-chip-x:hover { color:var(--vurgu); }
+.a3-nokta { width:10px; height:10px; border-radius:50%; background:var(--c); display:inline-block; }
+.a3-nokta.kesik { background:transparent; border:2px solid var(--c); box-sizing:border-box; }
+.a3-ekle { font-size:.8rem; padding:4px 8px; max-width:150px; }
+.a3-link { border:0; background:none; color:var(--vurgu); cursor:pointer; font-size:.8rem; padding:2px 4px; text-decoration:underline; text-underline-offset:2px; }
+.a3-grafik { margin:4px 0 6px; min-height:120px; }
+.a3-bos { color:var(--soluk); font-size:.86rem; margin:14px 0; }
+.a3-soluk { color:var(--soluk); }
+.a3-tablo-kap { overflow-x:auto; }
+.a3-tablo { width:100%; border-collapse:collapse; font-size:.8rem; margin-top:6px; }
+.a3-tablo caption { text-align:left; color:var(--soluk); font-size:.74rem; padding:4px 0; }
+.a3-tablo th, .a3-tablo td { padding:4px 8px; border-bottom:1px solid var(--cizgi); text-align:right; white-space:nowrap; }
+.a3-tablo thead th, .a3-tablo tbody th { text-align:left; font-weight:600; }
+.a3-tablo td { font-family:var(--f-sayi, monospace); }
+.a3-detay { margin-top:8px; font-size:.82rem; }
+.a3-detay summary { cursor:pointer; color:var(--soluk); }
+.a3-kaynak { font-size:.74rem; color:var(--soluk); margin:0 0 6px; }
+@media (max-width:560px) {
+  .a3-kart { padding:12px 12px 10px; }
+  .a3-chip button { padding:6px 8px; }          /* dokunma hedefi */
+  .a3-ekle { max-width:130px; }
+}
+.a3-oz-et .a2-baglanti { text-transform:uppercase; letter-spacing:inherit; font-size:inherit; font-weight:inherit; color:inherit; }

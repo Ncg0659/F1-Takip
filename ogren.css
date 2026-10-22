@@ -1,0 +1,77 @@
+/* A2.2 — ⓘ, açılır pencere, sözlük, lastik rehberi, açıklama modu. Yalnızca .a2-* sınıfları. Mevcut stillere dokunmaz. */
+
+/* ---- açıklama modu (html[data-a2-ogren]) ---- */
+html[data-a2-ogren="kapali"] .a2-i,
+html[data-a2-ogren="kapali"] .a2-lastik-satir { display:none !important; }
+html[data-a2-ogren="kapali"] .ym,
+html[data-a2-ogren="sadece"] .ym { display:none !important; }
+
+/* ---- ⓘ ---- */
+.a2-i { display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px; margin-left:5px; padding:0; vertical-align:middle;
+  font-family:var(--f-sayi, monospace); font-size:.62rem; font-weight:700; line-height:1; text-transform:none; letter-spacing:0;
+  color:var(--soluk); background:transparent; border:1px solid currentColor; border-radius:50%; cursor:pointer; opacity:.9; }
+.a2-i::before { content:"i"; }
+.a2-i:hover, .a2-i:focus-visible { color:var(--vurgu); opacity:1; }
+.a2-i:focus-visible { outline:2px solid var(--vurgu); outline-offset:2px; }
+.a2-i.a2-gorulen { opacity:.4; }
+.a2-i.a2-gorulen:hover, .a2-i.a2-gorulen:focus-visible { opacity:1; }
+
+/* ---- üst bar düğmeleri ---- */
+.a2-ustbar { display:inline-flex; align-items:center; gap:6px; margin-right:12px; }
+.a2-sozluk-dugme, .a2-mod-dugme { font-size:.72rem; padding:3px 9px; border:1px solid var(--cizgi); border-radius:999px; background:transparent; color:var(--soluk); cursor:pointer; white-space:nowrap; }
+.a2-sozluk-dugme:hover, .a2-mod-dugme:hover { color:var(--yazi); border-color:var(--soluk); }
+.a2-sozluk-dugme:focus-visible, .a2-mod-dugme:focus-visible { outline:2px solid var(--vurgu); outline-offset:2px; }
+@media (max-width:700px) { .a2-mod-dugme { display:none; } .a2-ustbar { margin-right:6px; } }
+
+/* ---- bağlantı düğmeleri ---- */
+.a2-baglanti { display:inline; padding:0; border:0; background:none; color:var(--yazi); font:inherit; text-decoration:underline; text-decoration-style:dotted; text-underline-offset:3px; cursor:pointer; }
+.a2-baglanti:hover { color:var(--vurgu); }
+.a2-lastik { display:inline-flex; align-items:center; gap:6px; font-size:.84rem; }
+.a2-lastik-satir { margin:-4px 0 10px; font-size:.84rem; }
+.a2-lastik-satir[hidden] { display:none; }
+
+/* ---- pencere ---- */
+.a2-dlg { width:min(520px, calc(100% - 24px)); max-height:min(85vh, 720px); padding:0; border:1px solid var(--cizgi); border-radius:14px; background:var(--kart); color:var(--yazi); box-shadow:0 16px 48px rgba(0,0,0,.35); overflow:hidden; }
+.a2-dlg[open] { display:flex; flex-direction:column; }
+.a2-dlg::backdrop { background:rgba(0,0,0,.5); }
+.a2-dlg-ust { display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid var(--cizgi); }
+.a2-dlg-ust h2 { flex:1; margin:0; font-size:1.02rem; border:0; padding:0; text-transform:none; letter-spacing:0; }
+.a2-dlg-ust h2::before, .a2-dlg-ust h2::after { content:none; }
+.a2-geri, .a2-kapat { border:0; background:none; color:var(--soluk); font-size:.86rem; cursor:pointer; padding:2px 4px; }
+.a2-geri:hover, .a2-kapat:hover { color:var(--yazi); }
+.a2-dlg-govde { padding:14px; overflow:auto; font-size:.9rem; line-height:1.5; outline:none; }
+.a2-dlg-govde p { margin:0 0 10px; }
+.a2-kisa { font-size:.95rem; }
+.a2-uzun { color:var(--soluk); }
+.a2-uzun[hidden] { display:none; }
+.a2-daha { border:0; background:none; padding:0; margin:0 0 10px; color:var(--vurgu); font-size:.84rem; cursor:pointer; }
+.a2-et { display:block; font-size:.64rem; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--soluk); margin-bottom:6px; }
+.a2-iliskili, .a2-kat, .a2-mod { margin:0 0 14px; }
+.a2-chip { margin:0 6px 6px 0; padding:4px 10px; font-size:.82rem; border:1px solid var(--cizgi); border-radius:999px; background:var(--kart2); color:var(--yazi); cursor:pointer; }
+.a2-chip:hover { border-color:var(--vurgu); }
+.a2-meta { font-size:.76rem; color:var(--soluk); }
+.a2-meta a { color:inherit; }
+.a2-donem { font-size:.64rem; font-weight:700; letter-spacing:.08em; color:var(--vurgu); border:1px solid var(--vurgu); border-radius:3px; padding:0 5px; text-transform:uppercase; }
+.a2-ara { width:100%; box-sizing:border-box; margin:0 0 14px; padding:8px 10px; font-size:.9rem; border:1px solid var(--cizgi); border-radius:8px; background:var(--kart2); color:var(--yazi); }
+.a2-mod-sec { margin:0 6px 6px 0; padding:4px 12px; font-size:.82rem; border:1px solid var(--cizgi); border-radius:999px; background:transparent; color:var(--yazi); cursor:pointer; }
+.a2-mod-sec.aktif { border-color:var(--vurgu); color:var(--vurgu); font-weight:600; }
+.a2-mod-not { font-size:.76rem; color:var(--soluk); margin:4px 0 0; }
+.a2-bos { color:var(--soluk); }
+
+/* ---- lastik rehberi ---- */
+.a2-lk { padding:12px 0; border-top:1px solid var(--cizgi); }
+.a2-lk:first-child { border-top:0; padding-top:0; }
+.a2-lk h3 { margin:0 0 6px; font-size:.95rem; display:flex; align-items:center; gap:8px; }
+.a2-lk p { margin:0 0 8px; }
+.a2-bilesikler { display:grid; gap:8px; margin-top:8px; }
+.a2-bilesik { display:grid; grid-template-columns:22px 70px 1fr 1fr; align-items:center; gap:10px; font-size:.82rem; }
+.a2-halka { width:18px; height:18px; border-radius:50%; border:4px solid var(--hc); box-sizing:border-box; background:transparent; }
+.a2-cubuk { display:flex; align-items:center; gap:3px; }
+.a2-cubuk small { width:56px; color:var(--soluk); font-size:.7rem; }
+.a2-cubuk i { flex:1; height:6px; border-radius:3px; background:var(--cizgi); }
+.a2-cubuk i.dolu { background:var(--soluk); }
+@media (max-width:560px) {
+  .a2-dlg { width:100%; max-width:none; margin:auto 0 0; border-radius:16px 16px 0 0; max-height:88vh; }
+  .a2-bilesik { grid-template-columns:22px 62px 1fr; }
+  .a2-bilesik .a2-cubuk:nth-of-type(2) { grid-column:3; }
+}

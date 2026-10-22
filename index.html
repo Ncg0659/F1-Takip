@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>F1 Takip</title>
+<meta name="app-version" content="3.0.0">
+<link rel="icon" href="data:,">
+<script>/* UI v3 nav: PRODUCTION'DA VARSAYILAN AÇIK. Geliştirici geri dönüşü: ?nav=off (kalıcı "off"), ?nav=v3 geri açar. localStorage temizlenince v3 kalır. */
+try { var __q = new URLSearchParams(location.search).get("nav"); if (__q === "off") { localStorage.setItem("f1-nav", "off"); } else if (__q === "v3") { localStorage.setItem("f1-nav", "v3"); }
+  if (localStorage.getItem("f1-nav") !== "off") { document.documentElement.setAttribute("data-nav", "v3"); } } catch (e) { document.documentElement.setAttribute("data-nav", "v3"); }
+try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAttribute("data-dev", "1"); } } catch (e) {}   /* geliştirici kontrolleri (test/debug) yalnız ?dev=1 ile görünür */</script>
+<script src="diger-seriler.js?v=3.0.0"></script>
+<script src="yaris-notlari.js?v=3.0.0"></script>
+<script src="notlar-kaynaklar.js?v=3.0.0"></script>
+<script src="notlar-motor.js?v=3.0.0"></script>
+<script src="tasarim.js?v=3.0.0"></script>
+<script src="seri-ayarlari.js?v=3.0.0"></script>
+<script src="jolpica-istemci.js?v=3.0.0"></script>
+<script src="openf1-veri.js?v=3.0.0"></script>
+<script src="hafta-veri.js?v=3.0.0"></script>
+<script src="hafta-state.js?v=3.0.0"></script>
+<script src="program-yardimci.js?v=3.0.0"></script>
+<script src="program-degisiklik.js?v=3.0.0"></script>
+<script src="hafta-baglam.js?v=3.0.0"></script>
+<script src="baglam-ui.js?v=3.0.0"></script>
+<script src="race-control.js?v=3.0.0"></script>
+<script src="seans-olaylari.js?v=3.0.0"></script>
+<script src="laps-veri.js?v=3.0.0"></script>
+<script src="tur-analizi.js?v=3.0.0"></script>
+<script src="overtakes-veri.js?v=3.0.0"></script>
+<script src="gecisler.js?v=3.0.0"></script>
+<script src="pit-veri.js?v=3.0.0"></script>
+<script src="pitler.js?v=3.0.0"></script>
+<script src="seans-hava-veri.js?v=3.0.0"></script>
+<script src="seans-hava.js?v=3.0.0"></script>
+<script src="v3-bilesen.js?v=3.0.0"></script>
+<script src="hafta-ui.js?v=3.0.0"></script>
+<script src="gun-v3.js?v=3.0.0"></script>
+<script src="yaris-v3.js?v=3.0.0"></script>
+<script src="bugun-v3.js?v=3.0.0"></script>
+<script src="nav-v3.js?v=3.0.0"></script>
+<script src="motion-v1.js?v=3.0.0"></script>
+<script src="favori-v1.js?v=3.0.0"></script>
+<script src="sezon-veri.js?v=3.0.0"></script>
+<script src="pist-siluetleri.js?v=3.0.0"></script>
+<script src="sezon-takvim.js?v=3.0.0"></script>
+<script src="yorum-motoru.js?v=3.0.0"></script>
+<script src="icerik-sozluk.js?v=3.0.0"></script>
+<script src="icerik-lastik.js?v=3.0.0"></script>
+<script src="icerik-sozluk-a3.js?v=3.0.0"></script>
+<script src="icerik-sozluk-a4.js?v=3.0.0"></script>
+<script src="icerik-sozluk-v2.js?v=3.0.0"></script>
+<script src="ogren-ui.js?v=3.0.0"></script>
+<script src="ogren-v2.js?v=3.0.0"></script>
+<script src="detay-panel.js?v=3.0.0"></script>
+<script src="detay-sezon.js?v=3.0.0"></script>
+<script src="sezon-hesap.js?v=3.0.0"></script>
+<script src="sezon-analiz-veri.js?v=3.0.0"></script>
+<script src="svg-grafik.js?v=3.0.0"></script>
+<script src="analiz-merkezi.js?v=3.0.0"></script>
+<script src="sezon-hesap-a32.js?v=3.0.0"></script>
+<script src="analiz-form.js?v=3.0.0"></script>
+<script src="pilot-karsilastirma.js?v=3.0.0"></script>
+<script src="sezon-hesap-a33.js?v=3.0.0"></script>
+<script src="analiz-sprint.js?v=3.0.0"></script>
+<script src="pist-siniflandirma.js?v=3.0.0"></script>
+<script src="sezon-hesap-a34.js?v=3.0.0"></script>
+<script src="analiz-pist.js?v=3.0.0"></script>
+<script src="lastik-hesap.js?v=3.0.0"></script>
+<script src="openf1-stint.js?v=3.0.0"></script>
+<script src="analiz-lastik.js?v=3.0.0"></script>
+<script src="icerik-pilotlar.js?v=3.0.0"></script>
+<script src="icerik-takimlar.js?v=3.0.0"></script>
+<script src="profil-veri.js?v=3.0.0"></script>
+<script src="profil-pilot.js?v=3.0.0"></script>
+<script src="profil-takim.js?v=3.0.0"></script>
+<script src="profil-giris.js?v=3.0.0"></script>
+<script src="icerik-pistler.js?v=3.0.0"></script>
+<script src="pist-hesap.js?v=3.0.0"></script>
+<script src="profil-pist.js?v=3.0.0"></script>
+<script src="hafta-bilmen.js?v=3.0.0"></script>
+<script src="arama.js?v=3.0.0"></script>
+<script src="arama-ui.js?v=3.0.0"></script>
+<script src="feed-canli.js?v=3.0.0"></script>
+<script src="ticker.js?v=3.0.0"></script>
+<script src="yaris-ozet-hesap.js?v=3.0.0"></script>
+<script src="yaris-ozet-v2-hesap.js?v=3.0.0"></script>
+<script src="yaris-ozet-v2.js?v=3.0.0"></script>
+<script src="yaris-ozet.js?v=3.0.0"></script>
+<script src="ui-final.js?v=3.0.0"></script>
+<script src="diger-ui.js?v=3.0.0"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root { --zemin:#eef1f5; --yazi:#14202e; --vurgu:#d4161c; --cizgi:#c9d1dc; --kart:#ffffff; --soluk:#4a5a6c; }
+  :root[data-tema="koyu"] { --zemin:#0f1722; --yazi:#e6ebf2; --cizgi:#2b3a4d; --kart:#182333; --soluk:#9fb0c3; }
+  select, input { background:var(--kart); color:var(--yazi); }
+  .favbar { margin-bottom:12px; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:16px; background:var(--zemin); color:var(--yazi);
+         font-family: "Trebuchet MS", "Segoe UI", sans-serif; }
+  h1 { font-size:1.6rem; margin:0 0 4px; }
+  p { margin:0 0 16px; color:var(--soluk); }
+  input { width:100%; padding:10px; font-size:1rem; border:1px solid var(--cizgi);
+          border-radius:6px; margin-bottom:12px; }
+  .kap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; background:var(--kart); }
+  th, td { text-align:left; padding:10px 8px; border-bottom:1px solid var(--cizgi); white-space:nowrap; }
+  th { border-bottom:2px solid var(--vurgu); }
+  td.sezon { font-weight:bold; color:var(--vurgu); }
+  nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+  nav button { flex:1; min-width:110px; padding:10px; font-size:1rem; border:1px solid var(--cizgi); background:var(--kart);
+               border-radius:6px; cursor:pointer; color:var(--yazi); }
+  nav button.aktif { background:var(--yazi); color:var(--zemin); border-color:var(--yazi); }
+  .sonraki { background:var(--kart); border-left:6px solid var(--vurgu); padding:12px 14px; margin-bottom:16px; }
+  .sonraki b { font-size:1.15rem; }
+  .sayac { font-size:1.6rem; font-weight:bold; color:var(--vurgu); margin-top:6px; }
+  select { padding:8px; font-size:1rem; margin:0 6px 10px 0; max-width:100%; }
+  .grafik { position:relative; height:320px; background:var(--kart); padding:8px; }
+  .sonuc { background:var(--kart); border-left:6px solid var(--yazi); padding:12px 14px; margin-top:10px; line-height:1.5; }
+  .not { font-size:.85rem; color:var(--soluk); }
+  .yenile { padding:8px 14px; font-size:1rem; border:1px solid var(--cizgi); background:var(--kart); color:var(--yazi); border-radius:6px; cursor:pointer; }
+  h2 { font-size:1.2rem; margin:20px 0 8px; }
+  .olay { margin:0 0 10px; line-height:1.35; }
+  .olay-saat { font-weight:bold; }
+  .olay-kat { font-size:.72rem; font-weight:bold; padding:1px 6px; border-radius:4px; background:var(--cizgi); margin:0 4px; }
+  .olay-kat.yuksek { background:var(--vurgu); color:#fff; }
+  .rozet { font-size:.7rem; color:var(--soluk); border:1px solid var(--cizgi); border-radius:4px; padding:0 4px; margin-left:2px; }
+  #feed-debug-metin { font-size:.8rem; white-space:pre-wrap; }
+</style>
+<link rel="stylesheet" href="tasarim.css?v=3.0.0">
+<link rel="stylesheet" href="v3-bilesen.css?v=3.0.0">
+<link rel="stylesheet" href="hafta.css?v=3.0.0">
+<link rel="stylesheet" href="gun-v3.css?v=3.0.0">
+<link rel="stylesheet" href="yaris-v3.css?v=3.0.0">
+<link rel="stylesheet" href="seans-olaylari.css?v=3.0.0">
+<link rel="stylesheet" href="sezon-takvim.css?v=3.0.0">
+<link rel="stylesheet" href="yorum-motoru.css?v=3.0.0">
+<link rel="stylesheet" href="ogren.css?v=3.0.0">
+<link rel="stylesheet" href="detay-panel.css?v=3.0.0">
+<link rel="stylesheet" href="svg-grafik.css?v=3.0.0">
+<link rel="stylesheet" href="analiz-merkezi.css?v=3.0.0">
+<link rel="stylesheet" href="analiz-form.css?v=3.0.0">
+<link rel="stylesheet" href="pilot-karsilastirma.css?v=3.0.0">
+<link rel="stylesheet" href="analiz-sprint.css?v=3.0.0">
+<link rel="stylesheet" href="analiz-pist.css?v=3.0.0">
+<link rel="stylesheet" href="analiz-lastik.css?v=3.0.0">
+<link rel="stylesheet" href="profil.css?v=3.0.0">
+<link rel="stylesheet" href="profil-pist.css?v=3.0.0">
+<link rel="stylesheet" href="hafta-bilmen.css?v=3.0.0">
+<link rel="stylesheet" href="arama.css?v=3.0.0">
+<link rel="stylesheet" href="ticker.css?v=3.0.0">
+<link rel="stylesheet" href="yaris-ozet.css?v=3.0.0">
+<link rel="stylesheet" href="ui-final.css?v=3.0.0">
+<link rel="stylesheet" href="diger-ui.css?v=3.0.0">
+<link rel="stylesheet" href="v3-rozet.css?v=3.0.0">
+<link rel="stylesheet" href="bugun-v3.css?v=3.0.0">
+<link rel="stylesheet" href="nav-v3.css?v=3.0.0">
+<link rel="stylesheet" href="motion-v1.css?v=3.0.0">
+<link rel="stylesheet" href="favori-v1.css?v=3.0.0">
+<link rel="stylesheet" href="ogren-v2.css?v=3.0.0">
+</head>
+<body>
+  <nav>
+    <button id="btn-sezon" class="aktif">Güncel Sezon</button>
+    <button id="btn-yarisgrup">Yarış</button>
+    <button id="btn-grafik">Grafik</button>
+    <button id="btn-profil">Pilot & Pist</button>
+    <button id="btn-sampiyonlar">Şampiyonlar</button>
+    <button id="btn-diger">Diğer Seriler</button>
+    <button id="btn-tema" title="Tema değiştir">Koyu / Açık</button>
+  </nav>
+  <nav id="yaris-alt" hidden>
+    <button id="btn-hafta">Yarış Haftası</button>
+    <button id="btn-sprint" hidden>Sprint</button>
+    <button id="btn-gun">Yarış Günü</button>
+    <button id="btn-yaris">Yarış Analizi</button>
+  </nav>
+  <div role="navigation" id="nav-v3" aria-label="Ana gezinme">
+    <button type="button" id="nav-bugun" data-nav="bugun" aria-label="Bugün"><svg class="nv-ik" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span class="nv-u">BUGÜN</span></button>
+    <button type="button" id="nav-haftasonu" data-nav="haftasonu" aria-label="Hafta sonu"><svg class="nv-ik" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg><span class="nv-u">HAFTA SONU</span><span class="nv-k">HAFTA</span></button>
+    <button type="button" id="nav-sezon" data-nav="sezon" aria-label="Sezon"><svg class="nv-ik" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="nv-u">SEZON</span></button>
+    <button type="button" id="nav-analiz" data-nav="analiz" aria-label="Analiz"><svg class="nv-ik" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg><span class="nv-u">ANALİZ</span></button>
+    <button type="button" id="nav-kesfet" data-nav="kesfet" aria-label="Keşfet"><svg class="nv-ik" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15 9l-2 5-5 1 2-5z"/></svg><span class="nv-u">KEŞFET</span></button>
+  </div>
+  <div id="ctx-v3" role="group" aria-label="Alt bölümler" hidden></div>
+  <div class="favbar">Favori pilot: <select id="favori-sec"><option value="">Seçilmedi</option></select></div>
+  <section id="sekme-bugun" hidden aria-label="Bugün">
+    <h1 class="bg-sr">Bugün</h1>
+    <div id="bg-kok"></div>
+  </section>
+  <section id="sekme-sampiyonlar" hidden>
+  <h1>Dünya Şampiyonları</h1>
+  <p>1950'den bugüne pilot şampiyonları.</p>
+  <input id="ara" placeholder="Pilot veya takım ara">
+  <div class="kap">
+    <table>
+      <thead><tr><th>Sezon</th><th>Pilot</th><th>Takım</th><th>Puan</th><th>Galibiyet</th></tr></thead>
+      <tbody id="govde"><tr><td colspan="5">Yükleniyor...</td></tr></tbody>
+    </table>
+  </div>
+
+<script>
+  const TEMEL = "https://api.jolpi.ca/ergast/f1/";
+  const ILK_SEZON = 1950;
+  const BU_YIL = new Date().getFullYear();
+  let sampiyonlar = [];
+
+  // Bekleme yardımcısı: sunucuyu yormamak için istekler arasında durur
+  function bekle(ms) { return new Promise(function (coz) { setTimeout(coz, ms); }); }
+
+  // Tarayıcı hafızası: geçmiş sezonlar değişmez, bir kez çekip saklarız
+  function hafizadanOku(sezon) {
+    try { return JSON.parse(localStorage.getItem("f1-" + sezon)); } catch (e) { return null; }
+  }
+  function hafizayaYaz(sezon, kayit) {
+    try { localStorage.setItem("f1-" + sezon, JSON.stringify(kayit)); } catch (e) {}
+  }
+
+  // Tek bir sezonun puan durumunu çek, 1. sıradaki pilotu döndür
+  async function sezonuGetir(sezon) {
+    const gecmis = sezon < BU_YIL;
+    if (gecmis) {
+      const kayitli = hafizadanOku(sezon);
+      if (kayitli) { return kayitli; }
+    }
+    let cevap = await fetch(TEMEL + sezon + "/driverstandings/");
+    if (cevap.status === 429) {            // çok hızlı istedik, biraz bekle ve tekrar dene
+      await bekle(3000);
+      cevap = await fetch(TEMEL + sezon + "/driverstandings/");
+    }
+    if (!cevap.ok) { throw new Error(sezon + " için sunucu cevabı: " + cevap.status); }
+    const veri = await cevap.json();
+    const liste = veri.MRData.StandingsTable.StandingsLists[0];
+    if (!liste) { return null; }
+    const s = liste.DriverStandings[0];
+    const kayit = {
+      sezon: String(sezon),
+      pilot: s.Driver.givenName + " " + s.Driver.familyName + (gecmis ? "" : " (lider)"),
+      takim: s.Constructors.length ? s.Constructors[0].name : "-",
+      puan: s.points,
+      galibiyet: s.wins
+    };
+    if (gecmis) { hafizayaYaz(sezon, kayit); }
+    return kayit;
+  }
+
+  // Sezonları sırayla çek, geldikçe tabloyu güncelle
+  async function verileriGetir() {
+    const govde = document.getElementById("govde");
+    try {
+      for (let sezon = ILK_SEZON; sezon <= BU_YIL; sezon++) {
+        const onceden = sezon < BU_YIL && hafizadanOku(sezon);
+        const kayit = await sezonuGetir(sezon);
+        if (kayit) { sampiyonlar.unshift(kayit); }   // en yeni üstte
+        tabloyuCiz(sampiyonlar);
+        if (!onceden) { await bekle(350); }          // sadece internetten çektiysek bekle
+      }
+    } catch (hata) {
+      govde.insertAdjacentHTML("beforeend",
+        "<tr><td colspan='5'>Veri alınamadı. Hata: " + hata.message + "</td></tr>");
+    }
+  }
+
+  function tabloyuCiz(liste) {
+    document.getElementById("govde").innerHTML = liste.map(function (k) {
+      return "<tr><td class='sezon'>" + k.sezon + "</td><td>" + k.pilot + "</td><td>" +
+             k.takim + "</td><td>" + k.puan + "</td><td>" + k.galibiyet + "</td></tr>";
+    }).join("");
+  }
+
+  document.getElementById("ara").addEventListener("input", function (e) {
+    const aranan = e.target.value.toLowerCase();
+    tabloyuCiz(sampiyonlar.filter(function (k) {
+      return (k.pilot + " " + k.takim).toLowerCase().includes(aranan);
+    }));
+  });
+
+  // UI turu: açılış ekranı Güncel Sezon; geçmiş şampiyonlar yüklemesi eskisi gibi açılışta (aynı istekler, aynı zamanlama) başlar.
+  let sampiyonBasladi = false;
+  function sampiyonBaslat() { if (sampiyonBasladi) { return; } sampiyonBasladi = true; verileriGetir(); }
+  sampiyonBaslat();
+</script>
+  </section>
+
+  <section id="sekme-sezon">
+    <h1 id="sezon-baslik">Güncel Sezon</h1>
+    <div class="sonraki" id="sonraki">Takvim yükleniyor...</div>
+    <div id="a2-takvim"></div>
+    <section class="ui-hesap" aria-labelledby="ui-hesap-b">
+      <h2 id="ui-hesap-b">Şampiyonluk hesaplayıcı</h2>
+      <label class="ui-hesap-sec" for="hesap-pilot"><span>Pilot seç</span><select id="hesap-pilot"></select></label>
+      <div class="sonuc" id="hesap-sonuc">Yükleniyor...</div>
+      <p class="not">Basit hesap: kalan yarışlarda galibiyet 25 puan, sprint hafta sonlarında ek 8 puan sayılır. Rakiplerin puan alması hesaba katılmaz.</p>
+    </section>
+    <h2>Pilotlar puan durumu</h2>
+    <div class="kap"><table>
+      <thead><tr><th>Sıra</th><th>Pilot</th><th>Takım</th><th>Puan</th><th>Gal.</th></tr></thead>
+      <tbody id="pilot-govde"><tr><td colspan="5">Yükleniyor...</td></tr></tbody>
+    </table></div>
+    <h2>Takımlar puan durumu</h2>
+    <div class="kap"><table>
+      <thead><tr><th>Sıra</th><th>Takım</th><th>Puan</th><th>Gal.</th></tr></thead>
+      <tbody id="takim-govde"><tr><td colspan="4">Yükleniyor...</td></tr></tbody>
+    </table></div>
+    <div id="a2-eski-takvim">
+    <h2>Takvim</h2>
+    <div class="kap"><table>
+      <thead><tr><th>Tur</th><th>Yarış</th><th>Tarih</th></tr></thead>
+      <tbody id="takvim-govde"></tbody>
+    </table></div>
+    </div>
+  </section>
+
+  <section id="sekme-profil" hidden>
+    <h1>Pilot karşılaştırma</h1>
+    <p>İki pilotu yan yana kıyasla.</p>
+    <select id="pilot-a"></select>
+    <select id="pilot-b"></select>
+    <div class="kap"><table>
+      <thead><tr><th>Bilgi</th><th id="baslik-a">-</th><th id="baslik-b">-</th></tr></thead>
+      <tbody id="kiyas-govde"><tr><td colspan="3">Yükleniyor...</td></tr></tbody>
+    </table></div>
+    <h2>Sezonun pistleri</h2>
+    <div class="kap"><table>
+      <thead><tr><th>Pist</th><th>Yer</th><th>Yarış</th><th>Harita</th></tr></thead>
+      <tbody id="pist-govde"></tbody>
+    </table></div>
+  </section>
+
+  <section id="sekme-grafik" hidden>
+    <div id="a3-merkez"></div>
+    <h1>Puan grafiği</h1>
+    <p id="grafik-durum">İlk 6 pilotun sezon boyunca puan gelişimi.</p>
+    <div class="grafik"><canvas id="puan-grafik"></canvas></div>
+  </section>
+
+  <section id="a43-bilmen" class="bm" hidden aria-labelledby="bm-b"></section>
+  <section id="sekme-hafta" hidden></section>
+  <section id="sekme-sprint" hidden></section>
+
+  <section id="sekme-yaris" hidden>
+    <h1>Yarış analizi</h1>
+    <div id="yv-hero"><div class="yv-hero-g">
+      <div class="yv-sol">
+        <div class="yv-ust"><span class="yv-turr" id="yv-tur"></span><span id="yv-durum"></span><select id="yaris-sec" aria-label="Yarış seç"></select></div>
+        <div class="yv-yer" id="yv-yer"></div>
+        <div class="yv-meta" id="yv-meta"></div>
+      </div>
+      <div id="yv-pist" class="g3-pist" hidden></div>
+    </div></div>
+    <p id="yaris-durum">Bir yarış seç.</p>
+    <div id="yv-cipler"></div>
+    <div id="yv-neden"></div>
+    <div id="yv-detay">
+      <div id="yv-detay-baslik">YARIŞ ANALİZİ</div>
+      <div id="yv-sek"></div>
+      <div id="yv-sonuc-panel">
+        <div class="kap"><table>
+          <thead><tr><th>Sıra</th><th>Pilot</th><th>Takım</th><th>Start</th><th>Değişim</th><th>Süre / Durum</th><th>Puan</th><th>En hızlı tur</th></tr></thead>
+          <tbody id="sonuc-govde"></tbody>
+        </table></div>
+      </div>
+      <div id="yv-a7-panel" hidden></div>
+      <div id="yv-pit-ek" hidden>
+        <p data-lastik-rehberi></p>
+        <details class="v3-acord" id="yv-pit-tablo"><summary><span class="v3-ab">PİT TABLOSU</span><span class="v3-ao">Jolpica · tur ve süre</span></summary><div class="v3-ag"><div class="kap"><table>
+          <thead><tr><th>Pilot</th><th>Stop</th><th>Tur</th><th>Süre (sn)</th></tr></thead>
+          <tbody id="pit-govde"></tbody>
+        </table></div></div></details>
+      </div>
+      <div id="yv-tur-ek" hidden>
+        <h2 class="yv-h2">Tur süreleri</h2>
+        <details class="v3-acord" id="yv-tur-grafik"><summary><span class="v3-ab">İKİ PİLOT TUR SÜRESİ GRAFİĞİ</span></summary><div class="v3-ag">
+          <select id="tur-a"></select>
+          <select id="tur-b"></select>
+          <p class="not" id="tur-durum"></p>
+          <div class="grafik"><canvas id="tur-grafik"></canvas></div>
+        </div></details>
+      </div>
+    </div>
+  </section>
+
+  <section id="sekme-gun" hidden>
+    <h1 id="gun-baslik">Yarış günü</h1>
+    <div class="sonraki" id="gun-kutu">Yarış bilgisi hazırlanıyor…</div>
+    <div id="gun-v3-ozet"><div id="gun-v3-durum"><div id="gun-v3-serit"></div><div id="gun-baglam"></div></div><div id="gun-v3-cipler"></div></div>
+    <div class="sonuc" id="gun-hava">Hava verisi hazırlanıyor…</div>
+    <p data-lastik-yagmur hidden></p>
+    <div id="gun-notlar-bolum">
+      <div class="sonuc" id="gun-notlar">Yarış notları hazırlanıyor…</div>
+    </div>
+    <div id="gun-detay">
+      <div id="gun-detay-baslik">YARIŞ SONUCU</div>
+      <div id="gun-v3-sek"></div>
+      <div id="gun-sonuc-panel">
+        <p id="gun-sonuc-metin">Yarış başlayınca burada sonuçlar için kontrol edilir.</p>
+        <div class="kap"><table>
+          <thead><tr><th>Sıra</th><th>Pilot</th><th>Takım</th><th>Start</th><th>Değişim</th><th>Puan</th></tr></thead>
+          <tbody id="gun-sonuc-govde"></tbody>
+        </table></div>
+      </div>
+      <div id="gun-a7-panel" hidden></div>
+    </div>
+    <aside id="gun-ogren" hidden></aside>
+    <details id="gun-dev" class="v3-acord"><summary><span class="v3-ab">YENİLEME</span></summary><div class="v3-ag">
+      <div class="not" id="feed-kontrol">
+        <button class="yenile" id="feed-yenile">Notları yenile</button>
+        <label><input type="checkbox" id="feed-test"> Test: zaman filtresini kapat</label>
+      </div>
+      <details id="feed-debug" hidden><summary>Debug</summary><pre id="feed-debug-metin"></pre></details>
+      <p class="not" id="gun-not"></p>
+      <button class="yenile" id="gun-yenile">Şimdi yenile</button>
+    </div></details>
+  </section>
+
+  <section id="sekme-diger" hidden>
+    <h1>Diğer seriler</h1>
+    <nav id="seri-dugmeleri"></nav>
+    <div class="sonraki" id="seri-bilgi">Yükleniyor...</div>
+    <h2>Pilotlar</h2>
+    <div class="kap"><table>
+      <thead><tr><th>Sıra</th><th>Pilot</th><th>Takım</th><th>Puan</th></tr></thead>
+      <tbody id="seri-pilot-govde"></tbody>
+    </table></div>
+    <div id="seri-takim-kap">
+      <h2>Takımlar</h2>
+      <div class="kap"><table>
+        <thead><tr><th>Sıra</th><th>Takım</th><th>Puan</th></tr></thead>
+        <tbody id="seri-takim-govde"></tbody>
+      </table></div>
+    </div>
+    <p class="not" id="seri-not"></p>
+  </section>
+
+<script>
+  // Ham anahtar (ör. "marina_bay") kullanıcıya gösterilmez: ortak sunum yardımcısı (SezonTakvim.sehirGorunen); normal değerler aynen geçer
+  function sehirG(t) { try { return window.SezonTakvim && window.SezonTakvim.sehirGorunen ? window.SezonTakvim.sehirGorunen(t) : t; } catch (e) { return t; } }
+  var BOLUMLER = ["bugun", "sampiyonlar", "sezon", "profil", "grafik", "hafta", "sprint", "yaris", "gun", "diger"];
+  var YARIS_GRUBU = ["hafta", "sprint", "gun", "yaris"];
+  const SEZON = new Date().getFullYear();
+  let sezonYuklendi = false;
+  let grafikIstendi = false;
+  let grafikBasladi = false;
+  let sezonPilotlar = [];
+  let sezonYarislar = [];
+  let sayacZamanlayici = null;
+
+  // Sekme geçişi
+  function sekmeAc(ad) {
+    BOLUMLER.forEach(function (b) {
+      document.getElementById("sekme-" + b).hidden = (b !== ad);
+      var bt = document.getElementById("btn-" + b); if (bt) { bt.className = (b === ad) ? "aktif" : ""; }   // "bugun" yalnız yeni nav shell'inde (eski nav'da düğmesi yok)
+    });
+    // Sezon ve profil sekmeleri aynı veriyi kullanır, bir kez yüklenir
+    if (ad !== "sampiyonlar" && ad !== "diger" && ad !== "hafta" && ad !== "sprint" && !sezonYuklendi) { sezonYuklendi = true; sezonuYukle(); }
+    if (ad === "grafik") { grafikIstendi = true; if (sezonPilotlar.length) { grafikHazirla(); } }
+    if (ad === "sampiyonlar") { sampiyonBaslat(); }
+    if (ad === "diger") { digerHazirla(); }
+    if (ad === "gun") { gunIstendi = true; if (sezonPilotlar.length) { gunBaslat(); } } else { gunDurdur(); }
+    // Yarış grubu: alt navigasyon, Yarış Haftası / Sprint (hafta-ui.js)
+    var grupta = YARIS_GRUBU.indexOf(ad) >= 0;
+    document.getElementById("btn-yarisgrup").className = grupta ? "aktif" : "";
+    document.getElementById("yaris-alt").hidden = !grupta;
+    if (window.YarisHaftasi) {
+      if (grupta) { YarisHaftasi.sonAltSekmeYaz(ad); YarisHaftasi.hazirla(); }
+      if (ad === "hafta" || ad === "sprint") { YarisHaftasi.ac(ad); } else { YarisHaftasi.durdur(); }
+    }
+    document.dispatchEvent(new CustomEvent("f1-sekme", { detail: ad }));   // UI v3 nav shell vurgusu için (yalnız olay; başka etkisi yok)
+  }
+  document.getElementById("btn-yarisgrup").addEventListener("click", function () {
+    var son = window.YarisHaftasi ? YarisHaftasi.sonAltSekme() : "yaris";
+    if (son === "sprint" && document.getElementById("btn-sprint").hidden) { son = "hafta"; }
+    sekmeAc(window.YarisHaftasi ? son : "yaris");
+  });
+  BOLUMLER.forEach(function (b) {
+    var bt = document.getElementById("btn-" + b); if (bt) { bt.addEventListener("click", function () { sekmeAc(b); }); }
+  });
+
+  async function jsonAl(yol) {
+    const cevap = await fetch("https://api.jolpi.ca/ergast/f1/" + yol);
+    if (!cevap.ok) { throw new Error(yol + " -> sunucu cevabı: " + cevap.status); }
+    return (await cevap.json()).MRData;
+  }
+  function bekle2(ms) { return new Promise(function (coz) { setTimeout(coz, ms); }); }
+
+  async function sezonuYukle() {
+    document.getElementById("sezon-baslik").textContent = SEZON + " Sezonu";
+    try {
+      const takvim = await jsonAl(SEZON + "/races/");
+      sezonYarislar = takvim.RaceTable.Races;
+      takvimiCiz(sezonYarislar);
+      await bekle2(400);
+      const pilotlar = await jsonAl(SEZON + "/driverstandings/");
+      sezonPilotlar = pilotlar.StandingsTable.StandingsLists[0].DriverStandings;
+      pilotlariCiz(sezonPilotlar);
+      await bekle2(400);
+      const takimlar = await jsonAl(SEZON + "/constructorstandings/");
+      takimlariCiz(takimlar.StandingsTable.StandingsLists[0].ConstructorStandings);
+      profilHazirla();
+      if (grafikIstendi) { grafikHazirla(); }
+      if (gunIstendi) { gunBaslat(); }
+    } catch (hata) {
+      document.getElementById("sonraki").textContent = "Veri alınamadı. Hata: " + hata.message;
+      // Yarış Günü: sonsuz "hazırlanıyor" yerine anlamlı durum (yalnızca metin; istek yok)
+      const gk = document.getElementById("gun-kutu"), gn = document.getElementById("gun-notlar");
+      if (gk && !gunYaris) { gk.textContent = "Yarış bilgisi şu an alınamadı."; }
+      const gh = document.getElementById("gun-hava");
+      if (gh && !gunYaris) { gh.textContent = "Hava verisi, yarış bilgisi alındığında gösterilir."; }
+      if (gn && !gunYaris) { gn.textContent = "Yarış notları, yarış bilgisi alındığında burada görünecek."; }
+    }
+  }
+
+  // Yarışın başlangıç anını tarayıcının anlayacağı tarihe çevir (saat UTC verilir)
+  function yarisZamani(y) {
+    return new Date(y.date + "T" + (y.time || "12:00:00Z"));
+  }
+
+  function takvimiCiz(yarislar) {
+    const simdi = new Date();
+    const siradaki = yarislar.find(function (y) { return yarisZamani(y) > simdi; });
+    document.getElementById("takvim-govde").innerHTML = yarislar.map(function (y) {
+      const bitti = yarisZamani(y) <= simdi;
+      return "<tr style='" + (bitti ? "color:#8a97a6" : "") + "'><td>" + y.round + "</td><td>" +
+             y.raceName + "</td><td>" + yarisZamani(y).toLocaleDateString("tr-TR",
+             { day: "numeric", month: "long" }) + "</td></tr>";
+    }).join("");
+
+    const kutu = document.getElementById("sonraki");
+    if (!siradaki) { kutu.textContent = "Bu sezonun yarışları tamamlandı."; return; }
+    const yer = sehirG(siradaki.Circuit.Location.locality) + ", " + siradaki.Circuit.Location.country;
+    kutu.innerHTML = "Sıradaki yarış<br><b>" + siradaki.raceName + "</b><br>" + yer +
+                     "<div class='sayac' id='sayac'></div>";
+    clearInterval(sayacZamanlayici);
+    function guncelle() {
+      let fark = Math.floor((yarisZamani(siradaki) - new Date()) / 1000);
+      if (fark < 0) { document.getElementById("sayac").textContent = "Yarış başladı!"; return; }
+      const gun = Math.floor(fark / 86400); fark %= 86400;
+      const saat = Math.floor(fark / 3600); fark %= 3600;
+      const dak = Math.floor(fark / 60);
+      document.getElementById("sayac").textContent = gun + " gün " + saat + " sa " + dak + " dk " + (fark % 60) + " sn";
+    }
+    guncelle();
+    sayacZamanlayici = setInterval(guncelle, 1000);
+  }
+
+  function pilotlariCiz(liste) {
+    document.getElementById("pilot-govde").innerHTML = liste.map(function (k) {
+      return "<tr><td class='sezon'>" + F1UI.pozRozet(k.position) + "</td><td>" + F1UI.pilotHucresi(k.Driver.code, k.Driver.givenName + " " + k.Driver.familyName) +
+             "</td><td>" + F1UI.takimRozeti(k.Constructors.length ? k.Constructors[k.Constructors.length - 1].name : "-") +
+             "</td><td class='sayi'>" + k.points + "</td><td class='sayi'>" + k.wins + "</td></tr>";
+    }).join("");
+  }
+
+  function takimlariCiz(liste) {
+    document.getElementById("takim-govde").innerHTML = liste.map(function (k) {
+      return "<tr><td class='sezon'>" + F1UI.pozRozet(k.position) + "</td><td>" + F1UI.takimRozeti(k.Constructor.name) +
+             "</td><td class='sayi'>" + k.points + "</td><td class='sayi'>" + k.wins + "</td></tr>";
+    }).join("");
+    document.dispatchEvent(new CustomEvent("f1-takim-siralama", { detail: { liste: liste } }));   // A4.2: resmî constructor sıralaması (yeni istek yok)
+  }
+  function yasHesapla(dogum) {
+    return Math.floor((new Date() - new Date(dogum)) / 31557600000);
+  }
+
+  function profilHazirla() {
+    const secenekler = sezonPilotlar.map(function (k, i) {
+      return "<option value='" + i + "'>" + k.Driver.givenName + " " + k.Driver.familyName + "</option>";
+    }).join("");
+    document.getElementById("pilot-a").innerHTML = secenekler;
+    document.getElementById("pilot-b").innerHTML = secenekler;
+    document.getElementById("pilot-b").value = "1";   // varsayılan: ilk iki pilot
+    document.getElementById("pilot-a").onchange = kiyasla;
+    document.getElementById("pilot-b").onchange = kiyasla;
+    kiyasla();
+    pistleriCiz();
+    hesapHazirla();
+    yarisHazirla();
+    favoriHazirla();
+  }
+
+  function kiyasla() {
+    const a = sezonPilotlar[document.getElementById("pilot-a").value];
+    const b = sezonPilotlar[document.getElementById("pilot-b").value];
+    document.getElementById("baslik-a").textContent = a.Driver.familyName;
+    document.getElementById("baslik-b").textContent = b.Driver.familyName;
+    function takimAdi(k) { return k.Constructors.length ? k.Constructors[k.Constructors.length - 1].name : "-"; }
+    const satirlar = [
+      ["Sıra", a.position, b.position],
+      ["Puan", a.points, b.points],
+      ["Galibiyet", a.wins, b.wins],
+      ["Takım", takimAdi(a), takimAdi(b)],
+      ["Numara", a.Driver.permanentNumber || "-", b.Driver.permanentNumber || "-"],
+      ["Uyruk", a.Driver.nationality, b.Driver.nationality],
+      ["Yaş", yasHesapla(a.Driver.dateOfBirth), yasHesapla(b.Driver.dateOfBirth)]
+    ];
+    document.getElementById("kiyas-govde").innerHTML = satirlar.map(function (r) {
+      return "<tr><td>" + r[0] + "</td><td>" + r[1] + "</td><td>" + r[2] + "</td></tr>";
+    }).join("");
+  }
+
+  function pistleriCiz() {
+    document.getElementById("pist-govde").innerHTML = sezonYarislar.map(function (y) {
+      const p = y.Circuit;
+      const harita = "https://www.google.com/maps?q=" + p.Location.lat + "," + p.Location.long;
+      return "<tr><td>" + sehirG(p.circuitName) + "</td><td>" + sehirG(p.Location.locality) + ", " + p.Location.country +
+             "</td><td>" + y.raceName + "</td><td><span class='pp-hucre'><a href='" + harita + "' target='_blank'>Haritada aç</a>" +
+             (window.ProfilPist ? "<button type='button' class='pf-btn pp-btn' data-pist='" + p.circuitId + "' aria-label='" + p.circuitName + " pist profilini aç'>Profil</button>" : "") + "</span></td></tr>";
+    }).join("");
+  }
+  // ---- Şampiyonluk hesaplayıcı ----
+  function kalanYarislar() {
+    const sinir = new Date(Date.now() - 3 * 3600 * 1000);
+    return sezonYarislar.filter(function (y) { return yarisZamani(y) > sinir; });
+  }
+
+  function hesapHazirla() {
+    document.getElementById("hesap-pilot").innerHTML = sezonPilotlar.map(function (k, i) {
+      return "<option value='" + i + "'>" + k.position + ". " + k.Driver.givenName + " " + k.Driver.familyName + "</option>";
+    }).join("");
+    document.getElementById("hesap-pilot").value = "1";
+    document.getElementById("hesap-pilot").onchange = hesapla;
+    hesapla();
+  }
+
+  function hesapla() {
+    const kalan = kalanYarislar();
+    const sprintSayisi = kalan.filter(function (y) { return y.Sprint; }).length;
+    const enCok = kalan.length * 25 + sprintSayisi * 8;
+    const lider = sezonPilotlar[0];
+    const ikinci = sezonPilotlar[1];
+    const p = sezonPilotlar[document.getElementById("hesap-pilot").value];
+    const ad = p.Driver.givenName + " " + p.Driver.familyName;
+    const kutu = document.getElementById("hesap-sonuc");
+    let metin = "Kalan: " + kalan.length + " yarış (" + sprintSayisi + " sprint), en fazla " + enCok + " puan.<br>";
+    if (lider.points - ikinci.points > enCok) {
+      metin += "Şampiyonluk matematiksel olarak belli: " + lider.Driver.familyName + ".";
+    } else if (p === lider) {
+      metin += ad + " lider, şampiyonluk henüz kesinleşmedi. İkinciyle fark " + (lider.points - ikinci.points) + " puan.";
+    } else {
+      const fark = lider.points - p.points;
+      if (Number(p.points) + enCok >= Number(lider.points)) {
+        metin += ad + " için lidere fark " + fark + " puan. Şampiyonluk matematiksel olarak hâlâ mümkün.";
+      } else {
+        metin += ad + " için lidere fark " + fark + " puan. Matematiksel olarak şampiyonluk şansı bitti.";
+      }
+    }
+    kutu.innerHTML = metin;
+  }
+
+  // ---- Puan grafiği ----
+  async function turPuanlari(tur) {
+    const anahtar = "f1-" + SEZON + "-tur-" + tur;
+    try { const k = JSON.parse(localStorage.getItem(anahtar)); if (k) { return { veri: k, hafizadan: true }; } } catch (e) {}
+    const m = await jsonAl(SEZON + "/" + tur + "/driverstandings/");
+    const liste = m.StandingsTable.StandingsLists[0].DriverStandings;
+    const harita = {};
+    liste.forEach(function (k) { harita[k.Driver.driverId] = Number(k.points); });
+    try { localStorage.setItem(anahtar, JSON.stringify(harita)); } catch (e) {}
+    return { veri: harita, hafizadan: false };
+  }
+
+  async function grafikHazirla() {
+    if (window.AnalizMerkezi && AnalizMerkezi.eskiyiBekle()) { return; }   // A3 çalışıyorsa eski 16–23 standings çağrısı atlanır; A3 başarısız olursa yedek olarak çalışır
+    if (grafikBasladi) { return; }
+    grafikBasladi = true;
+    const durum = document.getElementById("grafik-durum");
+    const biten = sezonYarislar.filter(function (y) { return yarisZamani(y) < new Date(Date.now() - 3 * 3600 * 1000); });
+    const ilk6 = sezonPilotlar.slice(0, 6);
+    const renkler = ["#d4161c", "#5b6f86", "#1f7ae0", "#e8a317", "#2e9d57", "#8e44ad"];
+    const cizgiler = ilk6.map(function (k, i) {
+      return { label: k.Driver.familyName, data: [], borderColor: renkler[i], backgroundColor: renkler[i],
+               tension: 0.2, spanGaps: true, pointRadius: 2 };
+    });
+    const grafik = new Chart(document.getElementById("puan-grafik"), {
+      type: "line",
+      data: { labels: [], datasets: cizgiler },
+      options: { maintainAspectRatio: false,
+                 scales: { x: { title: { display: true, text: "Tur" } }, y: { title: { display: true, text: "Puan" } } } }
+    });
+    try {
+      for (let i = 0; i < biten.length; i++) {
+        durum.textContent = "Yükleniyor: tur " + (i + 1) + " / " + biten.length;
+        const sonuc = await turPuanlari(biten[i].round);
+        grafik.data.labels.push(biten[i].round);
+        ilk6.forEach(function (k, j) {
+          const p = sonuc.veri[k.Driver.driverId];
+          cizgiler[j].data.push(p === undefined ? null : p);
+        });
+        grafik.update();
+        if (!sonuc.hafizadan) { await bekle2(400); }
+      }
+      durum.textContent = "İlk 6 pilotun sezon boyunca puan gelişimi.";
+    } catch (hata) {
+      durum.textContent = "Grafik yüklenemedi. Hata: " + hata.message;
+      grafikBasladi = false;
+    }
+  }
+  // ---- Yarış analizi ----
+  let turGrafigi = null;
+  let yarisPilotlari = [];
+  let secilenTur = null;
+
+  // UI v3: Yarış Analizi sunum katmanının (yaris-v3.js) okuyacağı MEVCUT veri. Yeni fetch/timer yok.
+  window.YarisCtx = function () {
+    try {
+      if (secilenTur == null) { return null; }
+      const y = sezonYarislar.find(function (r) { return String(r.round) === String(secilenTur); });
+      if (!y) { return null; }
+      const h = HaftaVeri.haftaKur(y, "f1");
+      const s = h.seanslar.find(function (x) { return x.anahtar === "Race"; });
+      return { y: y, h: h, s: s || null, toplam: sezonYarislar.length };
+    } catch (e) { return null; }
+  };
+  window.A7HaftaYaris = function () { const c = window.YarisCtx(); return c ? c.h : null; };
+
+  function yarisHazirla() {
+    const biten = sezonYarislar.filter(function (y) { return yarisZamani(y) < new Date(Date.now() - 3 * 3600 * 1000); });
+    const sec = document.getElementById("yaris-sec");
+    sec.innerHTML = biten.map(function (y) {
+      return "<option value='" + y.round + "'>" + y.round + ". " + y.raceName + "</option>";
+    }).reverse().join("");   // en son yarış üstte
+    sec.onchange = function () { yarisYukle(sec.value); };
+    if (biten.length) { yarisYukle(sec.value); }
+  }
+
+  async function yarisYukle(tur) {
+    secilenTur = tur;
+    const durum = document.getElementById("yaris-durum");
+    durum.textContent = "Yükleniyor...";
+    try {
+      const sonuc = await jsonAl(SEZON + "/" + tur + "/results/?limit=30");
+      if (secilenTur !== tur) { return; }
+      const sonucYaris = sonuc && sonuc.RaceTable && sonuc.RaceTable.Races && sonuc.RaceTable.Races[0];
+      if (!sonucYaris || !sonucYaris.Results) {            // yanıt biçimi beklenenden farklı / sonuç henüz yok: ham JS hatası gösterme, geliştirici logunda kalsın
+        console.warn("[yaris] sonuç yanıtında Races/Results yok", tur);
+        durum.textContent = "Bu yarış için sonuç verisi bulunamadı.";
+        return;
+      }
+      sonuclariCiz(sonucYaris.Results);
+      await bekle2(400);
+      const pit = await jsonAl(SEZON + "/" + tur + "/pitstops/?limit=100");
+      if (secilenTur !== tur) { return; }
+      if (!(pit && pit.RaceTable && pit.RaceTable.Races)) { console.warn("[yaris] pit yanıtında RaceTable/Races yok", tur); }   // pit özeti boş kalır; sonuç ekranı devam eder
+      const yarisKaydi = pit && pit.RaceTable && pit.RaceTable.Races ? pit.RaceTable.Races[0] : null;
+      pitleriCiz(yarisKaydi ? yarisKaydi.PitStops : []);
+      durum.textContent = "";
+      turSecimiHazirla();
+    } catch (hata) {
+      durum.textContent = "Veri alınamadı. Hata: " + hata.message;
+    }
+  }
+
+  function sonuclariCiz(liste) {
+    yarisPilotlari = liste.map(function (r) {
+      return { id: r.Driver.driverId, ad: r.Driver.familyName };
+    });
+    document.getElementById("sonuc-govde").innerHTML = liste.map(function (r) {
+      const hizli = r.FastestLap ? r.FastestLap.Time.time + " (tur " + r.FastestLap.lap + ")" : "-";
+      return "<tr><td class='sezon'>" + F1UI.pozRozet(r.positionText) + "</td><td>" + F1UI.pilotHucresi(r.Driver.code, r.Driver.givenName + " " + r.Driver.familyName) +
+             "</td><td>" + F1UI.takimRozeti(r.Constructor ? r.Constructor.name : "-") +
+             "</td><td class='sayi'>" + (Number(r.grid) > 0 ? r.grid : "Pit") + "</td><td>" + F1UI.farkRozeti(r.grid, r.position) +
+             "</td><td class='sayi'>" + F1UI.esc(r.Time && r.Time.time ? r.Time.time : (r.status || "-")) +
+             "</td><td class='sayi'>" + (r.points || "0") + "</td><td class='sayi'>" + hizli + "</td></tr>";
+    }).join("");
+    try { if (window.YorumMotoru) { YorumMotoru.sonuc(liste, { hedef: "yaris", tur: secilenTur }); } } catch (e) {}
+    try { document.dispatchEvent(new CustomEvent("f1-yaris-sonuc", { detail: { tur: secilenTur, liste: liste } })); } catch (e) {}   // A3.4b: ek ağ çağrısı yok
+  }
+
+  function pitleriCiz(liste) {
+    try { document.dispatchEvent(new CustomEvent("f1-yaris-pit", { detail: { tur: secilenTur, liste: liste || [] } })); } catch (e) {}   // A3.4b
+    if (!liste.length) {
+      document.getElementById("pit-govde").innerHTML = "<tr><td colspan='4'>Bu yarış için pit stop verisi yok.</td></tr>";
+      return;
+    }
+    document.getElementById("pit-govde").innerHTML = liste.map(function (p) {
+      const pilot = yarisPilotlari.find(function (x) { return x.id === p.driverId; });
+      return "<tr><td>" + (pilot ? pilot.ad : p.driverId) + "</td><td>" + p.stop + "</td><td>" + p.lap +
+             "</td><td>" + p.duration + "</td></tr>";
+    }).join("");
+  }
+
+  function turSecimiHazirla() {
+    const secenekler = yarisPilotlari.map(function (p) {
+      return "<option value='" + p.id + "'>" + p.ad + "</option>";
+    }).join("");
+    const a = document.getElementById("tur-a");
+    const b = document.getElementById("tur-b");
+    a.innerHTML = secenekler;
+    b.innerHTML = secenekler;
+    b.value = yarisPilotlari[1] ? yarisPilotlari[1].id : yarisPilotlari[0].id;
+    a.onchange = turSureleriniCiz;
+    b.onchange = turSureleriniCiz;
+    turSureleriniCiz();
+  }
+
+  // "1:32.456" yazısını saniyeye çevir
+  function saniyeye(yazi) {
+    const parca = yazi.split(":");
+    return parca.length === 2 ? Number(parca[0]) * 60 + Number(parca[1]) : Number(yazi);
+  }
+
+  async function turSureleriniCiz() {
+    const tur = secilenTur;
+    const durum = document.getElementById("tur-durum");
+    const idler = [document.getElementById("tur-a").value, document.getElementById("tur-b").value];
+    durum.textContent = "Tur süreleri yükleniyor...";
+    try {
+      const veriler = [];
+      for (let i = 0; i < idler.length; i++) {
+        const m = await jsonAl(SEZON + "/" + tur + "/drivers/" + idler[i] + "/laps/?limit=100");
+        veriler.push(m.RaceTable.Races[0] ? m.RaceTable.Races[0].Laps : []);
+        await bekle2(400);
+      }
+      if (secilenTur !== tur) { return; }
+      const etiketler = veriler[0].length >= veriler[1].length ? veriler[0] : veriler[1];
+      const adlar = idler.map(function (id) { return yarisPilotlari.find(function (x) { return x.id === id; }).ad; });
+      const renkler = ["#d4161c", "#1f7ae0"];
+      const setler = veriler.map(function (laps, i) {
+        return { label: adlar[i], borderColor: renkler[i], backgroundColor: renkler[i], pointRadius: 1.5, tension: 0.1,
+                 data: laps.map(function (l) { return saniyeye(l.Timings[0].time); }) };
+      });
+      if (turGrafigi) { turGrafigi.destroy(); }
+      turGrafigi = new Chart(document.getElementById("tur-grafik"), {
+        type: "line",
+        data: { labels: etiketler.map(function (l) { return l.number; }), datasets: setler },
+        options: { maintainAspectRatio: false,
+                   scales: { x: { title: { display: true, text: "Tur" } }, y: { title: { display: true, text: "Saniye" } } } }
+      });
+      durum.textContent = "Pit stop turları çizgide yukarı sıçrama olarak görünür.";
+    } catch (hata) {
+      durum.textContent = "Tur süreleri alınamadı. Hata: " + hata.message;
+    }
+  }
+  // ---- Kişiselleştirme: tema ve favori pilot ----
+  function temaUygula(ad) {
+    document.documentElement.setAttribute("data-tema", ad);
+    try { localStorage.setItem("f1-tema", ad); } catch (e) {}
+  }
+  (function () {
+    let kayitli = null;
+    try { kayitli = localStorage.getItem("f1-tema"); } catch (e) {}
+    const sistemKoyu = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    temaUygula(kayitli || (sistemKoyu ? "koyu" : "acik"));
+  })();
+  document.getElementById("btn-tema").addEventListener("click", function () {
+    temaUygula(document.documentElement.getAttribute("data-tema") === "koyu" ? "acik" : "koyu");
+  });
+
+  function favoriPilot() {
+    try { return localStorage.getItem("f1-favori") || ""; } catch (e) { return ""; }
+  }
+
+  // Favori pilot işaretleri: favori-v1.js (pilot KODUNA göre; isim string eşlemesi yok)
+  function favoriVurgula() {
+    if (window.FavoriV1) { window.FavoriV1.isaretle(); }
+  }
+  // Tablolar yeniden çizildiğinde vurguyu tekrar uygula
+  new MutationObserver(favoriVurgula).observe(document.body, { childList: true, subtree: true });
+
+  function favoriHazirla() {
+    const sec = document.getElementById("favori-sec");
+    sec.innerHTML = "<option value=''>Seçilmedi</option>" + sezonPilotlar.map(function (k) {
+      return "<option value='" + k.Driver.driverId + "'>" + k.Driver.givenName + " " + k.Driver.familyName + "</option>";
+    }).join("");
+    sec.value = favoriPilot();
+    sec.onchange = function () {
+      try { localStorage.setItem("f1-favori", sec.value); } catch (e) {}
+      favoriUygula();
+      favoriVurgula();
+    };
+    favoriUygula();
+  }
+
+  // Karşılaştırma ve hesaplayıcıda favoriyi başlangıç olarak seç
+  function favoriUygula() {
+    const i = sezonPilotlar.findIndex(function (k) { return k.Driver.driverId === favoriPilot(); });
+    if (i === -1) { return; }
+    document.getElementById("pilot-a").value = String(i);
+    if (document.getElementById("pilot-b").value === String(i)) {
+      document.getElementById("pilot-b").value = i === 0 ? "1" : "0";
+    }
+    document.getElementById("hesap-pilot").value = String(i);
+    kiyasla();
+    hesapla();
+  }
+  // ---- Yarış günü ekranı ----
+  let gunIstendi = false;
+  let gunBasladi = false;
+  let gunYaris = null;
+  let gunSonucGeldi = false;
+  let gunBaslangicAni = 0;
+  let gunSaatZamanlayici = null;
+  let gunVeriZamanlayici = null;
+
+  // Bugünkü (12 saat öncesi/sonrası) yarışı bul; yoksa sıradakini al
+  // Yarış Günü, son yarışta kalır; bir sonraki yarış kendi gününde (start'tan 12 saat önce) açılır.
+  // Hafta sonunun ilk seansı (mevcut takvim verisinden; yoksa yarıştan 3 gün önce). Yeni istek yok.
+  function gunHaftaBasi(y) {
+    try {
+      const h = window.HaftaVeri ? HaftaVeri.haftaKur(y) : null;
+      if (h && h.seanslar.length) { return h.seanslar[0].baslangic.getTime(); }
+    } catch (e) {}
+    return yarisZamani(y).getTime() - 3 * 24 * 3600 * 1000;
+  }
+  function gunYarisiSec() {
+    const simdi = Date.now();
+    // A4.5b: canlı Sprint/Race varsa Yarış Günü o hafta sonunu gösterir (Sprint cumartesisi önceki yarışta kalmaz)
+    try { const cl = window.FeedCanli ? FeedCanli.canli() : null; const cr = cl && sezonYarislar.find(function (y) { return Number(y.round) === cl.tur; }); if (cr) { return cr; } } catch (e) {}
+    let secilen = null;
+    sezonYarislar.forEach(function (y) {
+      if (gunHaftaBasi(y) - 12 * 3600 * 1000 <= simdi) { secilen = y; }   // aktif yarış hafta sonu (ilk seanstan 12 sa önce) → Yarış Günü o hafta sonunu gösterir
+    });
+    return secilen || sezonYarislar.find(function (y) { return yarisZamani(y) > simdi; }) || null;
+  }
+
+  function gunDurdur() {
+    clearInterval(gunSaatZamanlayici);
+    clearInterval(gunVeriZamanlayici);
+    feedDurdur();
+    gunBasladi = false;
+  }
+
+  // UI v3: Yarış Günü sunum katmanının (gun-v3.js) okuyacağı MEVCUT durum çıktıları. Yeni durum/fetch/timer yok.
+  window.GunCtx = function () {
+    try {
+      if (!gunYaris) { return null; }
+      const r = gunRace();
+      let st = null;
+      if (r && window.HaftaState && window.RaceFeed) {
+        st = HaftaState.durum({ seans: r.s, simdi: Date.now(), sonucVar: gunSonucGeldi, eski: gunSonucGeldi ? "tamamlandi" : HaftaVeri.seansDurumu(r.s, r.h),
+                                olaylar: RaceFeed.yukle(SEZON + "-" + gunYaris.round).olaylar, program: gunProgram() });
+      }
+      return { yaris: gunYaris, sonuc: gunSonucGeldi, r: r, st: st, fst: gunSonucGeldi ? null : gunFeedDurumu(), fark: gunBas() - Date.now(), pg: gunProgram() };
+    } catch (e) { return null; }
+  };
+  // UI v3 nav: BUGÜN güvenli yönlendiricisi — yalnız MEVCUT takvim/saat/canlı-feed bilgisinden okur; fetch/timer yok.
+  window.BugunHedef = function () {
+    try {
+      if (!sezonYarislar.length) { return "sezon"; }
+      const simdi = Date.now();
+      try { if (window.FeedCanli && FeedCanli.canli()) { return "gun"; } } catch (e) {}
+      const y = gunYarisiSec(); if (!y) { return "sezon"; }
+      const bas = yarisZamani(y).getTime();
+      if (simdi >= bas - 12 * 3600 * 1000 && simdi <= bas + 3 * 3600 * 1000) { return "gun"; }          // aktif Yarış Günü bağlamı
+      if (simdi >= gunHaftaBasi(y) - 12 * 3600 * 1000 && simdi < bas - 12 * 3600 * 1000) { return "hafta"; }   // aktif yarış hafta sonu
+    } catch (e) {}
+    return "sezon";
+  };
+  // UI v3 BUGÜN hub (bugun-v3.js): MEVCUT takvim/pilot/seçici fonksiyonlarını yalnız OKUR (fetch/timer yok).
+  window.BugunKaynak = function () { return { sezon: SEZON, yarislar: sezonYarislar, pilotlar: sezonPilotlar, secYaris: gunYarisiSec, zaman: yarisZamani }; };
+  // GunCtx'in aynısını gunYaris'i GEÇİCİ değiştirerek (eşzamanlı, yan etkisiz) verilen yarış için üretir → Yarış Günü ile AYNI kanonik durum
+  window.BugunCtx = function (y) {
+    const eskiY = gunYaris, eskiS = gunSonucGeldi;
+    try { gunSonucGeldi = (eskiY && y && Number(eskiY.round) === Number(y.round)) ? eskiS : false; gunYaris = y; return window.GunCtx(); }
+    finally { gunYaris = eskiY; gunSonucGeldi = eskiS; }
+  };
+  window.A7Hafta = function () { try { const r = gunRace(); return r ? r.h : null; } catch (e) { return null; } };
+  window.gunNotlariYenile = function () { gunNotlariCiz(); };
+
+  function gunBaslat() {
+    if (gunBasladi) { return; }
+    gunBasladi = true;
+    gunSonucGeldi = false;
+    gunBaslangicAni = Date.now();
+    gunYaris = gunYarisiSec();
+    const kutu = document.getElementById("gun-kutu");
+    if (!gunYaris) { kutu.textContent = "Bu sezonda yaklaşan yarış yok."; return; }
+    document.getElementById("gun-baslik").textContent = gunYaris.raceName;
+    const yer = sehirG(gunYaris.Circuit.circuitName) + " - " + sehirG(gunYaris.Circuit.Location.locality) + ", " + gunYaris.Circuit.Location.country;
+    const baslangic = gunBas().toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+    const lok = gunYaris.Circuit.Location;
+    let pistGor = gunYaris.Circuit.circuitName;     // ham anahtar (ör. marina_bay) yerine insan okunur ad: mevcut ortak yardımcı
+    try { if (window.SezonTakvim && window.SezonTakvim.pistGorunen) { pistGor = window.SezonTakvim.pistGorunen(gunYaris) || sehirG(lok.locality); } } catch (e) {}
+    kutu.innerHTML = "<div class='yk g3-hero'><div class='g3-hero-g'><div class='g3-hero-sol'>" +
+                     "<div class='yk-ust'><span class='yk-tur'>TUR " + gunYaris.round + " <small>/ " + sezonYarislar.length +
+                     "</small></span><span id='yk-durumlar' class='yk-durumlar'></span></div>" +
+                     "<div class='yk-yer'>" + F1UI.bayrak(lok.country) + "<div><b>" + F1UI.esc(pistGor) +
+                     "</b><span class='alt'>" + F1UI.esc(sehirG(lok.locality) + ", " + lok.country) + "</span></div></div>" +
+                     "<div class='g3-meta'><span>START</span><b>" + baslangic + "</b></div>" +
+                     "<div class='sayac' id='gun-sayac'></div></div><div id='gun-v3-pist' class='g3-pist'></div></div></div>";
+    gunBekleCiz();
+    gunNotlariCiz();
+    feedBaslat();
+    gunSaatGuncelle();
+    gunSaatZamanlayici = setInterval(gunSaatGuncelle, 1000);
+    gunVeriGuncelle();
+    gunVeriZamanlayici = setInterval(gunVeriGuncelle, 60000);   // 60 saniyede bir
+  }
+
+  // Yarış başlamadan: basit bekleme durumu (mevcut seans/saat dilimi verisinden; yeni istek yok)
+  // Yarış (Race) için bağlamsal program bilgisi (baglam-ui.js): doğrulanmış YENİ SAAT varsa efektif başlangıç; yoksa takvimdeki planlı saat. Yeni fetch/timer yok.
+  function gunRace() {
+    try {
+      if (!gunYaris || !window.HaftaVeri) { return null; }
+      const h = HaftaVeri.haftaKur(gunYaris, "f1");
+      const s = h.seanslar.find(function (x) { return x.anahtar === "Race"; });
+      return s ? { h: h, s: s } : null;
+    } catch (e) { return null; }
+  }
+  function gunProgram() {
+    try { const r = gunRace(); return r && window.BaglamUI ? BaglamUI.program(r.h, r.s, Date.now()) : null; } catch (e) { return null; }
+  }
+  function gunBas() {
+    const p = gunProgram();
+    return p && p.tip === "NEW_TIME_CONFIRMED" && p.yeniBaslangic != null ? new Date(p.yeniBaslangic) : yarisZamani(gunYaris);
+  }
+  function gunBaglamCiz() {
+    const kutu = document.getElementById("gun-kutu"); if (!kutu || !gunYaris) { return; }
+    let kap = document.getElementById("gun-baglam");
+    if (!kap) { kap = document.createElement("div"); kap.id = "gun-baglam"; kutu.parentNode.insertBefore(kap, kutu.nextSibling); }
+    let html = "";
+    try {
+      const r = gunRace();
+      if (r && window.BaglamUI && !gunSonucGeldi) {
+        const bd = HaftaState.durum({ seans: r.s, simdi: Date.now(), sonucVar: false, eski: HaftaVeri.seansDurumu(r.s, r.h), olaylar: RaceFeed.yukle(SEZON + "-" + gunYaris.round).olaylar, program: gunProgram() });
+        html = BaglamUI.seansKartlari(r.h, r.s, bd).html;
+      }
+    } catch (e) { html = ""; }
+    if (kap.dataset.son !== html) { kap.dataset.son = html; kap.innerHTML = html; }
+  }
+
+  function gunBekleCiz() {
+    const kutu = document.getElementById("gun-kutu");
+    const eski = document.getElementById("gun-bekle"); if (eski) { eski.remove(); }
+    if (!gunYaris || gunBas() <= new Date()) { return; }
+    let satirlar = "";
+    try {
+      const bas = gunBas(), HV = window.HaftaVeri, h = HV.haftaKur(gunYaris);
+      const tr = HV.ANA_TZ || "Europe/Istanbul";
+      satirlar = "<div>" + F1UI.esc(HV.gunYaz(bas, tr)) + " · " + F1UI.esc(HV.saatYaz(bas, tr)) + " TR</div>";
+      const pist = HV.pistSaati(bas, h.pistTz);
+      if (pist) { satirlar += "<div class='not'>pist " + F1UI.esc(pist) + "</div>"; }
+    } catch (e) {}
+    const d = document.createElement("div");
+    d.id = "gun-bekle"; d.className = "not"; d.style.margin = "8px 0 0";
+    d.innerHTML = "<b>Yarış henüz başlamadı</b>" + satirlar;
+    (kutu.querySelector('.g3-hero-sol') || kutu).appendChild(d);
+  }
+
+  function iki(n) { return (n < 10 ? "0" : "") + n; }
+  function sureYaz(sn) {
+    return iki(Math.floor(sn / 3600)) + ":" + iki(Math.floor((sn % 3600) / 60)) + ":" + iki(sn % 60);
+  }
+
+  // Yarış (Race) için canlı durum: Race Feed deposundaki gerçek olaylar saat tahminini geçersiz kılabilir (hafta-state.js; yeni fetch/timer yok)
+  function gunFeedDurumu() {
+    try {
+      if (!window.HaftaState || !window.HaftaVeri || !window.RaceFeed || !gunYaris) { return null; }
+      const h = HaftaVeri.haftaKur(gunYaris, "f1");
+      const s = h.seanslar.find(function (x) { return x.anahtar === "Race"; });
+      if (!s) { return null; }
+      const st = HaftaState.durum({ seans: s, simdi: Date.now(), sonucVar: gunSonucGeldi, eski: gunSonucGeldi ? "tamamlandi" : HaftaVeri.seansDurumu(s, h),
+                                    olaylar: RaceFeed.yukle(SEZON + "-" + gunYaris.round).olaylar, program: gunProgram() });
+      if (st.kaynak === "feed" && ["DELAYED", "RED_FLAG", "SESSION_STOPPED", "RESUMED"].indexOf(st.durum) >= 0) { return st; }
+      if (st.kaynak === "program" && ["DELAYED", "POSTPONED", "CANCELLED"].indexOf(st.durum) >= 0) { return st; }
+      return null;
+    } catch (e) { return null; }
+  }
+  const GUN_FEED_YAZI = { POSTPONED: "Yarış ertelendi - yeni başlangıç saati bekleniyor", CANCELLED: "Yarış iptal edildi", DELAYED: "Başlangıç gecikti - yeni başlangıç saati bekleniyor", RED_FLAG: "Kırmızı bayrak - seans durduruldu", SESSION_STOPPED: "Seans durduruldu", RESUMED: "Seans yeniden başladı" };
+  const GUN_FEED_ROZET = { POSTPONED: ["bekle", "Postponed"], CANCELLED: ["kirmizi", "Cancelled"], DELAYED: ["bekle", "Delayed"], RED_FLAG: ["kirmizi", "Red flag"], SESSION_STOPPED: ["sc", "Stopped"], RESUMED: ["live", "Resumed"] };
+
+  function gunSaatGuncelle() {
+    const el = document.getElementById("gun-sayac");
+    if (!el || !gunYaris) { return; }
+    if (Date.now() - gunBaslangicAni > 20000) { gunHavaYedek(); }   // 20 sn'de hava gelmediyse açıklama göster; gelirse üzerine yazılır
+    const fark = Math.floor((gunBas() - new Date()) / 1000);
+    if (fark <= 0) { const bk = document.getElementById("gun-bekle"); if (bk) { bk.remove(); } }
+    gunBaglamCiz();
+    const fst = gunSonucGeldi ? null : gunFeedDurumu();
+    if (fst) {
+      el.textContent = GUN_FEED_YAZI[fst.durum] + (fst.sonKontrol ? " (sonraki pist kontrolü: " + fst.sonKontrol + " local)" : "");
+    } else if (fark > 0) {
+      el.textContent = "Start'a kalan: " + sureYaz(fark);
+    } else if (gunSonucGeldi) {
+      el.textContent = "Yarış bitti, sonuçlar yayımlandı";
+    } else if (-fark < 3 * 3600) {
+      el.textContent = "Yarış sürüyor - geçen süre " + sureYaz(-fark);
+    } else {
+      el.textContent = "Yarış bitti, sonuçlar bekleniyor";
+    }
+    gunDurumCiz();
+    try { if (window.GunV3) { GunV3.render(); } } catch (e) {}
+  }
+
+  // Ana karttaki durum rozetleri (sadece görünüm; mevcut verileri okur, hiçbir şey yazmaz)
+  function gunDurumCiz() {
+    const kap = document.getElementById("yk-durumlar");
+    if (!kap || !gunYaris) { return; }
+    // UI v3: hero rozeti, durum şeridi ve kritik çip TEK canonical state'ten (gun-v3.js kanonik) beslenir; ham feed olayı taranmaz
+    const r = [];
+    const kn = window.GunV3 && window.GunCtx ? GunV3.kanonik(GunCtx()) : null;
+    if (kn) { r.push(kn.rozet); }
+    else {
+      const fark = gunBas() - Date.now();
+      if (fark > 0) { r.push(["yakinda", fark < 12 * 3600 * 1000 ? "Race day" : "Upcoming", ""]); }
+      else if (gunSonucGeldi) { r.push(["bitti", "Finished", ""]); }
+      else { r.push(["live", "Live", ""]); }
+    }
+    const hv = document.getElementById("gun-hava");
+    if (hv && !gunSonucGeldi && Number(hv.dataset.yagmur) >= 50) { r.push(["yagmur", "Rain risk", "Önümüzdeki 3 saatte %" + hv.dataset.yagmur]); }
+    const html = r.map(function (x) { return "<span class='dr " + x[0] + "' title='" + x[2] + "'>" + x[1].toUpperCase() + "</span>"; }).join("");
+    if (kap.dataset.son !== html) { kap.dataset.son = html; kap.innerHTML = html; }
+  }
+
+  function havaYazisi(kod) {
+    if (kod === 0) { return "açık"; }
+    if (kod <= 3) { return "parçalı bulutlu"; }
+    if (kod === 45 || kod === 48) { return "sisli"; }
+    if (kod >= 51 && kod <= 57) { return "çisenti"; }
+    if (kod >= 61 && kod <= 67) { return "yağmurlu"; }
+    if (kod >= 80 && kod <= 82) { return "sağanak"; }
+    if (kod >= 95) { return "gök gürültülü fırtına"; }
+    return "değişken";
+  }
+
+  // Hava verisi hiç gelmediyse sonsuz "hazırlanıyor" yerine kısa açıklama (mevcut veri varsa dokunmaz; yeni istek yok)
+  function gunHavaYedek() {
+    const hv = document.getElementById("gun-hava");
+    if (hv && !hv.querySelector(".g3-hava") && hv.textContent !== "Hava verisi henüz alınamadı.") { hv.textContent = "Hava verisi henüz alınamadı."; }
+  }
+  async function gunHavaGuncelle() {
+    const konum = gunYaris.Circuit.Location;
+    const adres = "https://api.open-meteo.com/v1/forecast?latitude=" + konum.lat + "&longitude=" + konum.long +
+                  "&current=temperature_2m,precipitation,weather_code,wind_speed_10m,cloud_cover&hourly=precipitation_probability&forecast_days=1&timezone=auto";
+    const cevap = await fetch(adres);
+    if (!cevap.ok) { throw new Error("Hava servisi cevabı: " + cevap.status); }
+    const v = await cevap.json();
+    // Bu saatten sonraki 3 saatin en yüksek yağmur ihtimali
+    const i = Math.max(0, v.hourly.time.findIndex(function (t) { return t >= v.current.time; }));
+    const ihtimal = Math.max.apply(null, v.hourly.precipitation_probability.slice(i, i + 3));
+    const c = v.current;
+    const kod = c.weather_code;
+    const ust = kod >= 95 ? "zap" : (kod >= 51 ? "rain" : (kod === 0 ? "sun" : "cloud"));
+    const yag = Number(c.precipitation) || 0;
+    const pist = yag > 0 ? "Islak" : (ihtimal >= 50 ? "Nemlenebilir" : "Kuru");
+    const sayi = function (x, birim) { return (x === undefined || x === null) ? "-" : Math.round(x) + birim; };
+    const el = document.getElementById("gun-hava");
+    el.dataset.yagmur = ihtimal; el.dataset.yagis = yag; el.dataset.sicak = Math.round(c.temperature_2m);
+    el.innerHTML = "<div class='g3-hava'><span class='g3-hava-ad'>" + F1UI.ikon(ust) + "<b>" + Math.round(c.temperature_2m) + "°C</b> " + havaYazisi(kod) + "</span>" +
+      "<span>Yağmur <b>%" + ihtimal + "</b></span>" + (yag > 0 ? "<span>Yağış <b>" + yag + " mm</b></span>" : "") +
+      "<span>Rüzgâr <b>" + sayi(c.wind_speed_10m, " km/sa") + "</b></span><span>Pist <b>" + pist + "</b></span></div>";
+    gunDurumCiz();
+  }
+
+  async function gunSonucGuncelle() {
+    const metin = document.getElementById("gun-sonuc-metin");
+    if (yarisZamani(gunYaris) > new Date()) { metin.textContent = "Yarış henüz başlamadı."; return; }
+    if (gunSonucGeldi) { return; }
+    const m = await jsonAl(SEZON + "/" + gunYaris.round + "/results/?limit=30");
+    const kayit = m.RaceTable.Races[0];
+    if (!kayit) { metin.textContent = "Resmî sonuçlar henüz yayımlanmadı. Her dakika tekrar kontrol ediliyor."; return; }
+    gunSonucGeldi = true;
+    const p = kayit.Results.slice(0, 3).map(function (r) { return r.Driver.familyName; });
+    metin.textContent = "Podyum: 1. " + p[0] + ", 2. " + p[1] + ", 3. " + p[2];
+    document.getElementById("gun-sonuc-govde").innerHTML = kayit.Results.map(function (r) {
+      return "<tr><td class='sezon'>" + F1UI.pozRozet(r.positionText) + "</td><td>" + F1UI.pilotHucresi(r.Driver.code, r.Driver.givenName + " " + r.Driver.familyName) +
+             "</td><td>" + F1UI.takimRozeti(r.Constructor.name) + "</td><td class='sayi'>" + (Number(r.grid) > 0 ? r.grid : "Pit") +
+             "</td><td>" + F1UI.farkRozeti(r.grid, r.position) + "</td><td class='sayi'>" + r.points + "</td></tr>";
+    }).join("");
+    try { if (window.YorumMotoru) { YorumMotoru.sonuc(kayit.Results, { hedef: "gun", tur: gunYaris.round }); } } catch (e) {}
+    try { if (window.GunV3) { GunV3.sonucAyarla(kayit.Results); GunV3.render(); } } catch (e) {}
+  }
+
+  async function gunVeriGuncelle() {
+    const not = document.getElementById("gun-not");
+    not.classList.add("yenileniyor");
+    let hatalar = [];
+    try { await gunHavaGuncelle(); } catch (h) { hatalar.push(h.message); gunHavaYedek(); }
+    try { await gunSonucGuncelle(); } catch (h) { hatalar.push(h.message); }
+    const saat = new Date().toLocaleTimeString("tr-TR");
+    not.textContent = "Son güncelleme: " + saat + (hatalar.length ? " | Hata: " + hatalar.join("; ") : "");
+    setTimeout(function () { not.classList.remove("yenileniyor"); }, 900);
+  }
+  document.getElementById("gun-yenile").addEventListener("click", function () { if (gunYaris) { gunVeriGuncelle(); feedPoll(); } });
+  // ---- Diğer seriler (F2, F3, Formula E): diger-seriler.js dosyasından ----
+  let seciliSeri = "f2";
+
+  function digerHazirla() {
+    const bilgi = document.getElementById("seri-bilgi");
+    if (!window.DIGER_SERILER) {
+      bilgi.textContent = "diger-seriler.js dosyası bulunamadı. index.html ile aynı klasörde olmalı.";
+      return;
+    }
+    document.getElementById("seri-dugmeleri").innerHTML = window.DIGER_SERILER.map(function (x) {
+      return "<button data-kod='" + x.kod + "' class='" + (x.kod === seciliSeri ? "aktif" : "") + "'>" + x.ad + "</button>";
+    }).join("");
+    document.querySelectorAll("#seri-dugmeleri button").forEach(function (b) {
+      b.addEventListener("click", function () { seciliSeri = b.getAttribute("data-kod"); digerHazirla(); });
+    });
+    const seri = window.DIGER_SERILER.find(function (x) { return x.kod === seciliSeri; });
+    bilgi.innerHTML = "<b>" + seri.ad + "</b><br>" + seri.durum + "<br>Son güncelleme: " + seri.guncelleme;
+    document.getElementById("seri-pilot-govde").innerHTML = seri.pilotlar.map(function (p) {
+      return "<tr><td class='sezon'>" + p[0] + "</td><td>" + p[1] + "</td><td>" + p[2] + "</td><td>" + p[3] + "</td></tr>";
+    }).join("");
+    document.getElementById("seri-takim-kap").hidden = !seri.takimlar.length;
+    document.getElementById("seri-takim-govde").innerHTML = seri.takimlar.map(function (t) {
+      return "<tr><td class='sezon'>" + t[0] + "</td><td>" + t[1] + "</td><td>" + t[2] + "</td></tr>";
+    }).join("");
+    document.getElementById("seri-not").textContent = "Kaynak: " + seri.kaynak + ". " + seri.not;
+  }
+  // ---- Race Feed (otomatik yarış notları) ----
+  let feedZamanlayici = null;
+  let feedCalisiyor = false;
+  let feedSon = null;
+
+  function feedEsc(x) { return String(x).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function feedTestModu() { const e = document.getElementById("feed-test"); return !!(e && e.checked); }
+  // Notlar hangi yarışa ait? Yarış bittikten sonra 36 saat boyunca o yarışın notları gösterilir
+  // (ekran başlığı bir sonraki yarışa geçse bile). Yoksa ekrandaki yarış.
+  function feedYarisi() {
+    const simdi = Date.now();
+    const y = sezonYarislar.find(function (r) {
+      const b = yarisZamani(r).getTime();
+      return simdi >= b - 3600 * 1000 && simdi <= b + 36 * 3600 * 1000;
+    });
+    return y || gunYaris;
+  }
+  function feedCtx() {
+    const cl = window.FeedCanli ? FeedCanli.pollOturumu() : null;   // A4.5b: canlı Sprint/Race → oturuma özel anahtar ve pencere (+ doğrulanmış gecikme sırasında uzatılmış pencere)
+    if (cl) { return FeedCanli.ctx(cl); }
+    const fy = feedYarisi();
+    return {
+      raceKey: SEZON + "-" + fy.round,
+      raceStart: yarisZamani(fy),
+      pilotlar: sezonPilotlar.map(function (k) { return { family: k.Driver.familyName, given: k.Driver.givenName, code: k.Driver.code }; })
+    };
+  }
+  function feedPollGerekli() { return RaceFeed.pencere(yarisZamani(feedYarisi())).aktif || feedTestModu(); }
+  // Yarış bitmiş ama 36 saat dolmamışsa: açılışta bir kez 'telafi' sorgusu yapılır (sürekli sorgu yok)
+  function feedTelafiGerekli() { const y = feedYarisi(); return y !== gunYaris || Date.now() > RaceFeed.pencere(yarisZamani(y)).bit.getTime(); }
+
+  const GEREKLI_MOTOR = 3;
+  function motorSurumu() { return window.RaceFeed ? (window.RaceFeed.MOTOR_SURUM || 0) : 0; }
+  function motorUyarisi() {
+    if (motorSurumu() >= GEREKLI_MOTOR) { return ""; }
+    return "<div class='olay' style='border-left:4px solid var(--vurgu);padding-left:8px'><b>Eski ya da eksik notlar-motor.js yüklü</b> (yüklü sürüm: " +
+           motorSurumu() + ", gerekli: " + GEREKLI_MOTOR + "). Güncel dosyayı index.html ile aynı klasöre koy ve sayfayı sert yenile (Cmd+Shift+R). " +
+           "Bu yüzden notlar İngilizce görünebilir.</div>";
+  }
+
+  function feedDurdur() { clearInterval(feedZamanlayici); feedZamanlayici = null; }
+
+  function feedBaslat() {
+    feedDurdur();
+    if (!window.RaceFeed || !gunYaris) { return; }
+    const ayar = window.NOTLAR_AYAR || {};
+    document.getElementById("feed-debug").hidden = !ayar.debug;
+    feedDebugCiz();
+    // Yarış penceresi dışında (ve test modu kapalıyken) kaynaklara istek atılmaz
+    feedZamanlayici = setInterval(function () { if (window.FeedCanli ? feedTestModu() : feedPollGerekli()) { feedPoll(); } }, (ayar.pollSaniye || 30) * 1000);   // A4.5b: otomatik poll'un TEK sahibi FeedCanli (yalnızca canlı Sprint/Race); burada yalnızca 'test modu' kalır
+    if (feedPollGerekli() || feedTelafiGerekli()) { feedPoll(); }
+  }
+
+  async function feedPoll() {
+    if (!window.RaceFeed || feedCalisiyor) { return; }
+    // A4.5b: canlı Sprint/Race sırasında poll, hangi sekmede olunursa olsun yapılır; en az 30 sn arayla (tek sahip: FeedCanli.izin)
+    const canliOt = window.FeedCanli ? FeedCanli.pollOturumu() : null;
+    if (canliOt) { if (!FeedCanli.izin()) { gunNotlariCiz(); return; } }
+    else if (!gunYaris) { return; }
+    feedCalisiyor = true;
+    try {
+      feedSon = await RaceFeed.poll(feedCtx(), { testMode: feedTestModu() });
+    } catch (h) {
+      feedSon = { stats: { zaman: new Date().toISOString(), kaynak: [], hatalar: [h.message], fetched: 0, new: 0, relevant: 0, rejected: 0, duplicate: 0, eventsAdded: 0, reddedilme: {}, pencere: null } };
+    }
+    feedCalisiyor = false;
+    gunNotlariCiz();
+    feedDebugCiz();
+    if (window.FeedCanli) { FeedCanli.bildir(feedSon); }   // A4.5b: store güncellendi → "f1-feed-guncel" olayı (ticker dinler)
+  }
+  document.getElementById("feed-yenile").addEventListener("click", function () { feedPoll(); });
+  document.getElementById("feed-test").addEventListener("change", function () { feedPoll(); });
+
+  function feedSaat(iso) { return iso ? new Date(iso).toLocaleTimeString("tr-TR") : "-"; }
+  function feedDebugCiz() {
+    const el = document.getElementById("feed-debug-metin");
+    if (!el || !window.RaceFeed || !gunYaris) { return; }
+    const s = feedSon ? feedSon.stats : null;
+    const pen = RaceFeed.pencere(yarisZamani(feedYarisi()));
+    const toplam = RaceFeed.yukle(feedCtx().raceKey).olaylar.length;
+    const kayitli = RaceFeed.yukle(feedCtx().raceKey).olaylar;
+    let m = "Motor sürümü: " + motorSurumu() + " (gerekli: " + GEREKLI_MOTOR + ")" + (motorSurumu() >= GEREKLI_MOTOR ? "" : "  <-- ESKİ DOSYA") +
+            "\nKayıtlı olay: " + kayitli.length + " (EN yedek: " + kayitli.filter(function (o) { return o.translationFallback; }).length + ")" +
+            (s && s.healed ? "\nYeniden çevrilen eski kayıt: " + s.healed : "") + "\n\nLive source:\n";
+    if (s && s.kaynak.length) {
+      m += s.kaynak.map(function (k) { return k.name + " — " + k.durum + (k.hata ? " (" + k.hata + ")" : ""); }).join("\n");
+    } else { m += (window.NOTLAR_KAYNAKLAR || []).filter(function (k) { return k.enabled && k.liveSource; }).map(function (k) { return k.name + " — henüz sorgulanmadı"; }).join("\n"); }
+    m += "\n\nYarış penceresi: " + feedSaat(pen.bas.toISOString()) + " – " + feedSaat(pen.bit.toISOString()) + " (" + (pen.aktif ? "AKTİF" : "pasif") + ")" +
+         "\nTest modu: " + (feedTestModu() ? "AÇIK" : "kapalı");
+    m += "\n\nLast poll:\n" + (s ? feedSaat(s.zaman) : "-") + "\n\nLast post:\n" + (s ? feedSaat(s.lastPost) : "-");
+    if (s) {
+      const r = s.reddedilme || {};
+      m += "\n\nFetched: " + s.fetched + "\nNew: " + s.new + "\nRelevant: " + s.relevant + "\nRejected: " + s.rejected +
+           " (zaman dışı " + (r.zaman || 0) + ", ilgisiz " + (r.ilgisiz || 0) + ", repost " + (r.repost || 0) + ", boş " + (r.bos || 0) + ")" +
+           "\nDuplicate: " + s.duplicate + "\nBu pollde eklenen olay: " + s.eventsAdded +
+           "\nTranslated: " + (s.translated || 0) + "\nFallback EN: " + (s.fallbackEN || 0);
+      if (s.hatalar && s.hatalar.length) { m += "\nHata: " + s.hatalar.join("; "); }
+    }
+    m += "\n\nRace Feed events (kayıtlı toplam): " + toplam;
+    el.textContent = m;
+  }
+
+  // Olaydaki pilotların takımları (rozet için); sadece görünüm
+  function olayTakimlari(o) {
+    const cikti = [];
+    (o.drivers || []).forEach(function (f) {
+      const k = sezonPilotlar.find(function (x) { return x.Driver.familyName === f; });
+      if (k && k.Constructors.length) {
+        const t = k.Constructors[k.Constructors.length - 1].name;
+        if (cikti.indexOf(t) < 0) { cikti.push(t); }
+      }
+    });
+    return cikti.slice(0, 2);
+  }
+
+  function gunNotlariCiz() {
+    const kutu = document.getElementById("gun-notlar");
+    const uyari = motorUyarisi();
+    let olaylar = [];
+    if (window.RaceFeed && gunYaris) { olaylar = RaceFeed.yukle(feedCtx().raceKey).olaylar; }
+    if (olaylar.length) {
+      // UI v3: ilk görünüm = son 3–5 ÖNEMLİ not; [TÜM FEED] mevcut 40 olaya açar (yeni fetch/timer yok)
+      const acik = !!(window.GunV3 && GunV3.feedAcik());
+      const yuksek = olaylar.filter(function (o) { return o.priority === "high"; });
+      let sec = yuksek.slice(0, 5);
+      olaylar.forEach(function (o) { if (sec.length < 3 && sec.indexOf(o) < 0) { sec.push(o); } });
+      let gor = acik ? olaylar.slice(0, 40) : olaylar.filter(function (o) { return sec.indexOf(o) >= 0; });
+      const tum = Math.min(olaylar.length, 40);
+      const dugme = (acik || tum > gor.length) ? "<button type='button' class='g3-mini' data-gun-feed aria-expanded='" + acik + "'>" + (acik ? "DARALT" : "TÜM FEED (" + tum + ")") + "</button>" : "";
+      kutu.innerHTML = uyari + "<div class='g3-feed-ust'><b>RACE FEED</b><span>" + olaylar.length + " not" + (yuksek.length ? " · " + yuksek.length + " önemli" : "") + "</span>" + dugme + "</div>" +
+        "<div class='tl'>" + gor.map(function (o) { return F1UI.olaySatiri(o, olayTakimlari(o)); }).join("") + "</div>";
+      try { if (window.GunV3) { GunV3.satirlar(kutu); } } catch (e) {}
+      return;
+    }
+    // Yarış başlamadan: eski yarışın notları/elle notlar gösterilmez
+    if (gunYaris && yarisZamani(gunYaris) > new Date()) { kutu.innerHTML = uyari + "<span class='not'>Canlı yarış notları yarış başladığında burada görünecek.</span>"; return; }
+    // Otomatik not yoksa: eski (elle yazılmış) notlar yedek olarak gösterilir
+    const n = window.YARIS_NOTLARI;
+    if (!n || !n.notlar.length) { kutu.innerHTML = uyari + "Henüz canlı yarış notu bulunamadı."; return; }
+    // UI v3: elle yazılmış yedek notlar da kompakt: ilk 3 + [TÜM FEED]
+    const yAcik = !!(window.GunV3 && GunV3.feedAcik());
+    const yGor = yAcik ? n.notlar : n.notlar.slice(0, 3);
+    const yDugme = (yAcik || n.notlar.length > 3) ? "<button type='button' class='g3-mini' data-gun-feed aria-expanded='" + yAcik + "'>" + (yAcik ? "DARALT" : "TÜM FEED (" + n.notlar.length + ")") + "</button>" : "";
+    kutu.innerHTML = uyari + "<div class='g3-feed-ust'><b>RACE FEED</b><span>canlı not yok · elle yazılmış notlar</span>" + yDugme + "</div>" +
+                     "<div class='tl-yedek'><ul>" + yGor.map(function (m) { return "<li>" + m + "</li>"; }).join("") +
+                     "</ul>" + (yAcik ? "<span class='not'>Son güncelleme: " + n.guncelleme + " (elle güncellenir)</span>" : "") + "</div>";
+  }
+  // UI turu: uygulama Güncel Sezon ile açılır (kayıtlı bir ana sekme sistemi yoktur; yalnızca Yarış alt sekmesi hatırlanır, o aynen sürer)
+  sekmeAc(document.documentElement.getAttribute("data-nav") === "v3" ? "bugun" : "sezon");   // yeni shell açıksa ana ekran BUGÜN
+</script>
+</body>
+</html>

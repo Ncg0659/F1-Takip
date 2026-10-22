@@ -1,0 +1,32 @@
+/* A4.3 — "Bilmen gereken 5 şey" kartı. Yalnızca #a43-bilmen kapsamı; genel kart tasarımına dokunmaz. */
+.bm { margin:0 0 14px; padding:10px 14px; background:var(--kart); border:1px solid var(--cizgi); border-radius:10px; }
+.bm[hidden] { display:none; }
+.bm-baslik { margin:0 0 6px; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase; color:var(--soluk); }
+.bm-liste { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+.bm-m { display:grid; grid-template-columns:1.8em 20px 1fr; gap:8px; align-items:start; min-width:0; }
+.bm-no { font-variant-numeric:tabular-nums; font-size:.78rem; font-weight:700; color:var(--soluk); padding-top:2px; }
+.bm-ik { display:inline-flex; color:var(--soluk); padding-top:1px; } .bm-ik .ik { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.bm-ic { display:flex; flex-direction:column; gap:1px; min-width:0; }
+.bm-et { font-size:.68rem; color:var(--soluk); }
+.bm-tx { font-size:.92rem; line-height:1.35; overflow-wrap:anywhere; }
+@media (max-width:480px) { .bm { padding:8px 12px; } .bm-liste { gap:6px; } .bm-m { grid-template-columns:1.6em 18px 1fr; gap:6px; } }
+
+/* UI STYLE PASS v2: "Bilmen gereken 5 şey" kompakt kartlar (özet önce; dokununca açılır) */
+.bm { border-radius:4px; background:transparent; padding:12px 14px; }
+.bm-baslik { font-family:var(--f-sayi); font-size:.64rem; font-weight:600; letter-spacing:.14em; }
+.bm-liste { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+.bm-m { display:block; border:1px solid var(--cizgi); border-radius:4px; min-width:0; }
+.bm-d { min-width:0; }
+.bm-s { display:grid; grid-template-columns:1.6em 18px 1fr; gap:8px; align-items:start; padding:8px 10px; cursor:pointer; list-style:none; }
+.bm-s::-webkit-details-marker { display:none; }
+.bm-s:focus-visible { outline:2px solid var(--vurgu); outline-offset:-2px; }
+.bm-tx { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:.84rem; }
+.bm-d[open] .bm-tx { display:block; -webkit-line-clamp:unset; overflow:visible; }
+.bm-alt { display:block; margin:0 10px 8px 46px; font-size:.76rem; color:var(--soluk); overflow-wrap:anywhere; }
+@media (max-width:900px) { .bm-liste { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width:560px) { .bm-liste { grid-template-columns:minmax(0,1fr); } .bm-s { grid-template-columns:1.6em 18px 1fr; } }
+
+/* UI v3: ortak mini kart diline yaklaştırma (içerik ve görünürlük mantığı değişmedi) */
+.bm-m { border-radius:3px; }
+.bm-no { font-family:var(--f-sayi); }
+.bm-et { letter-spacing:.06em; }

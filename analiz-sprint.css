@@ -1,0 +1,31 @@
+/* A3.3 — Sprint vs Ana Yarış. Yalnızca #a33-sprint kapsamı. */
+.a33-bolum .a3-not { color:var(--soluk); font-size:.84rem; margin:0 0 10px; }
+.a33-sec { display:flex; align-items:center; gap:8px; margin:0 0 10px; font-size:.84rem; color:var(--soluk); }
+.a33-sec select { font:inherit; padding:6px 8px; min-height:36px; max-width:100%; border:1px solid var(--cizgi); border-radius:6px; background:var(--kart); color:var(--yazi); }
+.a33-kart { display:flex; flex-direction:column; gap:10px; }
+.a33-toplam, .a33-katki { background:var(--kart); border:1px solid var(--cizgi); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:3px; }
+.a33-toplam b { font-size:1.6rem; font-variant-numeric:tabular-nums; }
+.a33-katki b { font-size:1.3rem; font-variant-numeric:tabular-nums; }
+.a33-et { font-size:.68rem; font-weight:700; letter-spacing:.06em; color:var(--soluk); display:flex; align-items:center; gap:4px; }
+.a33-alt { font-size:.76rem; color:var(--soluk); margin:0; overflow-wrap:anywhere; }
+.a33-iki { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.a33-blok { background:var(--kart); border:1px solid var(--cizgi); border-radius:10px; padding:10px 12px; min-width:0; }
+.a33-blok h3 { margin:0 0 6px; font-size:.72rem; letter-spacing:.06em; color:var(--soluk); }
+.a33-say { margin:0 0 6px; display:grid; grid-template-columns:repeat(auto-fit,minmax(78px,1fr)); gap:6px 10px; }
+.a33-say div { min-width:0; }
+.a33-say dt { font-size:.68rem; color:var(--soluk); display:flex; align-items:center; flex-wrap:wrap; gap:2px 4px; }
+.a33-say dd { margin:0; font-size:1.1rem; font-weight:600; font-variant-numeric:tabular-nums; }
+.a33-cubuk { display:block; height:6px; background:var(--cizgi); border-radius:3px; overflow:hidden; margin-top:4px; }
+.a33-cubuk i { display:block; height:100%; background:var(--a32-poz,#2f6db5); border-radius:3px; }
+.a33-tum { margin-top:12px; }
+.a33-tum summary { cursor:pointer; min-height:36px; display:flex; align-items:center; color:var(--vurgu); font-size:.88rem; }
+.a33-kay { overflow-x:auto; }
+.a33-kay table { width:100%; border-collapse:collapse; font-size:.84rem; font-variant-numeric:tabular-nums; }
+.a33-kay th, .a33-kay td { padding:6px 8px; text-align:right; border-top:1px solid var(--cizgi); white-space:nowrap; }
+.a33-kay th:first-child, .a33-kay td:first-child { text-align:left; white-space:normal; }
+.a33-kay th { font-size:.7rem; color:var(--soluk); border-top:0; }
+@media (max-width:640px) {
+  .a33-iki { grid-template-columns:1fr; }
+  .a33-kay th, .a33-kay td { padding:6px 4px; font-size:.78rem; }
+  .a33-kay th { font-size:.64rem; white-space:normal; }
+}

@@ -1,0 +1,29 @@
+/* A3.1 — SVG grafik altyapısı stilleri. Yalnızca .sg-* sınıfları. Renkler mevcut tema değişkenlerinden (açık/koyu otomatik). */
+.sg { position:relative; width:100%; min-width:0; }
+.sg-svg { display:block; width:100%; height:auto; overflow:visible; touch-action:pan-y; font-family:inherit; }
+.sg-svg:focus { outline:none; }
+.sg-svg:focus-visible { outline:2px solid var(--vurgu); outline-offset:3px; border-radius:6px; }
+.sg-izgara { stroke:var(--cizgi); stroke-width:1; stroke-opacity:.8; }
+.sg-izgara.sg-sifir { stroke:var(--soluk); stroke-opacity:.9; stroke-width:1.2; }
+.sg-yet, .sg-xet { fill:var(--soluk); font-size:11px; font-family:var(--f-sayi, monospace); }
+.sg-cizgi { fill:none; stroke-width:2.2; stroke-linejoin:round; stroke-linecap:round; }
+.sg-nokta { stroke-width:1.4; }
+.sg-seri.sg-soluk, .sg-uc.sg-soluk { opacity:.22; }
+.sg-uc { font-size:11px; font-weight:700; font-family:var(--f-sayi, monospace); }
+.sg-rehber { stroke:var(--soluk); stroke-width:1; stroke-dasharray:3 3; }
+.sg-i-nokta { stroke-width:2; }
+.sg-isaret[hidden], .sg-ipucu[hidden] { display:none; }
+.sg-ipucu { position:absolute; z-index:3; pointer-events:none; background:var(--kart); color:var(--yazi); border:1px solid var(--cizgi); border-radius:8px;
+  padding:7px 10px; font-size:.78rem; line-height:1.45; box-shadow:0 4px 18px rgba(0,0,0,.28); min-width:140px; max-width:230px; }
+.sg-ipucu b { font-weight:700; }
+.sg-ipucu .sg-ip-bas { color:var(--soluk); font-size:.72rem; margin-bottom:3px; }
+.sg-ipucu .sg-ip-satir { display:flex; align-items:center; justify-content:space-between; gap:10px; white-space:nowrap; }
+.sg-ipucu .sg-ip-ad { display:inline-flex; align-items:center; gap:6px; }
+.sg-ipucu .sg-ip-nokta { width:8px; height:8px; border-radius:50%; flex:none; }
+.sg-ipucu .sg-ip-ek { color:var(--soluk); font-size:.7rem; }
+.sg-sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+/* çubuk */
+.sg-kod { fill:var(--yazi); font-size:12px; font-weight:700; font-family:var(--f-sayi, monospace); }
+.sg-ad { fill:var(--soluk); font-size:12px; }
+.sg-zemin { fill:var(--kart2); stroke:var(--cizgi); stroke-width:1; }
+.sg-deger { fill:var(--yazi); font-size:12px; font-weight:700; font-family:var(--f-sayi, monospace); }

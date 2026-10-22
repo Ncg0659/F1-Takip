@@ -1,0 +1,49 @@
+.so, .ta, .gc, .pt, .sh { margin-top:8px; }
+.so-ac, .ta-ac, .gc-ac, .pt-ac, .sh-ac { background:none; border:1px solid var(--cizgi); color:inherit; border-radius:8px; padding:6px 10px; font:inherit; font-size:.84rem; cursor:pointer; }
+.so-govde, .ta-govde, .gc-govde, .pt-govde, .sh-govde { margin-top:6px; }
+.so-liste { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:4px; }
+.so-sat { display:grid; grid-template-columns:auto 1.4em 1fr; gap:8px; align-items:start; font-size:.86rem; padding:4px 6px; border-left:3px solid var(--cizgi); border-radius:4px; }
+.so-sat.so-critical { border-left-color:#e10600; }
+.so-sat.so-warning { border-left-color:#f5a623; }
+.so-saat { font-variant-numeric:tabular-nums; font-weight:600; min-width:3.2em; }
+.so-saat small { display:block; font-weight:400; opacity:.65; font-size:.72rem; }
+.so-metin b { font-weight:700; }
+.so-ham { display:block; opacity:.6; font-size:.74rem; word-break:break-word; }
+.so-not, .so-kaynak, .ta-not, .ta-kaynak, .gc-not, .gc-kaynak, .pt-not, .pt-kaynak, .sh-not, .sh-kaynak { margin:6px 0 0; font-size:.78rem; opacity:.7; }
+.so-btn, .ta-btn, .gc-btn, .pt-btn, .sh-btn { margin-top:6px; background:none; border:1px solid var(--cizgi); color:inherit; border-radius:8px; padding:5px 10px; font:inherit; font-size:.82rem; cursor:pointer; }
+@media (max-width:480px){ .so-sat { grid-template-columns:auto 1.2em 1fr; gap:6px; font-size:.83rem; } }
+/* A7.2 Tur Analizi (so-* sınıfları paylaşılır) */
+.ta-liste { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; }
+.ta-sat { border:1px solid var(--cizgi); border-radius:8px; padding:6px 8px; font-size:.86rem; }
+.ta-ust { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.ta-no { font-weight:700; opacity:.7; min-width:1.2em; }
+.ta-pilot { font-weight:700; }
+.ta-takim { opacity:.6; }
+.ta-sure { margin-left:auto; font-variant-numeric:tabular-nums; font-weight:700; }
+.ta-alt { display:flex; flex-wrap:wrap; gap:2px 12px; margin-top:3px; font-size:.78rem; opacity:.8; font-variant-numeric:tabular-nums; }
+/* A7.3 Geçişler */
+.gc-toplam { margin:6px 0 2px; font-size:.88rem; }
+.gc-bas { margin:8px 0 3px; font-size:.78rem; opacity:.7; text-transform:uppercase; letter-spacing:.03em; }
+.gc-liste { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:4px; font-size:.86rem; }
+.gc-pilot { display:flex; gap:8px; flex-wrap:wrap; align-items:baseline; }
+.gc-no { font-weight:700; opacity:.7; min-width:1.2em; }
+.gc-say { opacity:.75; }
+.gc-sat { display:grid; grid-template-columns:4.2em 1fr; gap:8px; padding:3px 6px; border-left:3px solid var(--cizgi); border-radius:4px; }
+.gc-zaman { font-variant-numeric:tabular-nums; font-weight:600; opacity:.8; }
+/* A7.4 Pit Stoplar */
+.pt-toplam { margin:6px 0 2px; font-size:.88rem; }
+.pt-bas { margin:8px 0 3px; font-size:.78rem; opacity:.7; text-transform:uppercase; letter-spacing:.03em; }
+.pt-liste { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:4px; font-size:.86rem; }
+.pt-pilot { display:flex; gap:8px; flex-wrap:wrap; align-items:baseline; }
+.pt-no { font-weight:700; opacity:.7; min-width:1.2em; }
+.pt-say { font-variant-numeric:tabular-nums; opacity:.85; }
+.pt-sat { display:grid; grid-template-columns:4.2em 1fr; gap:8px; padding:3px 6px; border-left:3px solid var(--cizgi); border-radius:4px; }
+.pt-zaman { font-variant-numeric:tabular-nums; font-weight:600; opacity:.8; }
+.pt-metin { display:flex; flex-wrap:wrap; gap:2px 12px; align-items:baseline; }
+.pt-det { font-variant-numeric:tabular-nums; opacity:.85; font-size:.82rem; }
+.pt-det i { opacity:.7; }
+/* A7.5 Seans Hava Koşulları */
+.sh-olcum { margin-top:6px; }
+.sh-bas { margin:6px 0 2px; font-size:.78rem; opacity:.75; text-transform:uppercase; letter-spacing:.03em; }
+.sh-bas small { text-transform:none; opacity:.8; margin-left:6px; font-variant-numeric:tabular-nums; }
+.sh-liste { list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:2px 14px; font-size:.86rem; font-variant-numeric:tabular-nums; }

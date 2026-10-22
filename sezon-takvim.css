@@ -1,0 +1,249 @@
+/* A2.1 — Güncel Sezon takvim kartları (sunum katmanı). Yalnızca .st-* sınıfları ve #a2-takvim / #a2-eski-takvim.
+   Mevcut stillere dokunmaz; renkler yalnızca mevcut tema değişkenlerinden (açık/koyu tema otomatik). */
+#a2-takvim { margin:14px 0 6px; --st-ayrac:var(--cizgi); --st-kenar-hover:var(--soluk); }
+@supports (color: color-mix(in srgb, red 50%, blue)) {
+  #a2-takvim { --st-ayrac:color-mix(in srgb, var(--cizgi) 65%, transparent); --st-kenar-hover:color-mix(in srgb, var(--soluk) 55%, var(--cizgi)); }
+}
+#sekme-sezon[data-a2="1"] #sonraki,
+#sekme-sezon[data-a2="1"] #a2-eski-takvim { display:none; }
+
+/* ---- üst şerit (filtre) ---- */
+.st-bar { display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; margin:0 0 12px; }
+.st-cipler { display:flex; gap:4px; flex-wrap:wrap; }
+.st-cip { padding:5px 12px; font-size:.82rem; border:1px solid var(--cizgi); border-radius:999px; background:var(--kart); color:var(--yazi); cursor:pointer; }
+.st-cip.aktif { border-color:var(--vurgu); color:var(--vurgu); font-weight:600; }
+.st-ozet { font-size:.8rem; color:var(--soluk); }
+.st-not { font-size:.8rem; color:var(--soluk); margin:6px 0 0; }
+.st-soluk { color:var(--soluk); }
+
+/* ---- kart ızgarası ---- */
+.st-izgara { display:grid; grid-template-columns:1fr; gap:12px; }
+@media (min-width:900px) { .st-izgara { grid-template-columns:1fr 1fr; } }
+.st-kart { background:var(--kart); border:1px solid var(--cizgi); border-radius:12px; padding:14px 16px 12px; display:flex; flex-direction:column; min-width:0; transition:border-color .15s, background-color .15s; }
+@media (hover:hover) { .st-kart:hover { border-color:var(--st-kenar-hover); background:var(--kart2); } }
+.st-kart.st-bekleniyor { background:var(--kart2); }
+.st-kart.st-siradaki { grid-column:1 / -1; border-color:var(--vurgu); border-left-width:3px; padding:16px 18px 14px; }
+@media (hover:hover) { .st-kart.st-siradaki:hover { border-color:var(--vurgu); } }
+
+/* ---- bloklar: ince ayırıcı + nefes alanı ---- */
+.st-blok { border-top:1px solid var(--st-ayrac); margin-top:12px; padding-top:12px; display:flex; flex-direction:column; gap:6px; min-width:0; }
+.st-alt-bolum { padding-top:8px; }
+
+/* ---- 1. yarış kimliği ---- */
+.st-bas { display:flex; align-items:flex-start; gap:10px; min-width:0; }
+.st-no { font-family:var(--f-sayi); font-weight:700; font-size:.8rem; color:var(--soluk); min-width:1.7em; padding-top:3px; }
+.st-ad { display:flex; flex-direction:column; gap:3px; min-width:0; flex:1; }
+.st-gp { display:flex; align-items:center; gap:7px; font-size:1.06rem; line-height:1.25; color:var(--yazi); }
+.st-gp b { font-weight:700; overflow-wrap:anywhere; }
+.st-gp .ik { flex:none; color:var(--soluk); }
+.st-meta { display:flex; flex-wrap:wrap; gap:2px 14px; font-size:.76rem; color:var(--soluk); }
+.st-meta span { display:inline-flex; align-items:center; gap:5px; }
+.st-sprint { flex:none; margin-left:auto; font-family:var(--f-sayi); font-size:.62rem; font-weight:700; letter-spacing:.1em; color:var(--vurgu); border:1px solid var(--vurgu); border-radius:3px; padding:1px 6px; line-height:1.4; }
+.st-etiket { font-family:var(--f-sayi); font-size:.68rem; letter-spacing:.14em; color:var(--vurgu); font-weight:700; margin-bottom:6px; }
+
+/* ---- ikonlar / etiketler ---- */
+.st-kart .ik { width:12px; height:12px; flex:none; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.st-et { display:inline-flex; align-items:center; gap:5px; font-size:.64rem; font-weight:600; letter-spacing:.09em; color:var(--soluk); }
+
+/* ---- 3. kazanan: ana odak ---- */
+.st-kaz-satir { display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; }
+.st-kaz-ad { font-size:1.12rem; font-weight:700; color:var(--yazi); overflow-wrap:anywhere; }
+.st-sure { font-family:var(--f-sayi); font-size:.76rem; color:var(--soluk); }
+.st-k { display:inline-block; font-family:var(--f-sayi); font-weight:700; font-size:.72rem; letter-spacing:.06em; color:var(--yazi); background:var(--kart2); border:1px solid var(--cizgi); border-radius:3px; padding:1px 5px; }
+
+/* ---- 4. podyum / pole / sprint kazananı ---- */
+.st-ist { display:grid; grid-template-columns:repeat(auto-fit, minmax(118px, 1fr)); gap:10px 16px; }
+.st-oge { display:flex; flex-direction:column; gap:5px; min-width:0; }
+.st-deg { display:inline-flex; flex-wrap:wrap; align-items:center; gap:6px 10px; font-size:.88rem; font-weight:600; color:var(--yazi); }
+.st-pod { display:inline-flex; align-items:center; gap:4px; }
+.st-pod i { font-style:normal; font-size:.74rem; color:var(--soluk); font-weight:500; }
+
+/* ---- gelecek kartı ---- */
+.st-gel .st-deg small { font-size:.66rem; color:var(--soluk); letter-spacing:.06em; }
+
+/* ---- sıradaki kart ---- */
+.st-sayac { font-family:var(--f-sayi); font-weight:700; font-size:1.5rem; letter-spacing:.02em; color:var(--yazi); }
+.st-seans { list-style:none; margin:2px 0 0; padding:0; display:grid; font-size:.88rem; }
+.st-seans li { display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-bottom:1px solid var(--st-ayrac); }
+.st-seans li:last-child { border-bottom:0; }
+.st-seans li span { color:var(--yazi); }
+.st-seans b { font-family:var(--f-sayi); font-weight:600; font-size:.8rem; text-align:right; color:var(--soluk); }
+
+/* ---- 7. detay / ikincil eylem ---- */
+.st-detay, .st-git { align-self:flex-start; display:inline-flex; align-items:center; gap:3px; padding:2px 4px 2px 0; font-size:.8rem; border:0; background:none; color:var(--soluk); cursor:pointer; }
+.st-detay:hover, .st-git:hover { color:var(--yazi); }
+.st-detay .ik, .st-git .ik { width:14px; height:14px; transition:transform .15s; }
+.st-detay[aria-expanded="true"] .ik { transform:rotate(90deg); }
+.st-detay-ic { margin:6px 0 0; padding:8px 0 0; list-style:none; font-size:.84rem; display:grid; gap:4px; border-top:1px solid var(--st-ayrac); }
+.st-detay-ic[hidden] { display:none; }
+.st-detay:focus-visible, .st-git:focus-visible, .st-cip:focus-visible { outline:2px solid var(--vurgu); outline-offset:2px; border-radius:4px; }
+
+/* ---- mobil ---- */
+@media (max-width:560px) {
+  .st-kart { padding:12px 14px 10px; }
+  .st-ist { grid-template-columns:1fr; gap:10px; }
+  .st-gp { font-size:1rem; }
+  .st-sayac { font-size:1.3rem; }
+}
+
+/* ---- yalnızca AÇIK tema: etiket ve ayırıcı kontrastı bir kademe artırıldı (koyu tema değişmez) ---- */
+:root:not([data-tema="koyu"]) #a2-takvim { --st-ayrac:#aeb8c5; }
+@supports (color: color-mix(in srgb, red 50%, blue)) {
+  :root:not([data-tema="koyu"]) #a2-takvim { --st-ayrac:color-mix(in srgb, var(--cizgi) 75%, var(--soluk)); }
+}
+:root:not([data-tema="koyu"]) #a2-takvim .st-et { color:#455465; }
+
+/* ---- FINAL UI: kart hiyerarşisi (BİTEN kompakt · SIRADAKİ en güçlü · GELECEK sade) ---- */
+.st-rozetler { flex:none; margin-left:auto; display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+.st-rozetler .st-sprint { margin-left:0; }
+.st-bitti { display:inline-flex; align-items:center; gap:4px; font-family:var(--f-sayi); font-size:.62rem; font-weight:700; letter-spacing:.1em; color:var(--art); border:1px solid var(--art); border-radius:3px; padding:1px 6px; line-height:1.4; }
+.st-bitti .ik { width:11px; height:11px; }
+.st-biten { padding:12px 14px 10px; }
+.st-biten .st-blok { margin-top:10px; padding-top:10px; }
+.st-biten .st-ist { grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px 14px; }
+.st-biten .st-oge-trophy { grid-column:1 / -1; flex-direction:row; align-items:center; gap:8px; }
+.st-biten .st-oge-trophy .st-et { flex:none; color:var(--vurgu); }
+.st-biten .st-oge-trophy .st-deg { gap:6px 8px; }
+.st-biten .st-kaz-ad { font-size:1rem; }
+.st-biten .st-alt-bolum { padding-top:6px; margin-top:8px; }
+.st-gelecek { padding:10px 14px; }
+.st-gelecek .st-blok { margin-top:8px; padding-top:8px; flex-direction:row; align-items:center; justify-content:space-between; }
+.st-gelecek .st-gp { font-size:1rem; }
+.st-kart.st-siradaki { background:var(--kart2); border-width:2px; border-left-width:4px; padding:18px 20px 16px; }
+.st-siradaki .st-gp { font-size:1.25rem; }
+.st-siradaki .st-sayac { font-size:2rem; color:var(--vurgu); }
+.st-siradaki .st-etiket { display:inline-block; align-self:flex-start; padding:2px 10px; border-radius:999px; background:var(--vurgu); color:var(--kart); font-size:.7rem; }
+.st-siradaki .st-git { color:var(--vurgu); font-weight:600; font-size:.88rem; min-height:40px; }
+@media (max-width:560px) { .st-siradaki .st-sayac { font-size:1.45rem; } .st-kart.st-siradaki { padding:14px 14px 12px; } }
+.st-biten .st-oge { gap:3px; }
+.st-biten .st-et { font-size:.6rem; }
+
+/* ======== UI STYLE PASS v2 / Aşama 1 — "Sıradaki Yarış" COTA PROTOTİPİ (yalnız .st-p-*; yalnız circuitId "americas") ======== */
+.st-kart.st-p-kart { background:var(--kart); border:1px solid var(--cizgi); border-left-width:1px; padding:22px 24px 16px; gap:0; --st-p-soluk:var(--soluk); }
+@media (hover:hover) { .st-kart.st-p-kart:hover { border-color:var(--cizgi); background:var(--kart); } }
+:root:not([data-tema="koyu"]) .st-p-kart { --st-p-soluk:#4a596a; background:#fff; }
+.st-p-ust { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:8px 32px; align-items:center; }
+.st-p-sol { min-width:0; display:flex; flex-direction:column; }
+.st-p-meta { display:flex; flex-wrap:wrap; align-items:center; gap:2px 0; margin:0 0 10px; font-family:var(--f-sayi); font-size:.7rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--st-p-soluk); }
+.st-p-sir { font-weight:700; color:var(--vurgu); }
+.st-p-sir + span { padding-left:.55em; }
+.st-p-sprint { margin-left:10px; padding:0 6px; border:1px solid var(--vurgu); border-radius:3px; color:var(--vurgu); font-size:.6rem; line-height:1.5; }
+.st-siradaki .st-p-ad, .st-p-ad { margin:0; font-size:2rem; line-height:1.1; font-weight:800; letter-spacing:-.01em; color:var(--yazi); text-wrap:balance; }
+.st-p-yer { display:flex; align-items:center; gap:8px; margin:8px 0 0; font-size:.88rem; color:var(--st-p-soluk); }
+.st-p-yer > span { min-width:0; overflow-wrap:anywhere; }
+.st-p-yer .st-pist { font:inherit; color:inherit; background:none; border:0; padding:0; cursor:pointer; text-decoration:underline; text-decoration-color:transparent; text-underline-offset:3px; }
+.st-p-yer .st-pist:hover { text-decoration-color:currentColor; }
+.st-p-bayrak { flex:none; font-size:1.05rem; line-height:1; font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif; }
+/* sayaç: 4 sade kutu; kırmızı yalnız canlı akan saniye rakamında */
+.st-p-sayac { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-top:20px; max-width:380px; font-family:var(--f-sayi); }
+.st-p-sayac:not(:has(.st-p-kutu)) { display:block; font-size:1.3rem; font-weight:700; color:var(--yazi); }
+.st-p-kutu { display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 4px 8px; border:1px solid var(--cizgi); border-radius:8px; background:var(--kart2); min-width:0; }
+.st-p-sayi { font-size:2rem; line-height:1; font-weight:700; letter-spacing:.01em; color:var(--yazi); font-variant-numeric:tabular-nums; }
+.st-p-kutu-sn .st-p-sayi { color:var(--vurgu); }
+.st-p-birim { font-size:.58rem; font-weight:600; letter-spacing:.16em; color:var(--st-p-soluk); }
+/* pist silueti */
+.st-p-sag { display:flex; align-items:center; justify-content:center; min-width:0; }
+.st-p-pist { width:100%; max-width:380px; height:auto; aspect-ratio:3 / 2; overflow:visible; }
+.st-p-hat-alt, .st-p-hat { fill:none; stroke-linejoin:round; stroke-linecap:round; vector-effect:non-scaling-stroke; }
+.st-p-hat-alt { stroke:var(--cizgi); stroke-width:9; }
+.st-p-hat { stroke:var(--st-p-soluk); stroke-width:2; }
+:root:not([data-tema="koyu"]) .st-p-hat-alt { stroke:#d5dbe3; }
+/* seans programı */
+.st-p-seans { margin-top:22px; padding-top:14px; border-top:1px solid var(--st-ayrac); }
+.st-p-bas { margin:0 0 4px; font-family:var(--f-sayi); font-size:.64rem; font-weight:600; letter-spacing:.14em; color:var(--st-p-soluk); }
+.st-p-liste { list-style:none; margin:8px 0 0; padding:0; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; }
+.st-p-ss { display:flex; flex-direction:column; gap:6px; min-width:0; padding:10px 12px 11px; border:1px solid var(--cizgi); border-radius:4px; background:transparent; }
+.st-p-ssg { display:flex; align-items:center; justify-content:space-between; gap:6px; font-family:var(--f-sayi); font-size:.64rem; font-weight:600; letter-spacing:.1em; color:var(--st-p-soluk); white-space:nowrap; }
+.st-p-sad { font-size:.8rem; font-weight:600; letter-spacing:.04em; color:var(--yazi); line-height:1.2; overflow-wrap:anywhere; }
+.st-p-sz { font-family:var(--f-sayi); font-size:1.5rem; font-weight:700; line-height:1.1; color:var(--yazi); white-space:nowrap; font-variant-numeric:tabular-nums; }
+.st-p-canli { font-size:.56rem; letter-spacing:.1em; color:var(--vurgu); }
+.st-ss-canli { border-color:var(--vurgu); }
+.st-ss-canli .st-p-sz { color:var(--vurgu); }
+.st-ss-bitti, .st-ss-tamamlandi, .st-ss-sonuc-bekleniyor { opacity:.72; }
+.st-ss-delayed, .st-ss-gecikmeli { border-style:dashed; }
+.st-p-not { margin:6px 0 0; font-size:.74rem; color:var(--st-p-soluk); }
+.st-p-alt { margin-top:10px; padding-top:6px; }
+.st-p-git { color:var(--vurgu); font-weight:600; font-size:.9rem; min-height:40px; padding-left:0; }
+.st-p-git:hover { color:var(--vurgu); text-decoration:underline; }
+/* seans gridi: orta genişlikte 3+2; mobil 2 sütun, tek kalan 5. kart tam genişlik */
+@media (max-width:900px) { .st-p-liste { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+/* mobil: tek kolon — başlık → sayaç → silüet → program */
+@media (max-width:640px) {
+  .st-p-liste { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+  .st-p-ss:last-child:nth-child(odd) { grid-column:1 / -1; }
+  .st-p-sz { font-size:1.3rem; }
+  .st-kart.st-p-kart { padding:16px 16px 12px; }
+  .st-p-ust { grid-template-columns:minmax(0,1fr); gap:14px; }
+  .st-p-ad { font-size:1.55rem; }
+  .st-p-sayac { margin-top:16px; max-width:none; gap:6px; }
+  .st-p-sayi { font-size:1.55rem; }
+  .st-p-sag { justify-content:flex-start; }
+  .st-p-pist { max-width:260px; }
+  .st-p-seans { margin-top:14px; }
+}
+/* görsel revize: yalnız masaüstünde sayaç rakamları ~%17 büyük; alt etiketler ve mobil aynı */
+@media (min-width:641px) {
+  .st-p-sayac { max-width:440px; }
+  .st-p-kutu { padding:12px 4px 10px; }
+  .st-p-sayi { font-size:2.35rem; }
+}
+
+/* ---- Aşama 2: silüet yedeği ---- */
+.st-p-yedek { width:100%; max-width:380px; aspect-ratio:3 / 2; display:flex; align-items:center; justify-content:center; border:1px dashed var(--cizgi); border-radius:8px; color:var(--st-p-soluk); font-family:var(--f-sayi); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; text-align:center; padding:0 12px; }
+.st-kart.st-p-kart { margin-bottom:18px; }
+
+/* ======== Sezon Takvimi v2 (.st-v2*, .st-ay*) ======== */
+.st-v2 { margin:0 0 22px; --st-v2-soluk:var(--soluk); }
+:root:not([data-tema="koyu"]) .st-v2 { --st-v2-soluk:#4a596a; }
+:root:not([data-tema="koyu"]) .st-liste-kap { --st-v2-soluk:#4a596a; }
+.st-v2-filtre { display:flex; flex-wrap:wrap; gap:6px 22px; margin:0 0 10px; }
+.st-v2-grup { display:flex; align-items:center; flex-wrap:wrap; gap:6px 10px; min-width:0; }
+.st-v2-et { font-family:var(--f-sayi); font-size:.64rem; font-weight:600; letter-spacing:.14em; color:var(--st-v2-soluk); }
+.st-v2-cipler { display:flex; flex-wrap:wrap; gap:4px; }
+.st-v2-cip { font-family:var(--f-sayi); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; min-height:26px; padding:2px 8px; border:1px solid var(--cizgi); border-radius:4px; background:transparent; color:var(--st-v2-soluk); cursor:pointer; }
+.st-v2-cip:hover { color:var(--yazi); }
+.st-v2-cip.aktif { border-color:var(--vurgu); color:var(--vurgu); font-weight:700; }
+.st-v2-cip:focus-visible, .st-ay-kart:focus-visible { outline:2px solid var(--vurgu); outline-offset:2px; }
+.st-ay-sar { overflow-x:auto; padding-bottom:6px; }
+.st-ay-izgara { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(104px,1fr); gap:10px; min-width:min-content; }
+.st-ay { min-width:0; }
+.st-ay-bas { margin:0 0 8px; padding-bottom:6px; border-bottom:1px solid var(--st-ayrac); font-family:var(--f-sayi); font-size:.64rem; font-weight:700; letter-spacing:.14em; color:var(--st-v2-soluk); }
+.st-ay-liste { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; }
+.st-ay-kart { width:100%; display:flex; flex-direction:column; gap:3px; text-align:left; font:inherit; padding:8px 9px 7px; border:1px solid var(--cizgi); border-radius:4px; background:var(--kart); color:var(--yazi); cursor:pointer; min-width:0; }
+@media (hover:hover) { .st-ay-kart:hover { border-color:var(--st-v2-soluk); } }
+.st-ay-ust { display:flex; align-items:center; justify-content:space-between; gap:6px; min-width:0; }
+.st-ay-ad { font-size:.82rem; font-weight:600; line-height:1.2; overflow-wrap:anywhere; }
+.st-ay-alt { display:flex; flex-wrap:wrap; align-items:center; gap:2px 6px; }
+.st-ay-tarih { font-family:var(--f-sayi); font-size:.7rem; color:var(--st-v2-soluk); white-space:nowrap; font-variant-numeric:tabular-nums; }
+.st-ay-spr { font-family:var(--f-sayi); font-size:.56rem; font-weight:700; letter-spacing:.08em; padding:0 4px; border:1px solid var(--st-v2-soluk); border-radius:3px; color:var(--st-v2-soluk); line-height:1.5; }
+.st-ay-kaz { margin-left:auto; font-family:var(--f-sayi); font-size:.62rem; letter-spacing:.06em; color:var(--st-v2-soluk); }
+.st-ay-gecmis { background:transparent; opacity:.72; }
+.st-ay-gecmis .st-ay-ad { font-weight:500; color:var(--st-v2-soluk); }
+.st-ay-siradaki { border-color:var(--vurgu); }
+.st-ay-nokta { flex:none; width:7px; height:7px; border-radius:50%; background:var(--vurgu); }
+.st-v2-not { margin:8px 0 0; font-size:.74rem; color:var(--st-v2-soluk); }
+.st-liste-kap { --st-v2-soluk:var(--soluk); margin-top:6px; border-top:1px solid var(--st-ayrac); }
+.st-liste-bas { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:44px; padding:8px 2px; cursor:pointer; list-style:none; font-family:var(--f-sayi); font-size:.7rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--st-v2-soluk, var(--soluk)); }
+.st-liste-bas::-webkit-details-marker { display:none; }
+.st-liste-bas::after { content:"+"; margin-left:auto; font-size:1rem; line-height:1; }
+.st-liste-kap[open] > .st-liste-bas::after { content:"–"; }
+.st-liste-bas:hover { color:var(--yazi); }
+.st-liste-bas:focus-visible { outline:2px solid var(--vurgu); outline-offset:2px; }
+.st-liste-kap[open] > .st-liste-bas { margin-bottom:8px; }
+/* mobil: aylar dikey kompakt liste (yatay sonsuz kolon yok) */
+@media (max-width:640px) {
+  .st-ay-sar { overflow:visible; }
+  .st-ay-izgara { grid-auto-flow:row; grid-auto-columns:auto; grid-template-columns:minmax(0,1fr); gap:14px; min-width:0; }
+  .st-ay-liste { gap:0; border:1px solid var(--cizgi); border-radius:4px; background:var(--kart); }
+  .st-ay-liste li + li { border-top:1px solid var(--st-ayrac); }
+  .st-ay-kart { flex-direction:row; align-items:center; justify-content:space-between; gap:10px; border:0; border-radius:0; background:transparent; padding:10px 12px; min-height:44px; }
+  .st-ay-ust { flex:1 1 auto; }
+  .st-ay-alt { flex:none; justify-content:flex-end; flex-wrap:nowrap; }
+  .st-ay-kaz { margin-left:6px; }
+  .st-ay-siradaki { outline:1px solid var(--vurgu); outline-offset:-1px; }
+  .st-v2-filtre { gap:6px; margin-bottom:20px; }
+  .st-v2-grup { width:100%; flex-wrap:nowrap; }
+  .st-v2-cipler { flex-wrap:wrap; }
+  .st-v2-et { flex:none; min-width:64px; }
+  .st-v2-cip { min-height:32px; }
+}

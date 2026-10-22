@@ -1,0 +1,65 @@
+/* A4.1 — Pilot profili. Yalnızca .pf kapsamı ve giriş düğmesi/tıklanabilir kod ipuçları. Genel kart tasarımına dokunmaz. */
+.pf { min-width:0; }
+.pf-b { margin:0 0 14px; }
+.pf-izgara { display:grid; gap:8px; grid-template-columns:repeat(auto-fill,minmax(104px,1fr)); }
+.pf-m { background:var(--kart); border:1px solid var(--cizgi); border-radius:8px; padding:8px 10px; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.pf-mv { font-family:var(--f-sayi,inherit); font-size:1.25rem; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.2; }
+.pf-ml { font-size:.72rem; color:var(--soluk); display:inline-flex; align-items:center; gap:4px; flex-wrap:wrap; }
+.pf-ml.pf-kat { color:var(--yazi); font-weight:700; font-size:.78rem; }
+.pf-me { font-size:.68rem; color:var(--soluk); overflow-wrap:anywhere; }
+.pf-nokta { color:var(--soluk); animation:pf-nabiz 1.2s ease-in-out infinite; }
+@keyframes pf-nabiz { 50% { opacity:.3; } }
+.pf-kucuk { align-self:flex-start; font-size:.62rem; padding:1px 6px; border:1px dashed var(--soluk); border-radius:10px; color:var(--soluk); }
+.pf-not { margin:8px 0 0; font-size:.76rem; color:var(--soluk); }
+.pf-soluk { color:var(--soluk); font-size:.82rem; }
+.pf-kimlik { margin:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:8px 12px; }
+.pf-kimlik > div, .pf-bio > div { min-width:0; }
+.pf-kimlik dt, .pf-bio dt { font-size:.68rem; color:var(--soluk); }
+.pf-kimlik dd, .pf-bio dd { margin:2px 0 0; font-size:.9rem; overflow-wrap:anywhere; }
+.pf-form { margin-top:10px; display:flex; flex-direction:column; gap:4px; }
+.pf-fl { display:flex; flex-wrap:wrap; gap:4px; }
+.pf-fi { display:inline-block; min-width:2.4em; text-align:center; padding:2px 6px; border-radius:4px; font-size:.74rem; font-weight:700; border:1px solid var(--cizgi); background:var(--kart2,var(--kart)); }
+.pf-f-pod { border-color:#2e9e4f; } .pf-f-dnf, .pf-f-dsq { border-color:#b3261e; color:#b3261e; } .pf-f-dns, .pf-f-yok { color:var(--soluk); }
+.pf-yuk { margin:0 0 8px; font-size:.82rem; color:var(--soluk); }
+.pf-isk { display:flex; flex-direction:column; gap:6px; }
+.pf-isk i { display:block; height:34px; border-radius:8px; background:linear-gradient(90deg,var(--cizgi),transparent,var(--cizgi)); background-size:200% 100%; animation:pf-kay 1.4s linear infinite; }
+@keyframes pf-kay { to { background-position:-200% 0; } }
+.pf-hata { margin:0; font-size:.84rem; }
+.pf-link { font:inherit; color:var(--vurgu,inherit); background:none; border:0; padding:6px 4px; min-height:36px; cursor:pointer; text-decoration:underline; }
+.pf-bio { margin:0 0 8px; display:grid; gap:8px; }
+.pf-maddeler { margin:0 0 8px; padding-left:18px; font-size:.86rem; }
+.pf-maddeler li { margin:0 0 4px; }
+.pf-kaynak { margin:10px 0 0; font-size:.68rem; color:var(--soluk); }
+/* giriş: Profil düğmesi + güvenli alanlarda tıklanabilir pilot kodu */
+.pf-btn { font:inherit; font-size:.84rem; min-height:36px; padding:4px 12px; margin-left:6px; border:1px solid var(--cizgi); border-radius:8px; background:var(--kart); color:var(--yazi); cursor:pointer; }
+.pf-btn:focus-visible { outline:2px solid var(--vurgu,currentColor); outline-offset:2px; }
+#sekme-profil .pilot, #sekme-grafik .pilot, #sekme-sezon .pilot, #sekme-yaris .pilot, #dp-panel .pilot,
+#sekme-grafik .a32-kod, #sekme-profil .pk-bk, #sekme-sezon .st-k, #dp-panel .st-k { cursor:pointer; }
+#sekme-profil .pilot:hover, #sekme-grafik .pilot:hover, #sekme-sezon .pilot:hover, #sekme-yaris .pilot:hover, #dp-panel .pilot:hover { text-decoration:underline; text-underline-offset:3px; }
+@media (max-width:480px) { .pf-izgara { grid-template-columns:repeat(2,minmax(0,1fr)); } .pf-kimlik { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+/* A4.2 — Takım profili (.pf-takim) ve Pilot & Pist takım girişleri. Genel kart tasarımına dokunmaz. */
+.pf-tk { grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); }
+.pf-pil { display:flex; flex-wrap:wrap; gap:6px; }
+.pf-pbtn { font:inherit; font-size:.84rem; color:inherit; background:var(--kart); border:1px solid var(--cizgi); border-radius:8px; padding:6px 10px; min-height:36px; cursor:pointer; text-align:left; }
+.pf-pbtn:hover { border-color:var(--vurgu,var(--cizgi)); }
+.pf-tp { margin:0 0 8px; font-size:.92rem; }
+.pf-katki { display:flex; flex-direction:column; gap:8px; }
+.pf-kp { display:flex; flex-wrap:wrap; align-items:center; gap:4px 12px; background:var(--kart); border:1px solid var(--cizgi); border-radius:8px; padding:8px 10px; }
+.pf-kp .pf-kad { flex:1 1 100%; background:none; border:0; padding:0; min-height:30px; font-weight:700; }
+.pf-kd { font-size:.82rem; font-variant-numeric:tabular-nums; color:var(--soluk); } .pf-kd b { color:var(--yazi); font-size:1rem; }
+.pf-etiket { font-size:.66rem; padding:1px 6px; border:1px dashed var(--soluk); border-radius:10px; color:var(--soluk); }
+.pf-gel { display:flex; align-items:center; gap:14px; flex-wrap:wrap; } .pf-gel .pf-m { min-width:140px; } .pf-spark { color:var(--vurgu,currentColor); max-width:100%; }
+.pf-pist-ust { margin:0 0 6px; font-size:.92rem; } .pf-pist-alt { margin:0; font-size:.8rem; color:var(--soluk); overflow-wrap:anywhere; }
+.pf-uyari { color:var(--yazi); border-left:3px solid #b8860b; padding-left:8px; }
+.pf-tbtn { font:inherit; color:inherit; background:none; border:0; padding:4px 2px; min-height:36px; cursor:pointer; display:inline-flex; align-items:center; gap:4px; }
+.pf-ok { color:var(--soluk); }
+.pf-takimlar { margin:10px 0; display:flex; flex-direction:column; gap:6px; }
+.pf-tbaslik { font-size:.74rem; color:var(--soluk); }
+.pf-tlist { display:flex; flex-wrap:wrap; gap:6px; }
+.pf-tchip { font:inherit; background:none; border:0; padding:4px 2px; min-height:36px; cursor:pointer; }
+@media (max-width:480px) {
+  .pf-tk { grid-template-columns:1fr; }
+  .pf-gel { flex-direction:column; align-items:flex-start; }
+}
+.pf-lider { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:2px; }

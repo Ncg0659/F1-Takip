@@ -1,0 +1,36 @@
+/* FINAL UI — Diğer Seriler (.ui-so-*). Yalnızca mevcut tema değişkenleri. */
+.ui-so { margin:10px 0 12px; padding:14px 16px; background:var(--kart); border:1px solid var(--cizgi); border-left:4px solid var(--vurgu); border-radius:12px; min-width:0; }
+.ui-so-bas { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 12px; margin-bottom:10px; }
+.ui-so-baslik { display:flex; align-items:center; gap:8px; margin:0; font-size:1.15rem; }
+.ui-rozet-surer { color:var(--vurgu); border:1px solid var(--vurgu); }
+.ui-rozet-bitti { color:var(--art); border:1px solid var(--art); }
+.ui-rozet .ik { width:11px; height:11px; }
+.ui-so-liste { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; }
+.ui-so-p { display:flex; flex-direction:column; gap:3px; min-width:0; padding:8px 10px; background:var(--kart2); border:1px solid var(--cizgi); border-radius:10px; }
+.ui-so-p1 { border-color:var(--vurgu); }
+.ui-so-sira { font-family:var(--f-sayi); font-size:.78rem; color:var(--soluk); }
+.ui-so-ad { display:flex; flex-direction:column; gap:3px; font-weight:700; font-size:.92rem; overflow-wrap:anywhere; }
+.ui-so-ad small { font-weight:400; }
+.ui-so-puan { font-family:var(--f-sayi); font-weight:700; font-size:1.05rem; }
+.ui-so-puan i { font-style:normal; font-size:.68rem; font-weight:400; color:var(--soluk); }
+.ui-so-kalan, .ui-so-tarih { display:flex; align-items:flex-start; gap:7px; margin:10px 0 0; font-size:.84rem; color:var(--soluk); }
+.ui-so-kalan .ik, .ui-so-tarih .ik { flex:none; margin-top:2px; color:var(--vurgu); }
+@media (max-width:560px) { .ui-so-liste { grid-template-columns:1fr; } .ui-so-p { flex-direction:row; align-items:center; gap:10px; } .ui-so-ad { flex:1; } }
+#seri-not { margin-top:12px; }
+@media (max-width:560px) {
+  #seri-pilot-govde td, #seri-takim-govde td { padding-left:6px; padding-right:6px; }
+  #seri-pilot-govde td:nth-child(3) > *, #seri-takim-govde td:nth-child(2) > * { white-space:normal; font-size:.62rem; }
+  #seri-pilot-govde td:nth-child(2) { font-size:.88rem; }
+}
+
+/* Takım rozeti (doğrulanmış takım rengi): hafif renk zemini + sol vurgu; metin tema rengi → açık/koyu temada okunur */
+.dt-rozet { display:inline-block; max-width:100%; padding:3px 9px 3px 8px; border-radius:4px; border:1px solid var(--cizgi); border-left:4px solid var(--dc); background:var(--kart2); color:var(--yazi); font-family:var(--f-sayi); font-size:.68rem; font-weight:700; letter-spacing:.05em; line-height:1.35; text-transform:uppercase; overflow-wrap:anywhere; }
+@supports (color: color-mix(in srgb, red 50%, blue)) {
+  .dt-rozet { background:color-mix(in srgb, var(--dc) 16%, var(--kart)); border-color:color-mix(in srgb, var(--dc) 40%, var(--cizgi)); border-left-color:var(--dc); }
+}
+@media (max-width:560px) {
+  #seri-pilot-govde td:nth-child(2) { width:36%; }
+  #seri-pilot-govde td:nth-child(3) { width:34%; }
+  .dt-rozet, #seri-pilot-govde .takim, #seri-takim-govde .takim { font-size:.58rem; padding:2px 5px; letter-spacing:.02em; }
+  .dt-rozet { border-left-width:3px; }
+}

@@ -1,0 +1,29 @@
+/* A5.1 — Pist Profili. Yalnızca .pp-* ek stilleri; geri kalan görünüm profil.css (.pf-*) ve detay-panel.css ortak dilini kullanır. */
+.pp-kimlik { grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); }
+.pp-teknik { grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); }
+.pp-rekor { margin:10px 0 0; font-size:.88rem; display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 8px; }
+.pp-rekor .pf-ml { flex-basis:100%; }
+.pp-rekor b { font-variant-numeric:tabular-nums; }
+.pp-sinif { margin:0; font-size:1rem; }
+.pp-sonuc { margin-top:10px; }
+.pp-kod { display:inline-block; min-width:2.4em; text-align:center; padding:1px 6px; border-radius:4px; font-size:.74rem; font-weight:700; border:1px solid var(--cizgi); background:var(--kart2,var(--kart)); }
+/* ayrı, güvenli tıklama hedefleri */
+.pp-btn { margin:0; white-space:nowrap; }
+.pp-hucre { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; }
+.st-pist { font:inherit; color:inherit; background:none; border:0; padding:0; margin:0; cursor:pointer; text-decoration:underline; text-decoration-style:dotted; text-underline-offset:3px; text-align:left; }
+.st-pist:hover { text-decoration-style:solid; }
+.st-pist:focus-visible, .pp-btn:focus-visible { outline:2px solid var(--vurgu,currentColor); outline-offset:2px; border-radius:4px; }
+@media (max-width:480px) {
+  .pp-kimlik, .pp-teknik { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .st-pist { min-height:28px; }
+}
+
+/* ---- FINAL UI: pist başlığı + sınıf renkleri (Sokak kırmızı/mercan · Yüksek hız sarı/turuncu · Teknik mavi/mor · Karma turkuaz) ---- */
+.pf-pist, .pp-baslik, #pist-govde { --pk-sokak:#c62f3a; --pk-yuksek:#9a5b00; --pk-teknik:#3f4fd6; --pk-karma:#0b7f74; }
+:root[data-tema="koyu"] .pf-pist, :root[data-tema="koyu"] .pp-baslik, :root[data-tema="koyu"] #pist-govde { --pk-sokak:#ff6b70; --pk-yuksek:#f5b73a; --pk-teknik:#8c97ff; --pk-karma:#3fd1c0; }
+.pp-baslik { display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:space-between; gap:10px 14px; margin:0 0 14px; padding:12px 14px; background:var(--kart2); border:1px solid var(--cizgi); border-left:4px solid var(--pk, var(--cizgi)); border-radius:10px; }
+.pp-baslik-ic { display:flex; flex-direction:column; gap:4px; min-width:0; flex:1 1 200px; }
+.pp-pist-ad { font-size:1.12rem; line-height:1.25; overflow-wrap:anywhere; }
+.pp-yer, .pp-gp { display:inline-flex; align-items:center; gap:6px; font-size:.84rem; color:var(--soluk); }
+.pp-k-sokak { --pk:var(--pk-sokak); } .pp-k-yuksek { --pk:var(--pk-yuksek); } .pp-k-teknik { --pk:var(--pk-teknik); } .pp-k-karma { --pk:var(--pk-karma); }
+.pp-sinifrozet { flex:none; display:inline-block; padding:3px 12px; border-radius:999px; font-size:.8rem; font-weight:700; letter-spacing:.04em; color:var(--pk); border:1.5px solid var(--pk); background:transparent; }

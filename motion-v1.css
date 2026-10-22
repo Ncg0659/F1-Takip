@@ -1,0 +1,187 @@
+/* F1 TAKİP — MOTION SYSTEM v1 ("Race Control" hareket katmanı).
+   Kural: motion dekorasyon değil, state ve hiyerarşiyi okunur yapar. Yalnız transform + opacity (+ tek seferlik renk tonu); sürekli box-shadow/filter/width/height animasyonu YOK.
+   Layout / veri / state mantığı / ağ / zamanlayıcı YOK. JS (motion-v1.js) yalnızca aşağıdaki .mo-* sınıflarını tek seferlik işaretler; animasyon bitince sınıf kaldırılır.
+   "-a / -b" ikizleri: aynı öğede animasyonu yeniden başlatmak için (keyframe adı değişince tarayıcı yeniden başlatır; reflow zorlanmaz). */
+
+/* 1) GLOBAL MOTION TOKENLARI (tek yer) */
+:root {
+  --motion-fast: 140ms;        /* micro: hover/press, sayaç hanesi, kısa renk geçişi */
+  --motion-normal: 200ms;      /* normal: nav çizgisi, seçili kart, bağlam çubuğu */
+  --motion-panel: 280ms;       /* panel: sekme geçişi, detay/akordeon, hero öğeleri */
+  --motion-reveal: 480ms;      /* hero/reveal: stagger'ın toplam penceresi (≤ 500ms) */
+  --motion-draw: 600ms;        /* pist çizgisi çizimi (500–800ms) */
+  --motion-pulse: 1.8s;        /* doğrulanmış LIVE nabzı (1.4–2.0s) */
+  --motion-stagger: 60ms;
+  --motion-ease: cubic-bezier(.22, .72, .24, 1);        /* doğal ease-out; overshoot/bounce yok */
+  --motion-ease-state: cubic-bezier(.3, .8, .3, 1);     /* state değişimi: daha hızlı */
+}
+
+/* 14) sayfa içi programatik kaydırma (ticker → Yarış Günü Race Feed'i): yumuşak davranışı motion-v1.js yalnız o tıklamada geçici verir; global smooth YOK (normal kaydırma/ölçümler etkilenmez). reduced-motion'da hep auto. */
+
+/* 2) PREFERS-REDUCED-MOTION: pist çizimi, nabız, slide/scale, uzun geçişler kapalı; içerik doğrudan son durumda. İşlev kaybı yok. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  :root { --motion-fast: .01ms; --motion-normal: .01ms; --motion-panel: .01ms; --motion-reveal: .01ms; --motion-draw: .01ms; --motion-stagger: 0ms; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important; }
+  html[data-nav="v3"] #nav-v3 button .nv-ik, .rc-sag > * { transform: none !important; }
+  .tk-live[data-mo-t] .tk-nokta, .bg-kod[data-mo-t], .dr.live::before { animation: none !important; }   /* nabız kapalı */
+}
+
+/* ---- ortak keyframe'ler (a/b ikizli) ---- */
+@keyframes mo-rise-a { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes mo-fade-a { from { opacity: 0; } to { opacity: 1; } }
+@keyframes mo-hold-a { from { opacity: 1; } to { opacity: 1; } }    /* işaretçi animasyon: bitince JS tetik sınıfını kaldırır */
+@keyframes mo-rise-b { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes mo-fade-b { from { opacity: 0; } to { opacity: 1; } }
+@keyframes mo-hold-b { from { opacity: 1; } to { opacity: 1; } }    /* işaretçi animasyon: bitince JS tetik sınıfını kaldırır */
+
+/* 3) SEKME GEÇİŞİ: hafif opacity + 8px; eski ekran anında gizlenir (üst üste binme yok) */
+.mo-sekme-a { animation: mo-sekme-a var(--motion-panel) var(--motion-ease) both; }
+@keyframes mo-sekme-a { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.mo-sekme-b { animation: mo-sekme-b var(--motion-panel) var(--motion-ease) both; }
+@keyframes mo-sekme-b { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* 3) NAV: kayan aktif çizgi (JS yalnız --mo-x / --mo-sx / --mo-y değişkenlerini yazar); bu modda buton alt/üst çizgisi saydam, çizgiyi ::after taşır */
+html[data-nav="v3"] #nav-v3 button { transition: color var(--motion-normal) var(--motion-ease), background-color var(--motion-normal) var(--motion-ease), border-color var(--motion-normal) var(--motion-ease), transform var(--motion-fast) var(--motion-ease); }
+html[data-nav="v3"] #nav-v3 .nv-ik { transition: transform var(--motion-normal) var(--motion-ease); }
+html[data-nav="v3"] #nav-v3[data-mo-ind]::after { content: ""; position: absolute; left: 0; top: 0; width: 100px; height: 2px; background: var(--vurgu); pointer-events: none; transform-origin: 0 0; transform: translate(var(--mo-x, 0px), var(--mo-y, 0px)) scaleX(var(--mo-sx, 1)); transition: transform var(--motion-normal) var(--motion-ease); }
+html[data-nav="v3"] #nav-v3[data-mo-ind] button[aria-current="page"] { border-bottom-color: transparent; border-top-color: transparent; }
+@media (min-width: 601px) { html[data-nav="v3"] #nav-v3[data-mo-ind] { position: relative; } }
+@media (max-width: 600px) {
+  html[data-nav="v3"] #nav-v3 button[aria-current="page"] .nv-ik { transform: scale(1.03); }   /* aktif ikon hafif vurgu: zıplama yok */
+}
+
+/* 3) BAĞLAM ÇUBUĞU + açılır paneller: 150–200ms fade/slide (display geçişi → gizlenirken de yumuşak) */
+html[data-nav="v3"] #ctx-v3 { transition: opacity var(--motion-fast) var(--motion-ease), transform var(--motion-fast) var(--motion-ease), display var(--motion-fast) allow-discrete; }
+html[data-nav="v3"] #ctx-v3[hidden] { opacity: 0; transform: translateY(-4px); pointer-events: none; }
+@starting-style { html[data-nav="v3"] #ctx-v3:not([hidden]) { opacity: 0; transform: translateY(-4px); } }
+html[data-nav="v3"] .nv-pop { transition: opacity var(--motion-fast) var(--motion-ease), transform var(--motion-fast) var(--motion-ease), display var(--motion-fast) allow-discrete; }
+html[data-nav="v3"] .nv-pop[hidden] { opacity: 0; transform: translateY(-4px); pointer-events: none; }
+@starting-style { html[data-nav="v3"] .nv-pop:not([hidden]) { opacity: 0; transform: translateY(-4px); } }
+
+/* 4) HERO ENTER: state → başlık → meta → pist; toplam ≤ ~480ms. Yalnız yarış/sekme değişince (JS işaretler); her state güncellemesinde tekrar YOK */
+.mo-hero-a { animation: mo-hold-a var(--motion-reveal) linear both; }
+.mo-hero-a :is(.bg-ust, .yk-ust, .yv-ust, .st-p-meta) { animation: mo-rise-a var(--motion-panel) var(--motion-ease) both; }
+.mo-hero-a :is(.bg-ad, .yk-yer, .yv-yer, .st-p-ad) { animation: mo-rise-a var(--motion-panel) var(--motion-ease) var(--motion-stagger) both; }
+.mo-hero-a :is(.bg-yer, .bg-ses, .bg-sayac, .bg-tarih, .g3-meta, .h-hero-meta, .yv-meta, .st-p-yer, .st-p-sayac) { animation: mo-rise-a var(--motion-panel) var(--motion-ease) calc(var(--motion-stagger) * 2) both; }
+.mo-hero-a :is(.bg-sag, .g3-pist, .h-hero-sag, #yv-pist, .st-p-sag) { animation: mo-fade-a var(--motion-panel) var(--motion-ease) calc(var(--motion-stagger) * 3) both; }
+.mo-hero-a :is(.bg-zaman, .bg-kritik, .st-p-seans) { animation: mo-fade-a var(--motion-panel) var(--motion-ease) calc(var(--motion-stagger) * 3 + 20ms) both; }
+/* 11) podyum: P1 → P2 → P3, 60–90ms stagger; rozet/takım hareket etmez (satır reveal); glow yok */
+.mo-hero-a .bg-pod-s { animation: mo-rise-a 220ms var(--motion-ease) both; }
+.mo-hero-a .bg-pod-s:nth-child(1) { animation-delay: calc(var(--motion-stagger) * 2); }
+.mo-hero-a .bg-pod-s:nth-child(2) { animation-delay: calc(var(--motion-stagger) * 2 + 75ms); }
+.mo-hero-a .bg-pod-s:nth-child(3) { animation-delay: calc(var(--motion-stagger) * 2 + 150ms); }
+.mo-hero-b { animation: mo-hold-b var(--motion-reveal) linear both; }
+.mo-hero-b :is(.bg-ust, .yk-ust, .yv-ust, .st-p-meta) { animation: mo-rise-b var(--motion-panel) var(--motion-ease) both; }
+.mo-hero-b :is(.bg-ad, .yk-yer, .yv-yer, .st-p-ad) { animation: mo-rise-b var(--motion-panel) var(--motion-ease) var(--motion-stagger) both; }
+.mo-hero-b :is(.bg-yer, .bg-ses, .bg-sayac, .bg-tarih, .g3-meta, .h-hero-meta, .yv-meta, .st-p-yer, .st-p-sayac) { animation: mo-rise-b var(--motion-panel) var(--motion-ease) calc(var(--motion-stagger) * 2) both; }
+.mo-hero-b :is(.bg-sag, .g3-pist, .h-hero-sag, #yv-pist, .st-p-sag) { animation: mo-fade-b var(--motion-panel) var(--motion-ease) calc(var(--motion-stagger) * 3) both; }
+.mo-hero-b :is(.bg-zaman, .bg-kritik, .st-p-seans) { animation: mo-fade-b var(--motion-panel) var(--motion-ease) calc(var(--motion-stagger) * 3 + 20ms) both; }
+/* 11) podyum: P1 → P2 → P3, 60–90ms stagger; rozet/takım hareket etmez (satır reveal); glow yok */
+.mo-hero-b .bg-pod-s { animation: mo-rise-b 220ms var(--motion-ease) both; }
+.mo-hero-b .bg-pod-s:nth-child(1) { animation-delay: calc(var(--motion-stagger) * 2); }
+.mo-hero-b .bg-pod-s:nth-child(2) { animation-delay: calc(var(--motion-stagger) * 2 + 75ms); }
+.mo-hero-b .bg-pod-s:nth-child(3) { animation-delay: calc(var(--motion-stagger) * 2 + 150ms); }
+
+/* 5) PİST SİLUETİ: gerçek path aynen; yalnız stroke-dashoffset ile "çiziliyor" (JS pathLength=1 işaretler); bitince statik görünüm */
+.mo-ciz-a { stroke-dasharray: 1; animation: mo-ciz-a var(--motion-draw) var(--motion-ease) both; }
+@keyframes mo-ciz-a { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.mo-ciz-b { stroke-dasharray: 1; animation: mo-ciz-b var(--motion-draw) var(--motion-ease) both; }
+@keyframes mo-ciz-b { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+/* 6) LIVE / STATE MİKRO HAREKET.
+   Nabız YALNIZ doğrulanmış LIVE'da (data-mo-t="live"; JS metne göre yazar): sakin opacity (+ çok küçük scale), 1.8s. LIVE TAHMİNİ: nabız YOK, amber statik. */
+@keyframes mo-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .62; } }
+@keyframes mo-pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: .6; } }
+.tk-nokta { animation: none; }
+.tk-live[data-mo-t="live"] .tk-nokta { animation: mo-pulse-dot var(--motion-pulse) ease-in-out infinite; }
+.bg-kod[data-mo-t="live"] { animation: mo-pulse var(--motion-pulse) ease-in-out infinite; }
+.dr.live::before { animation: mo-pulse var(--motion-pulse) ease-in-out infinite; }
+.dr.live:has(.tahmini)::before { animation: none; }       /* Hafta rozeti: saat/faz tahmini ise nabız yok */
+/* kritik state: tek seferlik kısa reveal, sonra statik (yanıp sönme YOK) */
+[data-mo-t="kirmizi"].mo-durum-a { animation: mo-durum-kirmizi-a 620ms var(--motion-ease-state) backwards; }
+@keyframes mo-durum-kirmizi-a { from { opacity: .35; transform: scale(1.03); background-color: rgba(225,6,0,.32); } 55% { opacity: 1; } to { transform: none; background-color: transparent; } }
+[data-mo-t="kirmizi"].mo-durum-b { animation: mo-durum-kirmizi-b 620ms var(--motion-ease-state) backwards; }
+@keyframes mo-durum-kirmizi-b { from { opacity: .35; transform: scale(1.03); background-color: rgba(225,6,0,.32); } 55% { opacity: 1; } to { transform: none; background-color: transparent; } }
+[data-mo-t="bekle"].mo-durum-a { animation: mo-durum-bekle-a 620ms var(--motion-ease-state) backwards; }
+@keyframes mo-durum-bekle-a { from { opacity: .35; transform: scale(1.03); background-color: rgba(224,168,0,.26); } 55% { opacity: 1; } to { transform: none; background-color: transparent; } }
+[data-mo-t="bekle"].mo-durum-b { animation: mo-durum-bekle-b 620ms var(--motion-ease-state) backwards; }
+@keyframes mo-durum-bekle-b { from { opacity: .35; transform: scale(1.03); background-color: rgba(224,168,0,.26); } 55% { opacity: 1; } to { transform: none; background-color: transparent; } }
+[data-mo-t="yesil"].mo-durum-a { animation: mo-durum-yesil-a 620ms var(--motion-ease-state) backwards; }
+@keyframes mo-durum-yesil-a { from { opacity: .35; transform: scale(1.03); background-color: rgba(34,197,94,.24); } 55% { opacity: 1; } to { transform: none; background-color: transparent; } }
+[data-mo-t="yesil"].mo-durum-b { animation: mo-durum-yesil-b 620ms var(--motion-ease-state) backwards; }
+@keyframes mo-durum-yesil-b { from { opacity: .35; transform: scale(1.03); background-color: rgba(34,197,94,.24); } 55% { opacity: 1; } to { transform: none; background-color: transparent; } }
+.mo-durum-a:not([data-mo-t]) { animation: mo-rise-a var(--motion-panel) var(--motion-ease-state) both; }
+.mo-durum-b:not([data-mo-t]) { animation: mo-rise-b var(--motion-panel) var(--motion-ease-state) both; }
+
+/* 7) TICKER: görününce 6px + opacity (180–220ms); gizlenirken 160ms fade (display geçişi); metin değişince yalnız içerik crossfade */
+.tk { transition: opacity var(--motion-normal) var(--motion-ease), transform var(--motion-normal) var(--motion-ease), display var(--motion-normal) allow-discrete; }
+.tk[hidden] { opacity: 0; transform: translateY(-6px); transition-duration: 160ms; pointer-events: none; }
+@starting-style { .tk:not([hidden]) { opacity: 0; transform: translateY(-6px); } }
+.mo-akis-a { animation: mo-akis-a var(--motion-normal) var(--motion-ease-state) both; }
+@keyframes mo-akis-a { from { opacity: .35; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
+.mo-akis-b { animation: mo-akis-b var(--motion-normal) var(--motion-ease-state) both; }
+@keyframes mo-akis-b { from { opacity: .35; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
+
+/* 8) GERİ SAYIM: yalnız DEĞİŞEN hane çok hafif dikey swap (120–160ms); kutular yerinden oynamaz (layout shift 0) */
+.mo-sw-a { animation: mo-sw-a var(--motion-fast) var(--motion-ease) both; }
+@keyframes mo-sw-a { from { opacity: .35; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+.mo-sw-b { animation: mo-sw-b var(--motion-fast) var(--motion-ease) both; }
+@keyframes mo-sw-b { from { opacity: .35; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+
+/* 9) SEANS KARTLARI: seçili kart border/tint 200ms (hafta sayfası yeniden çizildiği için JS yeni seçili karta işaretler); detay paneli 260ms fade/slide; LIVE'a geçişte kart bir kez kısa vurgu */
+.mo-sel-a { animation: mo-sel-a var(--motion-normal) var(--motion-ease) backwards; }
+@keyframes mo-sel-a { from { border-color: var(--cizgi); background-color: transparent; } }
+.mo-panel-a { animation: mo-panel-a var(--motion-panel) var(--motion-ease) both; }
+@keyframes mo-panel-a { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.mo-klive-a { animation: mo-klive-a 520ms var(--motion-ease-state) backwards; }
+@keyframes mo-klive-a { from { background-color: rgba(225,6,0,.22); } }
+.mo-sel-b { animation: mo-sel-b var(--motion-normal) var(--motion-ease) backwards; }
+@keyframes mo-sel-b { from { border-color: var(--cizgi); background-color: transparent; } }
+.mo-panel-b { animation: mo-panel-b var(--motion-panel) var(--motion-ease) both; }
+@keyframes mo-panel-b { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.mo-klive-b { animation: mo-klive-b 520ms var(--motion-ease-state) backwards; }
+@keyframes mo-klive-b { from { background-color: rgba(225,6,0,.22); } }
+
+/* 10) AKORDEON / DETAY / LAZY PANELLER: açılış opacity + 4px (280ms); kapanış anında (native details / yeniden çizim → animasyonsuz, bilinçli). Sahte skeleton YOK. */
+details.mo-ac-a > :not(summary), :not(details).mo-ac-a { animation: mo-ac-a var(--motion-panel) var(--motion-ease) both; }
+@keyframes mo-ac-a { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+details.mo-ac-b > :not(summary), :not(details).mo-ac-b { animation: mo-ac-b var(--motion-panel) var(--motion-ease) both; }
+@keyframes mo-ac-b { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* 11) SONUÇ TABLOSU: ilk 3 satır 75ms stagger, kalan satırlar toplu fade (22 satır tek tek animate edilmez) */
+.mo-res-a { animation: mo-hold-a 440ms linear both; }
+.mo-res-a > tr { animation: mo-fade-a 220ms var(--motion-ease) 160ms both; }
+.mo-res-a > tr:nth-child(-n+3) { animation: mo-rise-a 220ms var(--motion-ease) both; }
+.mo-res-a > tr:nth-child(2) { animation-delay: 75ms; }
+.mo-res-a > tr:nth-child(3) { animation-delay: 150ms; }
+.mo-res-b { animation: mo-hold-b 440ms linear both; }
+.mo-res-b > tr { animation: mo-fade-b 220ms var(--motion-ease) 160ms both; }
+.mo-res-b > tr:nth-child(-n+3) { animation: mo-rise-b 220ms var(--motion-ease) both; }
+.mo-res-b > tr:nth-child(2) { animation-delay: 75ms; }
+.mo-res-b > tr:nth-child(3) { animation-delay: 150ms; }
+
+/* 12) "YARIŞI KAÇIRDIYSAN" kartı: ilk açılışta başlık → ana özet → detay hafif stagger; detay açılınca yalnız detay (akordeon kuralı) */
+.mo-kart-a { animation: mo-hold-a var(--motion-reveal) linear both; }
+.mo-kart-a > * { animation: mo-rise-a var(--motion-panel) var(--motion-ease) both; }
+.mo-kart-a > :nth-child(2) { animation-delay: 55ms; }
+.mo-kart-a > :nth-child(3) { animation-delay: 110ms; }
+.mo-kart-a > :nth-child(4) { animation-delay: 165ms; }
+.mo-kart-a > :nth-child(n+5) { animation-delay: 200ms; }
+.mo-kart-b { animation: mo-hold-b var(--motion-reveal) linear both; }
+.mo-kart-b > * { animation: mo-rise-b var(--motion-panel) var(--motion-ease) both; }
+.mo-kart-b > :nth-child(2) { animation-delay: 55ms; }
+.mo-kart-b > :nth-child(3) { animation-delay: 110ms; }
+.mo-kart-b > :nth-child(4) { animation-delay: 165ms; }
+.mo-kart-b > :nth-child(n+5) { animation-delay: 200ms; }
+
+/* 13) İKON MİKRO ETKİLEŞİMLERİ: 120–160ms opacity/arka plan; hover ≤ 1.03; press ≥ 0.97; hover yalnız hover destekleyen cihazlarda (mobilde hover bağımlılığı yok) */
+html[data-nav="v3"] .rc-sag > :is(.nv-tb, #btn-ara, #btn-tema) { transition: color var(--motion-fast) var(--motion-ease), background-color var(--motion-fast) var(--motion-ease), border-color var(--motion-fast) var(--motion-ease), transform var(--motion-fast) var(--motion-ease); }
+@media (hover: hover) {
+  html[data-nav="v3"] .rc-sag > :is(.nv-tb, #btn-ara, #btn-tema):hover { transform: scale(1.03); }
+  html[data-nav="v3"] #nav-v3 button:hover .nv-ik { transform: scale(1.03); }
+}
+html[data-nav="v3"] .rc-sag > :is(.nv-tb, #btn-ara, #btn-tema):active { transform: scale(.97); }
+html[data-nav="v3"] #nav-v3 button:active { transform: scale(.98); }
+@keyframes mo-yildiz { from { opacity: .4; transform: scale(.8); } to { opacity: 1; transform: none; } }
+html[data-nav="v3"] #nv-fav.nv-on .nv-yildiz { animation: mo-yildiz var(--motion-normal) var(--motion-ease) both; }

@@ -1,0 +1,56 @@
+/* Pilot & Pist → Pilot Karşılaştırma (SEZON PERFORMANSI + SON 5 FORM). Yalnızca #pk-ek ve .pk-temel kapsamı; başka kartlara dokunmaz. */
+:root { --pk-iyi:#e8f1fb; --pk-arti:#2f6db5; --pk-eksi:#c26a12; --pk-hata:#b3261e; }
+:root[data-tema="koyu"] { --pk-iyi:#1c2f47; --pk-arti:#6aa9ff; --pk-eksi:#ffa04d; --pk-hata:#ff7b72; }
+.pk-temel { margin-top:0; }
+.pk h2 { margin:18px 0 6px; }
+.pk .not { color:var(--soluk); font-size:.84rem; margin:0 0 10px; }
+.pk-gizli { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+.pk-soluk { color:var(--soluk); }
+.pk-uyari { background:var(--kart); border:1px solid var(--pk-hata); border-radius:8px; padding:8px 10px; font-size:.84rem; margin:0 0 10px; }
+.pk-link { background:none; border:0; color:var(--vurgu); text-decoration:underline; cursor:pointer; font:inherit; padding:0; min-height:32px; }
+
+.pk-tablo { background:var(--kart); border:1px solid var(--cizgi); border-radius:10px; overflow:hidden; }
+.pk-r { display:grid; grid-template-columns:minmax(0,1fr) 150px minmax(0,1fr); align-items:stretch; border-top:1px solid var(--cizgi); }
+.pk-r:first-child { border-top:0; }
+.pk-h { padding:8px 10px; min-width:0; display:flex; flex-direction:column; gap:2px; justify-content:center; }
+.pk-ha { text-align:right; align-items:flex-end; }
+.pk-hb { text-align:left; align-items:flex-start; }
+.pk-ik { display:none; font-size:.66rem; font-weight:700; color:var(--soluk); letter-spacing:.04em; }
+.pk-v { font-size:1.15rem; font-weight:600; font-variant-numeric:tabular-nums; }
+.pk-iyi { background:var(--pk-iyi); }
+.pk-iyi .pk-v { font-weight:800; }
+.pk-m { padding:8px 6px; text-align:center; font-size:.8rem; color:var(--soluk); display:flex; align-items:center; justify-content:center; gap:4px; flex-wrap:wrap; border-left:1px solid var(--cizgi); border-right:1px solid var(--cizgi); }
+.pk-ornek { font-size:.7rem; color:var(--soluk); overflow-wrap:anywhere; }
+.pk-bar { display:block; width:100%; height:5px; background:var(--cizgi); border-radius:3px; margin-top:3px; overflow:hidden; opacity:.9; }
+.pk-bar i { display:block; height:100%; border-radius:3px; }
+.pk-ha .pk-bar i { margin-left:auto; }
+.pk-arti { background:var(--pk-arti); }
+.pk-eksi { background:var(--pk-eksi); }
+.pk-bas .pk-h { padding:10px; gap:4px; }
+.pk-bk { font-weight:800; font-size:1.05rem; }
+.pk-bad { font-size:.84rem; overflow-wrap:anywhere; }
+.pk-fav { color:#d99a00; }
+
+.pk-form { background:var(--kart); border:1px solid var(--cizgi); border-radius:10px; padding:8px 10px; display:flex; flex-direction:column; gap:8px; }
+.pk-fs { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.pk-fk { font-weight:800; min-width:2.6em; }
+.pk-fl { display:flex; align-items:center; flex-wrap:wrap; gap:2px 0; font-variant-numeric:tabular-nums; }
+.pk-fi { display:inline-block; min-width:2.4em; text-align:center; padding:2px 4px; border:1px solid var(--cizgi); border-radius:6px; font-size:.84rem; }
+.pk-ay { color:var(--soluk); padding:0 2px; }
+.pk-f-pod { border-color:var(--yazi); font-weight:700; }
+.pk-f-dus, .pk-f-yok { color:var(--soluk); }
+.pk-f-yok { border-style:dashed; }
+.pk-f-dnf, .pk-f-dns, .pk-f-dsq { border-color:var(--pk-hata); color:var(--pk-hata); font-weight:700; }
+
+@media (max-width:640px) {
+  .pk-r { grid-template-columns:1fr 1fr; }
+  .pk-m { grid-column:1 / -1; grid-row:1; border:0; padding:6px 8px 0; justify-content:flex-start; font-weight:700; color:var(--yazi); }
+  .pk-bas { grid-template-columns:1fr 1fr; }
+  .pk-bas .pk-m { display:none; }
+  .pk-h, .pk-ha, .pk-hb { text-align:left; align-items:flex-start; padding:4px 10px 8px; }
+  .pk-bas .pk-h { padding:10px; }
+  .pk-ik { display:block; }
+  .pk-bas .pk-ik { display:none; }
+  .pk-ha .pk-bar i { margin-left:0; }
+  .pk-fi { min-width:2.2em; font-size:.8rem; }
+}

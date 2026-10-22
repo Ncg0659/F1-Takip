@@ -1,0 +1,35 @@
+/* KİŞİSELLEŞTİRME v1 — FAVORİ PİLOT görsel dili: küçük ★ + çok hafif nötr tint/çizgi. Yeni parlak renk YOK, glow YOK,
+   kırmızı (LIVE/state) favori için KULLANILMAZ. Yalnız renk/arka plan; yerleşim (boyut/hizalama) değişmez. */
+:root { --fav-tint: color-mix(in srgb, var(--yazi) 7%, transparent); --fav-cizgi: color-mix(in srgb, var(--yazi) 38%, transparent); --fav-yildiz: color-mix(in srgb, var(--yazi) 72%, transparent); }
+
+/* tablo satırı (puan durumu, sonuçlar) — eski kırmızı tint yerine nötr */
+tr.favori td, tr[data-fav] td { background: var(--fav-tint); font-weight: 600; }
+tr.favori td:first-child, tr[data-fav] td:first-child { box-shadow: inset 2px 0 0 var(--fav-cizgi); }
+tr[data-fav] .pilot, li[data-fav] .pilot, .h-fp3[data-fav] .pilot { position: relative; }
+/* ★ mutlak konumlu: hücre/sütun genişliğini DEĞİŞTİRMEZ (hücre sağ iç boşluğuna oturur) */
+tr[data-fav] .pilot::after, li[data-fav] .pilot::after, .h-fp3[data-fav] .pilot::after { content: "★"; position: absolute; left: 100%; top: 50%; transform: translateY(-50%); margin-left: 4px; font-size: .7rem; line-height: 1; color: var(--fav-yildiz); pointer-events: none; }
+
+/* liste öğeleri (BUGÜN podyum/şampiyona, hafta P1–P3 satırı, analiz pilot satırları) */
+.bg-pod li[data-fav], .bg-std li[data-fav], .h-fp3[data-fav], li.gc-pilot[data-fav], li.pt-pilot[data-fav], li.ta-sat[data-fav] { background: var(--fav-tint); box-shadow: inset 2px 0 0 var(--fav-cizgi); }
+li.gc-pilot[data-fav] > b::after, li.pt-pilot[data-fav] > b::after, li.ta-sat[data-fav] .ta-pilot::after { content: " ★"; font-size: .7em; color: var(--fav-yildiz); }
+
+/* P1–P3 özet çipi: çok hafif vurgu (kırmızı değil) */
+.v3-cip[data-fav] { background: var(--fav-tint); border-color: var(--fav-cizgi); }
+
+/* pilot profili başlığı */
+#dp-panel[data-fav] .dp-baslik::after { content: "★ FAVORİ"; margin-left: 10px; padding: 1px 7px; border: 1px solid var(--fav-cizgi); border-radius: 3px; font-family: var(--f-sayi); font-size: .62rem; font-weight: 700; letter-spacing: .12em; vertical-align: middle; color: var(--fav-yildiz); white-space: nowrap; }
+
+/* BUGÜN — küçük, ikincil kişisel özet (hero'dan zayıf) */
+.fv-blok { margin: 10px 0 0; padding: 8px 0 6px 12px; border-top: 1px solid var(--cizgi); border-left: 2px solid var(--fav-cizgi); }
+.fv-blok p { margin: 0; }
+.fv-ust { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; font-size: .86rem; }
+.fv-y { font-size: .78rem; color: var(--fav-yildiz); }
+.fv-kod { font-family: var(--f-sayi); font-size: .72rem; letter-spacing: .08em; padding: 1px 6px; border: 1px solid var(--cizgi); border-radius: 3px; }
+.fv-ad { color: var(--soluk); }
+.fv-s { margin-top: 3px !important; font-size: .84rem; color: var(--soluk); font-variant-numeric: tabular-nums; }
+
+/* SEZON — kompakt şampiyona satırı */
+.fv-satir { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin: 0 0 8px; padding: 6px 0 6px 12px; border-left: 2px solid var(--fav-cizgi); font-size: .86rem; color: var(--soluk); }
+.fv-satir b { color: var(--yazi); font-variant-numeric: tabular-nums; }
+.fv-satir .fv-kod { color: var(--yazi); }
+

@@ -1,0 +1,14 @@
+/* İZLERKEN ÖĞREN v2 — bağlamsal işaret görünümü. Mevcut .a2-i bileşenini yeniden kullanır; yeni renk / glow / animasyon YOK.
+   Nötr: LIVE kırmızısı ve favori ★ ile karışmaz (hover/odak de kırmızı değil). Yerleşimi bozmaz: işaret satır içi 14px, dokunma alanı ::after ile büyür. */
+.a2-b2 { position: relative; flex: 0 0 auto; margin-left: 6px; color: var(--soluk); opacity: .85; vertical-align: middle; }
+.a2-b2::after { content: ""; position: absolute; inset: -9px; }                       /* görünmez dokunma alanı (yerleşime etki etmez) */
+.a2-b2:hover, .a2-b2:focus-visible { color: var(--yazi); opacity: 1; }
+.a2-b2:focus-visible { outline: 2px solid var(--yazi); outline-offset: 2px; }
+.a2-b2.a2-gorulen { opacity: .85; }
+.so-metin > b .a2-b2, .tl-kat + .a2-b2 { margin-left: 5px; }
+.bg-ust .a2-b2, .g3-kod + .a2-b2 { margin-left: 6px; }
+td .a2-b2 { margin-left: 5px; }
+/* "Neden önemli?" ve İngilizce ad (ogren-ui.js terimGorunum) */
+.a2-neden { margin: 8px 0 0; font-size: .86rem; line-height: 1.45; }
+.a2-neden b { font-weight: 700; }
+.a2-en { font-style: italic; }
