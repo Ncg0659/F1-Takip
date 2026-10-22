@@ -1,0 +1,41 @@
+/* A4.5 — Live Ticker. Yalnızca .tk-* sınıfları ve #a45-ticker. Renkler mevcut tema değişkenlerinden. Canlı oturum yokken tamamen gizli (hidden). */
+.tk { margin:0 0 10px; }
+.tk[hidden] { display:none; }
+.tk-btn { display:flex; align-items:center; gap:10px; width:100%; min-height:40px; padding:4px 12px; border:1px solid var(--cizgi); border-left:3px solid var(--vurgu); border-radius:8px;
+  background:var(--kart); color:var(--yazi); font:inherit; font-size:.82rem; line-height:1.3; text-align:left; cursor:pointer; overflow:hidden; }
+.tk-btn:hover { border-color:var(--vurgu); }
+.tk-btn:focus-visible { outline:2px solid var(--vurgu); outline-offset:2px; }
+.tk-live { flex:none; display:inline-flex; align-items:center; gap:6px; font-family:var(--f-sayi, inherit); font-weight:700; font-size:.74rem; letter-spacing:.12em; color:var(--vurgu); }
+.tk-nokta { width:8px; height:8px; border-radius:50%; background:var(--vurgu); display:inline-block; animation:tk-nabiz 2.4s ease-in-out infinite; }
+@keyframes tk-nabiz { 0%,100% { opacity:1; } 50% { opacity:.45; } }
+@media (prefers-reduced-motion:reduce) { .tk-nokta { animation:none; } }
+.tk-oturum { flex:none; font-family:var(--f-sayi, inherit); font-size:.66rem; letter-spacing:.1em; color:var(--soluk); border:1px solid var(--cizgi); border-radius:4px; padding:0 5px; }
+.tk-akis { flex:1; min-width:0; display:flex; align-items:center; gap:14px; overflow:hidden; white-space:nowrap; }
+.tk-o { flex:none; display:inline-flex; align-items:center; gap:6px; }
+.tk-o[hidden] { display:none; }
+.tk-o + .tk-o { padding-left:14px; border-left:1px solid var(--cizgi); }
+.tk-o:first-child { flex:0 1 auto; min-width:0; }
+.tk-o:first-child .tk-m { overflow:hidden; text-overflow:ellipsis; }
+.tk-kn { flex:none; width:7px; height:7px; border-radius:2px; background:var(--kc, var(--soluk)); }
+.tk-yas { flex:none; font-family:var(--f-sayi, inherit); font-weight:600; font-size:.7rem; color:var(--soluk); }
+.tk-yeni .tk-m { font-weight:700; }
+.tk-bos { color:var(--soluk); overflow:hidden; text-overflow:ellipsis; }
+.tk-git { flex:none; margin-left:auto; padding-left:6px; font-family:var(--f-sayi, inherit); font-size:.74rem; color:var(--soluk); white-space:nowrap; }
+.tk-btn:hover .tk-git { color:var(--vurgu); }
+.tk-sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+@media (max-width:600px) {
+  .tk-btn { gap:8px; padding:4px 10px; min-height:40px; }
+  .tk-o + .tk-o { display:none; }          /* mobilde yalnızca en yeni olay */
+  .tk-oturum { display:none; }
+  .tk-git-ad { display:none; }
+  .tk-git { padding-left:0; font-size:.9rem; }
+}
+/* Program override (ertelendi / gecikti / iptal): LIVE rozeti ve oturum etiketi yerine tek durum satırı */
+.tk-prog .tk-live, .tk-prog .tk-oturum { display:none; }
+.tk-pr { font-family:var(--f-sayi, inherit); font-weight:700; font-size:.8rem; letter-spacing:.04em; color:var(--vurgu); overflow:hidden; text-overflow:ellipsis; min-width:0; }
+@media (max-width:600px) { .tk-pr2 { display:none; } }   /* mobilde yalnızca durum; "yeni saat bekleniyor" ek bilgisi masaüstünde */
+/* durum dili BUGÜN hero ile aynı: tahmini → amber, nabız yok; gerçek LIVE/RED FLAG → mevcut kırmızı */
+.tk-live[data-ton="tahmin"], .tk-live[data-ton="bekle"] { color:#e0a800; }
+:root[data-tema="acik"] .tk-live[data-ton="tahmin"], :root[data-tema="acik"] .tk-live[data-ton="bekle"] { color:#8a6100; }
+.tk-live[data-ton="tahmin"] .tk-nokta, .tk-live[data-ton="bekle"] .tk-nokta { background:currentColor; animation:none; }

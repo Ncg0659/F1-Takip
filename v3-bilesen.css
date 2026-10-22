@@ -1,0 +1,51 @@
+/* UI v3 — ortak bileşenler. İnce border, az radius, monospace teknik değer, düşük kontrast yardımcı metin.
+   Kırmızı YALNIZ durum/seçim içindir. Glow/neon, animasyon, text-transform (İngilizce sabit terimlerde) YOK. */
+:root { --v3-soluk:var(--soluk); }
+:root[data-tema="acik"] { --v3-soluk:#4a596a; }
+
+/* A) durum şeridi */
+.v3-durum { display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; min-width:0; padding:6px 10px; border:1px solid var(--cizgi); border-left-width:2px; border-radius:3px; background:transparent; font-size:.84rem; }
+.v3-durum .dr { font-family:var(--f-sayi); font-size:.7rem; letter-spacing:.08em; }
+.v3-durum-m { color:var(--v3-soluk); min-width:0; overflow-wrap:anywhere; }
+.v3-durum-m .h-geri { font-family:var(--f-sayi); color:var(--yazi); }
+.v3-d-live { border-left-color:var(--vurgu); }
+.v3-d-kirmizi { border-left-color:var(--vurgu); }
+.v3-d-bekle { border-left-color:#f59e0b; }
+.v3-d-bitti, .v3-d-yaklasan { border-left-color:var(--cizgi); }
+
+/* B) özet çipi */
+.v3-cipler { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 0; padding:0; min-width:0; }
+.v3-cipler:empty { display:none; }
+.v3-cip { display:inline-flex; align-items:baseline; gap:5px; padding:3px 8px; border:1px solid var(--cizgi); border-radius:3px; background:transparent; font-family:var(--f-sayi); font-size:.74rem; letter-spacing:.04em; white-space:nowrap; }
+.v3-cip b { font-weight:700; color:var(--yazi); }
+.v3-cip i { font-style:normal; color:var(--v3-soluk); }
+.v3-cip-p b:first-child { color:var(--v3-soluk); }
+
+/* C) metrik karosu */
+.v3-metrik { display:flex; flex-direction:column; gap:2px; padding:8px 10px; border:1px solid var(--cizgi); border-radius:3px; min-width:0; }
+.v3-metrik b { font-family:var(--f-sayi); font-size:1.15rem; line-height:1.1; }
+.v3-metrik span { font-size:.68rem; color:var(--v3-soluk); letter-spacing:.06em; }
+
+/* D) tek-seçili sekmeler */
+.v3-sekmeler { display:flex; flex-wrap:wrap; gap:0; margin:12px 0 0; border-bottom:1px solid var(--cizgi); min-width:0; }
+.v3-sek { appearance:none; background:transparent; color:var(--v3-soluk); border:0; border-bottom:2px solid transparent; margin-bottom:-1px; padding:8px 12px; min-height:40px; font-family:var(--f-sayi); font-size:.7rem; letter-spacing:.1em; cursor:pointer; }
+.v3-sek:hover { color:var(--yazi); }
+.v3-sek.aktif { color:var(--yazi); border-bottom-color:var(--vurgu); }
+.v3-sek:focus-visible { outline:2px solid var(--vurgu); outline-offset:-2px; }
+.v3-sek-govde { padding-top:12px; min-width:0; }
+@media (max-width:560px) { .v3-sekmeler { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; } .v3-sekmeler::-webkit-scrollbar { display:none; } .v3-sek { flex:0 0 auto; padding:8px 8px; letter-spacing:.05em; } }
+
+/* E) neden önemli? mini kartı */
+.v3-neden { margin:10px 0 0; padding:7px 10px; border:1px solid var(--cizgi); border-radius:3px; background:transparent; min-width:0; }
+.v3-neden b { display:block; font-family:var(--f-sayi); font-size:.64rem; font-weight:600; letter-spacing:.12em; color:var(--v3-soluk); }
+.v3-neden p { margin:2px 0 0; font-size:.84rem; line-height:1.35; color:var(--yazi); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere; }
+
+/* F) standart accordion */
+.v3-acord { margin:10px 0 0; border:1px solid var(--cizgi); border-radius:3px; min-width:0; }
+.v3-acord > summary { display:flex; align-items:center; gap:10px; padding:9px 12px; min-height:40px; cursor:pointer; list-style:none; font-family:var(--f-sayi); font-size:.7rem; letter-spacing:.1em; }
+.v3-acord > summary::-webkit-details-marker { display:none; }
+.v3-acord > summary::after { content:"+"; margin-left:auto; color:var(--v3-soluk); font-size:.95rem; }
+.v3-acord[open] > summary::after { content:"–"; }
+.v3-acord > summary:focus-visible { outline:2px solid var(--vurgu); outline-offset:-2px; }
+.v3-ao { color:var(--v3-soluk); font-family:inherit; }
+.v3-ag { padding:0 12px 12px; min-width:0; }

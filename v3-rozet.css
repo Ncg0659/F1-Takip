@@ -1,0 +1,62 @@
+/* UI v3 — GLOBAL ROZET SİSTEMİ (tek kaynak). Takım rozeti, pilot kodu, pozisyon rozeti, info-row.
+   Yalnız sunum: sabit ölçü + hizalama. Renk mantığı (takım accent, altın/gümüş/bronz) mevcut sistemde kalır.
+   En son yüklenir → ekran-özel kopya kurallar (sezon-takvim .st-k, diger-ui mobil .takim) bu standarda uyar. */
+:root { --v3-p1:#6b4700; --v3-p2:#3f4c5e; --v3-p3:#7c3d10; --v3-pt:14%; --takim-w:112px; --kod-w:42px; --poz-w:30px; }
+:root[data-tema="koyu"] { --v3-p1:#f5d06f; --v3-p2:#dbe3ee; --v3-p3:#e9ab7b; --v3-pt:20%; }
+
+/* ---- takım rozeti: tek genişlik ---- */
+.takim:not(.takim-yok), .v3-team-badge:not(.takim-yok) { box-sizing:border-box; width:var(--takim-w); min-width:var(--takim-w); max-width:var(--takim-w); justify-content:center; text-align:center; white-space:nowrap; overflow:hidden; padding:0 6px 0 9px; font-size:.66rem; letter-spacing:.08em; }
+.takim-uzun:not(.takim-yok) { font-size:.58rem; letter-spacing:.04em; }
+.takim-cok-uzun:not(.takim-yok) { font-size:.52rem; letter-spacing:.02em; }
+#seri-pilot-govde .takim, #seri-takim-govde .takim { padding:0 5px 0 8px; letter-spacing:.06em; }
+
+/* ---- pilot kodu: tek ölçü, monospace ---- */
+.kod, .st-k, .v3-driver-code { box-sizing:border-box; display:inline-flex; align-items:center; justify-content:center; width:var(--kod-w); min-width:var(--kod-w); height:20px; padding:0; flex:none; font-family:var(--f-sayi); font-variant-numeric:tabular-nums; font-weight:700; font-size:.72rem; line-height:1; letter-spacing:.04em; white-space:nowrap; text-align:center; color:var(--yazi); background:var(--kart2); border:1px solid var(--cizgi); border-radius:3px; vertical-align:middle; }
+.pilot { align-items:center; }
+
+/* ---- pozisyon rozeti: 1/2/3 aynı ölçü, belirgin madalya renkleri ---- */
+.poz, .v3-position-badge { box-sizing:border-box; width:var(--poz-w); min-width:var(--poz-w); height:24px; padding:0; flex:none; font-size:.88rem; line-height:1; text-align:center; font-variant-numeric:tabular-nums; }
+.poz-1, .poz-2, .poz-3 { font-weight:800; border-width:2px; }
+.poz-1 { --pc:var(--v3-p1); } .poz-2 { --pc:var(--v3-p2); } .poz-3 { --pc:var(--v3-p3); }
+.poz-1, .poz-2, .poz-3 { color:var(--pc); border-color:var(--pc); background:color-mix(in srgb, var(--pc) var(--v3-pt), transparent); }
+
+/* ---- info-row: ICON | LABEL | VALUE(+CODE) | DESCRIPTION ---- */
+.yo-s, .v3-info-row { display:grid; grid-template-columns:minmax(0,128px) minmax(0,1fr); align-items:baseline; gap:2px 10px; min-height:26px; }
+.yo-s .yo-et, .v3-info-row .yo-et { display:grid; grid-template-columns:16px minmax(0,1fr); align-items:baseline; gap:0 6px; }
+.yo-s .yo-et .ik { align-self:center; }
+.yo-s .yo-et > span { line-height:1.2; }
+.yo-s .yo-d { display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 5px; }
+.yo-s .yo-pilot { display:inline-flex; align-items:center; gap:6px; }
+.yo-s .yo-pilot:only-of-type .yo-ad { display:inline-block; min-width:4.6em; }   /* tek pilotlu satırlarda kodlar aynı kolonda */
+.yo-s .yo-alt { grid-column:2; flex-basis:auto; }
+@media (max-width:560px) {
+  :root { --takim-w:100px; --kod-w:40px; --poz-w:28px; }
+  .yo-s, .v3-info-row { grid-template-columns:minmax(0,118px) minmax(0,1fr); gap:0 8px; min-height:24px; }
+  .yo-s .yo-et { font-size:.66rem; letter-spacing:.03em; }
+  .yo-s .yo-ad { min-width:0; }
+  .takim:not(.takim-yok) { font-size:.6rem; letter-spacing:.05em; }
+  .takim-uzun:not(.takim-yok) { font-size:.54rem; letter-spacing:.02em; }
+  .takim-cok-uzun:not(.takim-yok) { font-size:.5rem; letter-spacing:0; }
+}
+
+/* ---- tablo hizası: rozetli hücreler satır yüksekliğini bozmaz; kod + ad aynı baseline ---- */
+td .takim, td .poz, td .kod { vertical-align:middle; }
+td .pilot { white-space:nowrap; }
+table td:has(> .takim), table td:has(> .poz) { white-space:nowrap; }
+
+/* ---- Yarışı Kaçırdıysan v2 (açılır bölüm): ana yüzeyle aynı info-row grameri (yalnız yerleşim) ---- */
+.yo2-k { display:grid; grid-template-columns:minmax(0,128px) minmax(0,1fr); align-items:baseline; gap:2px 10px; min-height:26px; }
+.yo2-k .yo2-et { display:grid; grid-template-columns:16px minmax(0,1fr); align-items:baseline; gap:0 6px; }
+.yo2-k .yo2-et .ik { align-self:center; }
+.yo2-k .yo2-et > span { line-height:1.2; }
+.yo2-k .yo2-d { flex-direction:column; gap:2px; }
+.yo2-k .yo2-alt { grid-column:2; margin:0; }
+.yo2-b { display:grid; grid-template-columns:minmax(0,128px) minmax(0,1fr); align-items:baseline; gap:2px 10px; }
+.yo2-b .yo2-bb { grid-column:1; grid-row:1; margin:0; }
+.yo2-b > .yo2-ul { grid-column:2; grid-row:1; }
+.yo2-b > .yo2-not { grid-column:2; margin:2px 0 0; }
+@media (min-width:900px) { .yo2-detay { columns:1; } }
+@media (max-width:560px) {
+  .yo2-k, .yo2-b { grid-template-columns:minmax(0,118px) minmax(0,1fr); gap:0 8px; }
+  .yo2-k .yo2-et, .yo2-b .yo2-bb { font-size:.66rem; letter-spacing:.03em; }
+}

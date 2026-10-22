@@ -1,0 +1,75 @@
+/* UI v3 — Yarış Analizi / POST-RACE ANALYSIS. Yalnız sunum. Kırmızı yalnız durum/seçim içindir; glow/animasyon yok.
+   Yüzey dili: divider + düşük kontrast panel + teknik metadata (Yarış Günü ile aynı). */
+#sekme-yaris { --g3-c:var(--cizgi); }
+:root[data-tema="acik"] #sekme-yaris { --g3-c:rgba(15,23,42,.12); }
+#sekme-yaris:not([hidden]) { display:flex; flex-direction:column; min-width:0; }
+#sekme-yaris > * { min-width:0; }
+#sekme-yaris > h1 { order:0; margin:0 0 8px; font-size:1.3rem; }
+#sekme-yaris > #yv-hero { order:1; }
+#sekme-yaris > #yaris-durum { order:2; }
+#sekme-yaris > #yv-cipler { order:3; }
+#sekme-yaris > #yv-neden { order:4; }
+#sekme-yaris > #yo-kart { order:5; }
+#sekme-yaris > #yv-detay { order:6; }
+#yaris-durum { margin:6px 0 0; font-size:.82rem; color:var(--v3-soluk); }
+#yaris-durum:empty { display:none; }
+
+/* ---- hero: kompakt teknik özet ---- */
+#yv-hero { margin:0; padding:9px 0 9px 14px; border-top:1px solid var(--g3-c); border-bottom:1px solid var(--g3-c); border-left:2px solid var(--vurgu); background:linear-gradient(90deg, rgba(225,6,0,.06), transparent 55%); }
+:root[data-tema="acik"] #yv-hero { background:linear-gradient(90deg, rgba(225,6,0,.04), transparent 50%); }
+.yv-hero-g { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,230px); gap:6px 16px; align-items:center; }
+.yv-sol { min-width:0; }
+.yv-ust { display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; margin:0 0 6px; }
+#yv-tur { font-family:var(--f-sayi); font-weight:700; letter-spacing:.14em; border:0; padding:0; font-size:.7rem; color:var(--v3-soluk); }
+#yv-tur small { opacity:.7; font-weight:400; }
+#yv-tur:empty, #yv-durum:empty { display:none; }
+.yv-sprint { margin-left:6px; padding:0 6px; border:1px solid var(--vurgu); border-radius:3px; color:var(--vurgu); font-size:.6rem; font-weight:700; letter-spacing:.1em; }
+.yv-ust select { margin-left:auto; max-width:100%; min-height:32px; padding:2px 8px; font-size:.82rem; background:transparent; border:1px solid var(--g3-c); border-radius:3px; color:var(--yazi); }
+#yv-yer { display:flex; align-items:center; gap:12px; }
+#yv-yer b { display:block; font-family:var(--f-baslik); font-size:1.08rem; letter-spacing:.02em; line-height:1.15; }
+#yv-yer span.alt { display:block; font-size:.82rem; color:var(--soluk); }
+#yv-yer .bayrak { width:30px; height:22px; }
+#yv-yer:empty { display:none; }
+.yv-meta { display:flex; flex-wrap:wrap; gap:2px 14px; margin-top:6px; font-size:.8rem; color:var(--v3-soluk); }
+.yv-meta b { color:var(--yazi); font-weight:600; }
+.yv-meta i { font-style:normal; font-family:var(--f-sayi); font-size:.62rem; letter-spacing:.14em; margin-right:4px; }
+@media (max-width:560px) {
+  .yv-hero-g { grid-template-columns:minmax(0,1fr) minmax(0,110px); gap:4px 10px; }
+  .yv-ust select { margin-left:0; flex:1 1 100%; }
+  #yv-hero { padding-left:12px; }
+}
+
+/* ---- özet çipleri ---- */
+#yv-cipler .v3-cipler { margin:8px 0 0; gap:4px; }
+#yv-cipler .v3-cip { padding:1px 6px; font-size:.7rem; border-color:var(--g3-c); }
+
+/* ---- "Ne oldu?" ana özet: 1 cümle + [DETAY] ---- */
+#yv-neden { margin:0; min-width:0; }
+#yv-neden .ym { margin:8px 0 0; padding:6px 0 6px 10px; background:transparent; border:0; border-top:1px solid var(--g3-c); border-bottom:1px solid var(--g3-c); border-left:2px solid var(--vurgu); border-radius:0; }
+#yv-neden .ym-ac { position:relative; padding-right:62px; }
+#yv-neden .ym-ac::after { content:"DETAY"; position:absolute; right:0; top:3px; font-family:var(--f-sayi); font-size:.62rem; letter-spacing:.1em; color:var(--yazi); border:1px solid var(--g3-c); border-radius:3px; padding:1px 7px; }
+#yv-neden .ym-ac[aria-expanded="true"]::after { content:"DARALT"; }
+#yv-neden .ym-ozet { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+#yv-neden .ym-liste { margin:6px 0 2px; padding-left:20px; font-size:.86rem; }
+
+/* ---- Yarışı Kaçırdıysan (mevcut A6 kartı; içerik/hesap aynen): sakin yüzey ---- */
+#sekme-yaris > #yo-kart { margin:10px 0 0; padding:8px 0 4px 10px; background:transparent; border:0; border-top:1px solid var(--g3-c); border-left:2px solid var(--g3-c); border-radius:0; }
+
+/* ---- ayrıntı sekmeleri ---- */
+#yv-detay { margin:12px 0 0; padding-top:8px; border-top:1px solid var(--g3-c); min-width:0; }
+#yv-detay-baslik { font-family:var(--f-sayi); font-size:.66rem; letter-spacing:.14em; color:var(--v3-soluk); font-weight:600; }
+#yv-detay .v3-sekmeler { margin-top:6px; border-bottom-color:var(--g3-c); }
+#yv-sonuc-panel[hidden], #yv-a7-panel[hidden], #yv-pit-ek[hidden], #yv-tur-ek[hidden] { display:none; }
+#yv-sonuc-panel { margin-top:8px; }
+#yv-sonuc-panel .kap, #yv-pit-ek .kap { background:transparent; border:0; border-top:1px solid var(--g3-c); border-bottom:1px solid var(--g3-c); border-radius:0; box-shadow:none; overflow-x:auto; }
+#yv-sonuc-panel .ui-daralt { background:transparent; border:0; border-bottom:1px solid var(--g3-c); border-radius:0; box-shadow:none; min-height:36px; }
+#yv-a7-panel .so-ac[aria-expanded="true"], #yv-a7-panel .ta-ac[aria-expanded="true"], #yv-a7-panel .gc-ac[aria-expanded="true"], #yv-a7-panel .pt-ac[aria-expanded="true"], #yv-a7-panel .sh-ac[aria-expanded="true"] { display:none; }   /* sekme çubuğu açar; modülün kendi düğmesi JS ile tetiklenir */
+#yv-a7-panel { margin-top:8px; }
+#yv-pit-ek, #yv-tur-ek { margin-top:10px; }
+.yv-h2 { margin:10px 0 4px; font-family:var(--f-sayi); font-size:.66rem; letter-spacing:.14em; color:var(--v3-soluk); font-weight:600; text-transform:none; }
+#yv-detay .v3-acord { border-color:var(--g3-c); background:transparent; }
+:root[data-tema="acik"] #yv-detay .v3-acord { border-color:transparent; border-top:1px solid var(--g3-c); border-bottom:1px solid var(--g3-c); border-radius:0; }
+#yv-tur-ek .grafik { height:300px; border:0; border-radius:0; }
+#yv-tur-ek select { margin:0 6px 6px 0; max-width:100%; }
+#a34b-lastik { margin:8px 0; }
+@media (max-width:560px) { #yv-tur-ek .grafik { height:240px; } }

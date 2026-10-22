@@ -1,0 +1,48 @@
+/* A6 — "YARIŞI KAÇIRDIYSAN" kartı. Yalnızca .yo-* sınıfları ve #yo-kart; mevcut stillere (rozetler, ikonlar, renk değişkenleri) dokunmaz, onları kullanır. */
+.yo { margin:14px 0 18px; padding:10px 14px 12px; background:var(--kart); border:1px solid var(--cizgi); border-left:3px solid var(--vurgu); border-radius:10px; min-width:0; }
+.yo[hidden] { display:none; }
+.yo h2.yo-baslik { margin:0 0 8px; }
+.yo-liste { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:minmax(0,1fr); gap:6px 28px; }
+.yo-s { display:flex; flex-wrap:wrap; align-items:center; gap:2px 10px; min-width:0; font-size:.9rem; line-height:1.45; }
+.yo-et { display:inline-flex; align-items:center; gap:6px; flex:0 0 auto; font-family:var(--f-sayi); font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--soluk); }
+.yo-et .ik { color:var(--vurgu); }
+.yo-yukselen .yo-et .ik { color:var(--art); }
+.yo-gerileyen .yo-et .ik { color:var(--azl); }
+.yo-d { min-width:0; overflow-wrap:anywhere; }
+.yo-d .pilot { gap:6px; }
+.yo-alt { flex-basis:100%; font-size:.76rem; color:var(--soluk); }
+.yo-aks { display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:10px; padding-top:8px; border-top:1px solid var(--cizgi); }
+.yo-btn { font:inherit; font-size:.84rem; min-height:40px; padding:4px 0; border:0; background:none; color:var(--vurgu); font-weight:600; cursor:pointer; text-align:left; }
+.yo-btn:hover { text-decoration:underline; }
+.yo-btn:focus-visible { outline:2px solid var(--vurgu); outline-offset:2px; border-radius:4px; }
+#a34b-lastik.yo-vurgu { box-shadow:0 0 0 2px var(--vurgu), 0 0 16px var(--gol); transition:box-shadow .2s; }
+@media (min-width:900px) {
+  .yo-liste { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .yo-s { align-items:baseline; }
+}
+@media (max-width:480px) {
+  .yo { padding:8px 12px 10px; }
+  .yo-s { font-size:.88rem; }
+}
+
+/* v2 — isteğe bağlı historical özet (yalnızca .yo2-*) */
+.yo2 { margin-top:10px; padding-top:8px; border-top:1px solid var(--cizgi); min-width:0; }
+.yo2[hidden] { display:none; }
+.yo2-hizli { display:flex; align-items:center; gap:6px; margin:0 0 8px; font-size:.86rem; color:var(--soluk); }
+.yo2-hizli .ik { color:var(--vurgu); }
+.yo2-liste { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:minmax(0,1fr); gap:6px 28px; }
+.yo2-k { display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-width:0; font-size:.9rem; line-height:1.45; }
+.yo2-et { display:inline-flex; align-items:center; gap:6px; flex:0 0 auto; font-family:var(--f-sayi); font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--soluk); }
+.yo2-et .ik { color:var(--vurgu); }
+.yo2-d { display:flex; flex-direction:column; min-width:0; overflow-wrap:anywhere; }
+.yo2-alt, .yo2-not { flex-basis:100%; margin:2px 0 0; font-size:.76rem; color:var(--soluk); }
+.yo2-detay { margin-top:10px; padding-top:8px; border-top:1px dashed var(--cizgi); }
+.yo2-b { margin:0 0 10px; }
+.yo2-bb { margin:0 0 4px; font-family:var(--f-sayi); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--soluk); }
+.yo2-ul { margin:0; padding-left:18px; font-size:.86rem; line-height:1.5; overflow-wrap:anywhere; }
+.yo2-saat { font-family:var(--f-sayi); color:var(--soluk); }
+.yo2-aks { margin-top:6px; }
+@media (min-width:900px) { .yo2-liste { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 28px; } .yo2-detay { columns:2; column-gap:28px; } .yo2-b { break-inside:avoid; } }
+.yo2-btn { font:inherit; font-size:.84rem; min-height:36px; padding:2px 0; border:0; background:none; color:var(--vurgu); font-weight:600; cursor:pointer; text-align:left; }
+.yo2-btn:hover { text-decoration:underline; }
+.yo2-btn:focus-visible { outline:2px solid var(--vurgu); outline-offset:2px; border-radius:4px; }

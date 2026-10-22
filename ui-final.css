@@ -1,0 +1,67 @@
+/* FINAL UI/UX TURU — ortak sunum stilleri (.ui-*). Yalnızca mevcut tema değişkenlerini kullanır (açık/koyu otomatik). Veri/davranış yok. */
+
+/* ---- Aç / daralt düğmesi ---- */
+.ui-daralt { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:44px; margin:8px 0 0; padding:8px 14px; font:inherit; font-size:.86rem; font-weight:600;
+  color:var(--yazi); background:var(--kart); border:1px solid var(--cizgi); border-radius:10px; cursor:pointer; transition:border-color .15s, color .15s; }
+.ui-daralt[hidden] { display:none; }
+.ui-daralt .ik { color:var(--vurgu); }
+@media (hover:hover) { .ui-daralt:hover { border-color:var(--vurgu); } }
+.ui-daralt:focus-visible { outline:2px solid var(--vurgu); outline-offset:2px; }
+
+/* daralmış liste: yalnızca ilk 3 satır (favori pilot satırı her zaman görünür) */
+.kap.ui-kisa tbody tr:nth-child(n+4) { display:none; }
+.kap.ui-kisa tbody tr.favori { display:table-row; }
+
+/* ---- Şampiyonlar: 2014 ve öncesi gizli ---- */
+#sekme-sampiyonlar .kap:not(.ui-tum):not(.ui-ara) tr.ui-eski { display:none; }
+
+/* canlı (tamamlanmamış) sezon satırı */
+tr.ui-canli td { background:var(--kart2); }
+tr.ui-canli td:first-child { box-shadow:inset 3px 0 0 var(--vurgu); }
+.ui-ad { font-weight:700; }
+.ui-soluk { color:var(--soluk); font-size:.78rem; }
+.ui-rozet { display:inline-flex; align-items:center; gap:6px; margin-top:4px; padding:2px 8px; border-radius:999px; font-family:var(--f-sayi); font-size:.64rem; font-weight:700; letter-spacing:.1em; line-height:1.5; }
+.ui-rozet-canli { color:var(--vurgu); border:1px solid var(--vurgu); background:transparent; }
+.ui-nokta { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--vurgu); animation:ui-nabiz 1.8s ease-in-out infinite; }
+@keyframes ui-nabiz { 0%,100% { opacity:1; } 50% { opacity:.3; } }
+@media (prefers-reduced-motion:reduce) { .ui-nokta { animation:none; } }
+
+/* ---- Şampiyonluk hesaplayıcı (Güncel Sezon, Pilotlar puan durumunun üstünde): yalnızca görünüm ---- */
+.ui-hesap { margin:18px 0 6px; padding:14px 16px 12px; background:var(--kart); border:1px solid var(--cizgi); border-left:4px solid var(--vurgu); border-radius:12px; min-width:0; }
+.ui-hesap h2 { margin:0 0 10px; }
+.ui-hesap-sec { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; font-size:.78rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--soluk); }
+.ui-hesap-sec select { flex:1 1 220px; min-height:44px; max-width:100%; font-size:1rem; font-weight:600; }
+.ui-hesap .sonuc { margin-top:10px; padding:12px 14px; font-size:1.02rem; line-height:1.5; background:var(--kart2); border-radius:8px; }
+.ui-hesap .not { margin:8px 0 0; font-size:.76rem; color:var(--soluk); }
+
+/* ---- Grafik özet kartları: pilot adının altında takım rozeti ---- */
+.a3-oz-takim { display:flex; flex-wrap:wrap; gap:4px 6px; margin:2px 0 4px; }
+
+/* ---- Pist listesi: sınıf renkleri ---- */
+#pist-govde tr[class*="pp-k-"] td:first-child { box-shadow:inset 4px 0 0 var(--pk); }
+.ui-pist-ad { font-size:1rem; }
+#pist-govde .pp-sinifrozet { margin-top:4px; font-size:.7rem; padding:1px 9px; }
+#pist-govde .pp-btn { min-height:40px; padding:6px 16px; font-weight:700; color:var(--pk, var(--vurgu)); border:1.5px solid var(--pk, var(--vurgu)); border-radius:8px; background:transparent; cursor:pointer; }
+
+/* ---- Pilot karşılaştırma ---- */
+.ui-ab { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; margin:8px 0 12px; }
+.ui-ab-yan { display:flex; flex-direction:column; gap:4px; min-width:0; padding:8px 10px; background:var(--kart); border:1px solid var(--cizgi); border-top-width:3px; border-radius:10px; }
+.ui-ab-yan.ui-a { border-top-color:var(--vurgu); } .ui-ab-yan.ui-b { border-top-color:var(--soluk); }
+.ui-ab-et { font-family:var(--f-sayi); font-weight:700; font-size:.72rem; letter-spacing:.12em; color:var(--soluk); }
+.ui-ab-yan select { width:100%; min-width:0; min-height:44px; margin:0; }
+#sekme-profil thead th.ui-th-a { border-bottom:3px solid var(--vurgu); }
+#sekme-profil thead th.ui-th-b { border-bottom:3px solid var(--soluk); }
+#kiyas-govde td:first-child { color:var(--soluk); font-size:.84rem; }
+#kiyas-govde td:first-child .ik { vertical-align:-2px; margin-right:6px; color:var(--vurgu); }
+#kiyas-govde td.ui-kd { font-size:1rem; }
+#kiyas-govde td.ui-ustun { font-weight:800; color:var(--vurgu); }
+
+/* ---- Pist listesi 390 px: tablo kap içinde yatay kaydırmasız sığsın ---- */
+@media (max-width:560px) {
+  #pist-govde td, #sekme-profil .kap:has(#pist-govde) th { padding:8px 6px; font-size:.82rem; overflow-wrap:anywhere; }
+  #pist-govde td:nth-child(3) { display:none; }
+  #sekme-profil .kap:has(#pist-govde) th:nth-child(3) { display:none; }
+  #pist-govde .pp-hucre { display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
+}
+.ui-gp { display:none; color:var(--soluk); font-size:.74rem; margin-top:2px; }
+@media (max-width:560px) { .ui-gp { display:block; } #pist-govde .pp-sinifrozet { display:inline-block; } }

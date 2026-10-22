@@ -1,0 +1,18 @@
+F1 TAKİP
+Version: 3.0.0
+Release: Production
+
+Stable modules:
+- Navigation v3
+- BUGÜN Hub
+- Race State / Ticker
+- Motion v1
+- Personalization v1
+- İzlerken Öğren v2
+- Season
+- Race Weekend
+- Race Day
+- Post-Race Analysis
+
+Repository:
+https://github.com/Ncg0659/F1-Takip

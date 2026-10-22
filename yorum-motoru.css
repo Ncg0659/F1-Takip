@@ -1,0 +1,13 @@
+/* A2.1 — "Ne oldu?" şeridi. Yalnızca .ym-* sınıfları. Mevcut stillere dokunmaz. */
+.ym { margin:8px 0 14px; border:1px solid var(--cizgi); border-left:3px solid var(--vurgu); border-radius:10px; background:var(--kart); padding:8px 12px; }
+.ym[hidden] { display:none; }
+.ym-ust { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; }
+.ym-ac { flex:1 1 260px; min-width:0; text-align:left; background:none; border:0; padding:2px 0; color:var(--yazi); font:inherit; font-size:.9rem; cursor:pointer; }
+.ym-ac b { margin-right:6px; }
+.ym-ozet { color:var(--soluk); overflow-wrap:anywhere; }
+.ym-ok { color:var(--vurgu); display:inline-block; width:1em; }
+.ym-mod { margin-left:auto; font-size:.74rem; color:var(--soluk); display:inline-flex; align-items:center; gap:4px; }
+.ym-mod button { padding:2px 8px; font-size:.74rem; border:1px solid var(--cizgi); border-radius:999px; background:transparent; color:var(--soluk); cursor:pointer; }
+.ym-mod button.aktif { border-color:var(--vurgu); color:var(--vurgu); font-weight:600; }
+.ym-liste { margin:6px 0 2px; padding-left:20px; font-size:.88rem; line-height:1.5; }
+.ym-liste[hidden] { display:none; }
