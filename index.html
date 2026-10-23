@@ -4,92 +4,103 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>F1 Takip</title>
-<meta name="app-version" content="3.0.0">
-<link rel="icon" href="data:,">
+<meta name="app-version" content="3.0.1">
+<link rel="icon" type="image/x-icon" href="./favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16.png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#0f1722">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="F1 TAKİP">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <script>/* UI v3 nav: PRODUCTION'DA VARSAYILAN AÇIK. Geliştirici geri dönüşü: ?nav=off (kalıcı "off"), ?nav=v3 geri açar. localStorage temizlenince v3 kalır. */
 try { var __q = new URLSearchParams(location.search).get("nav"); if (__q === "off") { localStorage.setItem("f1-nav", "off"); } else if (__q === "v3") { localStorage.setItem("f1-nav", "v3"); }
   if (localStorage.getItem("f1-nav") !== "off") { document.documentElement.setAttribute("data-nav", "v3"); } } catch (e) { document.documentElement.setAttribute("data-nav", "v3"); }
 try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAttribute("data-dev", "1"); } } catch (e) {}   /* geliştirici kontrolleri (test/debug) yalnız ?dev=1 ile görünür */</script>
-<script src="diger-seriler.js?v=3.0.0"></script>
-<script src="yaris-notlari.js?v=3.0.0"></script>
-<script src="notlar-kaynaklar.js?v=3.0.0"></script>
-<script src="notlar-motor.js?v=3.0.0"></script>
-<script src="tasarim.js?v=3.0.0"></script>
-<script src="seri-ayarlari.js?v=3.0.0"></script>
-<script src="jolpica-istemci.js?v=3.0.0"></script>
-<script src="openf1-veri.js?v=3.0.0"></script>
-<script src="hafta-veri.js?v=3.0.0"></script>
-<script src="hafta-state.js?v=3.0.0"></script>
-<script src="program-yardimci.js?v=3.0.0"></script>
-<script src="program-degisiklik.js?v=3.0.0"></script>
-<script src="hafta-baglam.js?v=3.0.0"></script>
-<script src="baglam-ui.js?v=3.0.0"></script>
-<script src="race-control.js?v=3.0.0"></script>
-<script src="seans-olaylari.js?v=3.0.0"></script>
-<script src="laps-veri.js?v=3.0.0"></script>
-<script src="tur-analizi.js?v=3.0.0"></script>
-<script src="overtakes-veri.js?v=3.0.0"></script>
-<script src="gecisler.js?v=3.0.0"></script>
-<script src="pit-veri.js?v=3.0.0"></script>
-<script src="pitler.js?v=3.0.0"></script>
-<script src="seans-hava-veri.js?v=3.0.0"></script>
-<script src="seans-hava.js?v=3.0.0"></script>
-<script src="v3-bilesen.js?v=3.0.0"></script>
-<script src="hafta-ui.js?v=3.0.0"></script>
-<script src="gun-v3.js?v=3.0.0"></script>
-<script src="yaris-v3.js?v=3.0.0"></script>
-<script src="bugun-v3.js?v=3.0.0"></script>
-<script src="nav-v3.js?v=3.0.0"></script>
-<script src="motion-v1.js?v=3.0.0"></script>
-<script src="favori-v1.js?v=3.0.0"></script>
-<script src="sezon-veri.js?v=3.0.0"></script>
-<script src="pist-siluetleri.js?v=3.0.0"></script>
-<script src="sezon-takvim.js?v=3.0.0"></script>
-<script src="yorum-motoru.js?v=3.0.0"></script>
-<script src="icerik-sozluk.js?v=3.0.0"></script>
-<script src="icerik-lastik.js?v=3.0.0"></script>
-<script src="icerik-sozluk-a3.js?v=3.0.0"></script>
-<script src="icerik-sozluk-a4.js?v=3.0.0"></script>
-<script src="icerik-sozluk-v2.js?v=3.0.0"></script>
-<script src="ogren-ui.js?v=3.0.0"></script>
-<script src="ogren-v2.js?v=3.0.0"></script>
-<script src="detay-panel.js?v=3.0.0"></script>
-<script src="detay-sezon.js?v=3.0.0"></script>
-<script src="sezon-hesap.js?v=3.0.0"></script>
-<script src="sezon-analiz-veri.js?v=3.0.0"></script>
-<script src="svg-grafik.js?v=3.0.0"></script>
-<script src="analiz-merkezi.js?v=3.0.0"></script>
-<script src="sezon-hesap-a32.js?v=3.0.0"></script>
-<script src="analiz-form.js?v=3.0.0"></script>
-<script src="pilot-karsilastirma.js?v=3.0.0"></script>
-<script src="sezon-hesap-a33.js?v=3.0.0"></script>
-<script src="analiz-sprint.js?v=3.0.0"></script>
-<script src="pist-siniflandirma.js?v=3.0.0"></script>
-<script src="sezon-hesap-a34.js?v=3.0.0"></script>
-<script src="analiz-pist.js?v=3.0.0"></script>
-<script src="lastik-hesap.js?v=3.0.0"></script>
-<script src="openf1-stint.js?v=3.0.0"></script>
-<script src="analiz-lastik.js?v=3.0.0"></script>
-<script src="icerik-pilotlar.js?v=3.0.0"></script>
-<script src="icerik-takimlar.js?v=3.0.0"></script>
-<script src="profil-veri.js?v=3.0.0"></script>
-<script src="profil-pilot.js?v=3.0.0"></script>
-<script src="profil-takim.js?v=3.0.0"></script>
-<script src="profil-giris.js?v=3.0.0"></script>
-<script src="icerik-pistler.js?v=3.0.0"></script>
-<script src="pist-hesap.js?v=3.0.0"></script>
-<script src="profil-pist.js?v=3.0.0"></script>
-<script src="hafta-bilmen.js?v=3.0.0"></script>
-<script src="arama.js?v=3.0.0"></script>
-<script src="arama-ui.js?v=3.0.0"></script>
-<script src="feed-canli.js?v=3.0.0"></script>
-<script src="ticker.js?v=3.0.0"></script>
-<script src="yaris-ozet-hesap.js?v=3.0.0"></script>
-<script src="yaris-ozet-v2-hesap.js?v=3.0.0"></script>
-<script src="yaris-ozet-v2.js?v=3.0.0"></script>
-<script src="yaris-ozet.js?v=3.0.0"></script>
-<script src="ui-final.js?v=3.0.0"></script>
-<script src="diger-ui.js?v=3.0.0"></script>
+<script src="diger-seriler.js?v=3.0.1"></script>
+<script src="yaris-notlari.js?v=3.0.1"></script>
+<script src="notlar-kaynaklar.js?v=3.0.1"></script>
+<script src="notlar-motor.js?v=3.0.1"></script>
+<script src="tasarim.js?v=3.0.1"></script>
+<script src="seri-ayarlari.js?v=3.0.1"></script>
+<script src="jolpica-istemci.js?v=3.0.1"></script>
+<script src="openf1-veri.js?v=3.0.1"></script>
+<script src="hafta-veri.js?v=3.0.1"></script>
+<script src="hafta-state.js?v=3.0.1"></script>
+<script src="program-yardimci.js?v=3.0.1"></script>
+<script src="program-degisiklik.js?v=3.0.1"></script>
+<script src="hafta-baglam.js?v=3.0.1"></script>
+<script src="baglam-ui.js?v=3.0.1"></script>
+<script src="race-control.js?v=3.0.1"></script>
+<script src="seans-olaylari.js?v=3.0.1"></script>
+<script src="laps-veri.js?v=3.0.1"></script>
+<script src="tur-analizi.js?v=3.0.1"></script>
+<script src="overtakes-veri.js?v=3.0.1"></script>
+<script src="gecisler.js?v=3.0.1"></script>
+<script src="pit-veri.js?v=3.0.1"></script>
+<script src="pitler.js?v=3.0.1"></script>
+<script src="seans-hava-veri.js?v=3.0.1"></script>
+<script src="seans-hava.js?v=3.0.1"></script>
+<script src="v3-bilesen.js?v=3.0.1"></script>
+<script src="hafta-ui.js?v=3.0.1"></script>
+<script src="gun-v3.js?v=3.0.1"></script>
+<script src="yaris-v3.js?v=3.0.1"></script>
+<script src="bugun-v3.js?v=3.0.1"></script>
+<script src="nav-v3.js?v=3.0.1"></script>
+<script src="motion-v1.js?v=3.0.1"></script>
+<script src="favori-v1.js?v=3.0.1"></script>
+<script src="sezon-veri.js?v=3.0.1"></script>
+<script src="pist-siluetleri.js?v=3.0.1"></script>
+<script src="sezon-takvim.js?v=3.0.1"></script>
+<script src="yorum-motoru.js?v=3.0.1"></script>
+<script src="icerik-sozluk.js?v=3.0.1"></script>
+<script src="icerik-lastik.js?v=3.0.1"></script>
+<script src="icerik-sozluk-a3.js?v=3.0.1"></script>
+<script src="icerik-sozluk-a4.js?v=3.0.1"></script>
+<script src="icerik-sozluk-v2.js?v=3.0.1"></script>
+<script src="ogren-ui.js?v=3.0.1"></script>
+<script src="ogren-v2.js?v=3.0.1"></script>
+<script src="scroll-telemetry.js?v=3.0.1"></script>
+<script src="detay-panel.js?v=3.0.1"></script>
+<script src="detay-sezon.js?v=3.0.1"></script>
+<script src="sezon-hesap.js?v=3.0.1"></script>
+<script src="sezon-analiz-veri.js?v=3.0.1"></script>
+<script src="svg-grafik.js?v=3.0.1"></script>
+<script src="analiz-merkezi.js?v=3.0.1"></script>
+<script src="sezon-hesap-a32.js?v=3.0.1"></script>
+<script src="analiz-form.js?v=3.0.1"></script>
+<script src="pilot-karsilastirma.js?v=3.0.1"></script>
+<script src="sezon-hesap-a33.js?v=3.0.1"></script>
+<script src="analiz-sprint.js?v=3.0.1"></script>
+<script src="pist-siniflandirma.js?v=3.0.1"></script>
+<script src="sezon-hesap-a34.js?v=3.0.1"></script>
+<script src="analiz-pist.js?v=3.0.1"></script>
+<script src="lastik-hesap.js?v=3.0.1"></script>
+<script src="openf1-stint.js?v=3.0.1"></script>
+<script src="analiz-lastik.js?v=3.0.1"></script>
+<script src="icerik-pilotlar.js?v=3.0.1"></script>
+<script src="icerik-takimlar.js?v=3.0.1"></script>
+<script src="profil-veri.js?v=3.0.1"></script>
+<script src="profil-pilot.js?v=3.0.1"></script>
+<script src="profil-takim.js?v=3.0.1"></script>
+<script src="profil-giris.js?v=3.0.1"></script>
+<script src="icerik-pistler.js?v=3.0.1"></script>
+<script src="pist-hesap.js?v=3.0.1"></script>
+<script src="profil-pist.js?v=3.0.1"></script>
+<script src="hafta-bilmen.js?v=3.0.1"></script>
+<script src="arama.js?v=3.0.1"></script>
+<script src="arama-ui.js?v=3.0.1"></script>
+<script src="feed-canli.js?v=3.0.1"></script>
+<script src="ticker.js?v=3.0.1"></script>
+<script src="yaris-ozet-hesap.js?v=3.0.1"></script>
+<script src="yaris-ozet-v2-hesap.js?v=3.0.1"></script>
+<script src="yaris-ozet-v2.js?v=3.0.1"></script>
+<script src="yaris-ozet.js?v=3.0.1"></script>
+<script src="ui-final.js?v=3.0.1"></script>
+<script src="diger-ui.js?v=3.0.1"></script>
+<script src="pwa.js?v=3.0.1"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root { --zemin:#eef1f5; --yazi:#14202e; --vurgu:#d4161c; --cizgi:#c9d1dc; --kart:#ffffff; --soluk:#4a5a6c; }
@@ -128,37 +139,38 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
   .rozet { font-size:.7rem; color:var(--soluk); border:1px solid var(--cizgi); border-radius:4px; padding:0 4px; margin-left:2px; }
   #feed-debug-metin { font-size:.8rem; white-space:pre-wrap; }
 </style>
-<link rel="stylesheet" href="tasarim.css?v=3.0.0">
-<link rel="stylesheet" href="v3-bilesen.css?v=3.0.0">
-<link rel="stylesheet" href="hafta.css?v=3.0.0">
-<link rel="stylesheet" href="gun-v3.css?v=3.0.0">
-<link rel="stylesheet" href="yaris-v3.css?v=3.0.0">
-<link rel="stylesheet" href="seans-olaylari.css?v=3.0.0">
-<link rel="stylesheet" href="sezon-takvim.css?v=3.0.0">
-<link rel="stylesheet" href="yorum-motoru.css?v=3.0.0">
-<link rel="stylesheet" href="ogren.css?v=3.0.0">
-<link rel="stylesheet" href="detay-panel.css?v=3.0.0">
-<link rel="stylesheet" href="svg-grafik.css?v=3.0.0">
-<link rel="stylesheet" href="analiz-merkezi.css?v=3.0.0">
-<link rel="stylesheet" href="analiz-form.css?v=3.0.0">
-<link rel="stylesheet" href="pilot-karsilastirma.css?v=3.0.0">
-<link rel="stylesheet" href="analiz-sprint.css?v=3.0.0">
-<link rel="stylesheet" href="analiz-pist.css?v=3.0.0">
-<link rel="stylesheet" href="analiz-lastik.css?v=3.0.0">
-<link rel="stylesheet" href="profil.css?v=3.0.0">
-<link rel="stylesheet" href="profil-pist.css?v=3.0.0">
-<link rel="stylesheet" href="hafta-bilmen.css?v=3.0.0">
-<link rel="stylesheet" href="arama.css?v=3.0.0">
-<link rel="stylesheet" href="ticker.css?v=3.0.0">
-<link rel="stylesheet" href="yaris-ozet.css?v=3.0.0">
-<link rel="stylesheet" href="ui-final.css?v=3.0.0">
-<link rel="stylesheet" href="diger-ui.css?v=3.0.0">
-<link rel="stylesheet" href="v3-rozet.css?v=3.0.0">
-<link rel="stylesheet" href="bugun-v3.css?v=3.0.0">
-<link rel="stylesheet" href="nav-v3.css?v=3.0.0">
-<link rel="stylesheet" href="motion-v1.css?v=3.0.0">
-<link rel="stylesheet" href="favori-v1.css?v=3.0.0">
-<link rel="stylesheet" href="ogren-v2.css?v=3.0.0">
+<link rel="stylesheet" href="tasarim.css?v=3.0.1">
+<link rel="stylesheet" href="v3-bilesen.css?v=3.0.1">
+<link rel="stylesheet" href="hafta.css?v=3.0.1">
+<link rel="stylesheet" href="gun-v3.css?v=3.0.1">
+<link rel="stylesheet" href="yaris-v3.css?v=3.0.1">
+<link rel="stylesheet" href="seans-olaylari.css?v=3.0.1">
+<link rel="stylesheet" href="sezon-takvim.css?v=3.0.1">
+<link rel="stylesheet" href="yorum-motoru.css?v=3.0.1">
+<link rel="stylesheet" href="ogren.css?v=3.0.1">
+<link rel="stylesheet" href="detay-panel.css?v=3.0.1">
+<link rel="stylesheet" href="svg-grafik.css?v=3.0.1">
+<link rel="stylesheet" href="analiz-merkezi.css?v=3.0.1">
+<link rel="stylesheet" href="analiz-form.css?v=3.0.1">
+<link rel="stylesheet" href="pilot-karsilastirma.css?v=3.0.1">
+<link rel="stylesheet" href="analiz-sprint.css?v=3.0.1">
+<link rel="stylesheet" href="analiz-pist.css?v=3.0.1">
+<link rel="stylesheet" href="analiz-lastik.css?v=3.0.1">
+<link rel="stylesheet" href="profil.css?v=3.0.1">
+<link rel="stylesheet" href="profil-pist.css?v=3.0.1">
+<link rel="stylesheet" href="hafta-bilmen.css?v=3.0.1">
+<link rel="stylesheet" href="arama.css?v=3.0.1">
+<link rel="stylesheet" href="ticker.css?v=3.0.1">
+<link rel="stylesheet" href="yaris-ozet.css?v=3.0.1">
+<link rel="stylesheet" href="ui-final.css?v=3.0.1">
+<link rel="stylesheet" href="diger-ui.css?v=3.0.1">
+<link rel="stylesheet" href="v3-rozet.css?v=3.0.1">
+<link rel="stylesheet" href="bugun-v3.css?v=3.0.1">
+<link rel="stylesheet" href="nav-v3.css?v=3.0.1">
+<link rel="stylesheet" href="motion-v1.css?v=3.0.1">
+<link rel="stylesheet" href="favori-v1.css?v=3.0.1">
+<link rel="stylesheet" href="ogren-v2.css?v=3.0.1">
+<link rel="stylesheet" href="scroll-telemetry.css?v=3.0.1">
 </head>
 <body>
   <nav>

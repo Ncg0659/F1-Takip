@@ -1,0 +1,27 @@
+/* SCROLL TELEMETRY v1 — yalnız NAV v3 top bar'ında; mevcut .nv-tb / .nv-pop kalıbını kullanır (yeni büyük kart yok). */
+#nv-scroll { display:none; }   /* #nv-scroll-pop: mevcut .nv-pop kuralı gizler */
+html[data-nav="v3"] #nv-scroll { display:inline-flex; order:3; }
+html[data-nav="v3"] .st-ik { flex:0 0 auto; display:block; }
+html[data-nav="v3"] .st-ad { display:inline-block; font-variant-numeric:tabular-nums; white-space:nowrap; }
+html[data-nav="v3"] .st-ad b { font-weight:700; color:var(--yazi); display:inline-block; min-width:4ch; text-align:right; }
+html[data-nav="v3"] #nv-scroll[aria-expanded="true"] { color:var(--yazi); border-color:var(--soluk); box-shadow:inset 0 -2px 0 var(--vurgu); }
+html[data-nav="v3"] #nv-scroll:focus-visible { outline:2px solid var(--vurgu); outline-offset:2px; }
+
+html[data-nav="v3"] .st-pop:not([hidden]) { min-width:240px; }
+html[data-nav="v3"] .st-liste { margin:0 0 8px; padding:0; }
+html[data-nav="v3"] .st-liste > div { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:5px 0; border-bottom:1px solid var(--cizgi); }
+html[data-nav="v3"] .st-liste dt { margin:0; font-size:.78rem; color:var(--soluk); }
+html[data-nav="v3"] .st-liste dd { margin:0; font-family:var(--f-sayi); font-size:.86rem; font-weight:700; color:var(--yazi); font-variant-numeric:tabular-nums; }
+html[data-nav="v3"] .st-msg { margin:0 0 8px; font-size:.82rem; line-height:1.35; color:var(--yazi); }
+html[data-nav="v3"] .st-not { margin:0 0 8px; font-size:.7rem; line-height:1.35; color:var(--soluk); }
+html[data-nav="v3"] .st-alt { display:flex; flex-direction:column; gap:6px; }
+html[data-nav="v3"] .st-sifir { display:block; width:100%; min-height:38px; padding:6px 10px; text-align:left; font-size:.78rem; color:var(--soluk); background:transparent; border:1px solid var(--cizgi); border-radius:6px; cursor:pointer; text-transform:none; letter-spacing:0; }
+html[data-nav="v3"] .st-sifir:hover { color:var(--yazi); border-color:var(--soluk); }
+html[data-nav="v3"] .st-sifir:focus-visible { outline:2px solid var(--vurgu); outline-offset:2px; }
+html[data-nav="v3"] .st-sifir[data-onay] { color:var(--yazi); border-color:var(--vurgu); }
+
+/* mobil: top bar sıkıştırılmaz — yalnız küçük simge (sayı popover'da) */
+@media (max-width:600px) {
+  html[data-nav="v3"] .st-ad { display:none; }
+  html[data-nav="v3"] .st-pop:not([hidden]) { min-width:0; width:min(280px, calc(100vw - 32px)); }
+}
