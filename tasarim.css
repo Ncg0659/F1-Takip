@@ -215,3 +215,22 @@ td.sayi, td.puan { font-family:var(--f-sayi); }
   .yk-yer b { font-size:1.05rem; }
   th, td { padding:8px 7px; }
 }
+
+/* ---- MOBİL ÜST ÇUBUK TEMİZLİĞİ ----
+   Kırmızı üst çizgi (body::before) viewport üstünde sabit KALIR. Aşağı kaydırınca header/top bar çizginin hemen altında
+   yarım kesilmiş görünmesin diye: ilk 44px kaydırmada saf CSS scroll-timeline ile solar (JS/dinleyici yok), yukarı kaydırınca geri gelir.
+   • yalnız mobil (≤600px) ve hareket azaltma KAPALIYKEN; desteklemeyen tarayıcıda header normal (doğal) kayar. Masaüstü etkilenmez.
+   • Çentikli/uçtan uca (standalone) ekranlarda: çizgi güvenli alanın hemen altına iner; çizginin üstündeki alan düz zemin rengiyle kapanır
+     → çizginin üstünde hiçbir UI parçası görünmez. Güvenli alan 0 ise (normal tarayıcı) hiçbir fark yok. */
+@media (max-width:600px) {
+  body::before { top:env(safe-area-inset-top, 0px); box-shadow:0 7px 12px -6px var(--gol); }   /* ışıma yalnız aşağı (yukarı taşan ışıma çizginin üstünü kirletmesin) */
+  body { padding-top:calc(14px + env(safe-area-inset-top, 0px)); }          /* içerik güvenli alanın altından başlar (alan 0 ise 14px = mevcut değer) */
+  body::after { content:""; position:fixed; left:0; right:0; top:0; height:env(safe-area-inset-top, 0px); background:var(--zemin); z-index:49; pointer-events:none; }
+}
+@media (max-width:600px) and (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    @keyframes rc-kaybol { from { opacity:1; } to { opacity:0; } }
+    #rc-bar { animation:rc-kaybol linear both; animation-timeline:scroll(root block); animation-range:0 44px; }
+    html[data-nav="v3"] #rc-bar:has(.nv-pop:not([hidden])) { animation:none; }       /* açık popover varken solma yok (yalnız sayfa başında açılabilir) */
+  }
+}
