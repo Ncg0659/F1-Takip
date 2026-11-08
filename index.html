@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>F1 Takip</title>
-<meta name="app-version" content="3.0.2">
+<meta name="app-version" content="3.0.5">
 <link rel="icon" type="image/x-icon" href="./favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16.png">
@@ -19,88 +19,95 @@
 try { var __q = new URLSearchParams(location.search).get("nav"); if (__q === "off") { localStorage.setItem("f1-nav", "off"); } else if (__q === "v3") { localStorage.setItem("f1-nav", "v3"); }
   if (localStorage.getItem("f1-nav") !== "off") { document.documentElement.setAttribute("data-nav", "v3"); } } catch (e) { document.documentElement.setAttribute("data-nav", "v3"); }
 try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAttribute("data-dev", "1"); } } catch (e) {}   /* geliştirici kontrolleri (test/debug) yalnız ?dev=1 ile görünür */</script>
-<script src="diger-seriler.js?v=3.0.2"></script>
-<script src="yaris-notlari.js?v=3.0.2"></script>
-<script src="notlar-kaynaklar.js?v=3.0.2"></script>
-<script src="notlar-motor.js?v=3.0.2"></script>
-<script src="tasarim.js?v=3.0.2"></script>
-<script src="seri-ayarlari.js?v=3.0.2"></script>
-<script src="jolpica-istemci.js?v=3.0.2"></script>
-<script src="openf1-veri.js?v=3.0.2"></script>
-<script src="hafta-veri.js?v=3.0.2"></script>
-<script src="hafta-state.js?v=3.0.2"></script>
-<script src="program-yardimci.js?v=3.0.2"></script>
-<script src="program-degisiklik.js?v=3.0.2"></script>
-<script src="hafta-baglam.js?v=3.0.2"></script>
-<script src="baglam-ui.js?v=3.0.2"></script>
-<script src="race-control.js?v=3.0.2"></script>
-<script src="seans-olaylari.js?v=3.0.2"></script>
-<script src="laps-veri.js?v=3.0.2"></script>
-<script src="tur-analizi.js?v=3.0.2"></script>
-<script src="overtakes-veri.js?v=3.0.2"></script>
-<script src="gecisler.js?v=3.0.2"></script>
-<script src="pit-veri.js?v=3.0.2"></script>
-<script src="pitler.js?v=3.0.2"></script>
-<script src="seans-hava-veri.js?v=3.0.2"></script>
-<script src="seans-hava.js?v=3.0.2"></script>
-<script src="v3-bilesen.js?v=3.0.2"></script>
-<script src="hafta-ui.js?v=3.0.2"></script>
-<script src="gun-v3.js?v=3.0.2"></script>
-<script src="yaris-v3.js?v=3.0.2"></script>
-<script src="bugun-v3.js?v=3.0.2"></script>
-<script src="nav-v3.js?v=3.0.2"></script>
-<script src="motion-v1.js?v=3.0.2"></script>
-<script src="favori-v1.js?v=3.0.2"></script>
-<script src="sezon-veri.js?v=3.0.2"></script>
-<script src="pist-siluetleri.js?v=3.0.2"></script>
-<script src="sezon-takvim.js?v=3.0.2"></script>
-<script src="yorum-motoru.js?v=3.0.2"></script>
-<script src="icerik-sozluk.js?v=3.0.2"></script>
-<script src="icerik-lastik.js?v=3.0.2"></script>
-<script src="icerik-sozluk-a3.js?v=3.0.2"></script>
-<script src="icerik-sozluk-a4.js?v=3.0.2"></script>
-<script src="icerik-sozluk-v2.js?v=3.0.2"></script>
-<script src="ogren-ui.js?v=3.0.2"></script>
-<script src="ogren-v2.js?v=3.0.2"></script>
-<script src="scroll-telemetry.js?v=3.0.2"></script>
-<script src="detay-panel.js?v=3.0.2"></script>
-<script src="detay-sezon.js?v=3.0.2"></script>
-<script src="sezon-hesap.js?v=3.0.2"></script>
-<script src="sezon-analiz-veri.js?v=3.0.2"></script>
-<script src="svg-grafik.js?v=3.0.2"></script>
-<script src="analiz-merkezi.js?v=3.0.2"></script>
-<script src="sezon-hesap-a32.js?v=3.0.2"></script>
-<script src="analiz-form.js?v=3.0.2"></script>
-<script src="pilot-karsilastirma.js?v=3.0.2"></script>
-<script src="sezon-hesap-a33.js?v=3.0.2"></script>
-<script src="analiz-sprint.js?v=3.0.2"></script>
-<script src="pist-siniflandirma.js?v=3.0.2"></script>
-<script src="sezon-hesap-a34.js?v=3.0.2"></script>
-<script src="analiz-pist.js?v=3.0.2"></script>
-<script src="lastik-hesap.js?v=3.0.2"></script>
-<script src="openf1-stint.js?v=3.0.2"></script>
-<script src="analiz-lastik.js?v=3.0.2"></script>
-<script src="icerik-pilotlar.js?v=3.0.2"></script>
-<script src="icerik-takimlar.js?v=3.0.2"></script>
-<script src="profil-veri.js?v=3.0.2"></script>
-<script src="profil-pilot.js?v=3.0.2"></script>
-<script src="profil-takim.js?v=3.0.2"></script>
-<script src="profil-giris.js?v=3.0.2"></script>
-<script src="icerik-pistler.js?v=3.0.2"></script>
-<script src="pist-hesap.js?v=3.0.2"></script>
-<script src="profil-pist.js?v=3.0.2"></script>
-<script src="hafta-bilmen.js?v=3.0.2"></script>
-<script src="arama.js?v=3.0.2"></script>
-<script src="arama-ui.js?v=3.0.2"></script>
-<script src="feed-canli.js?v=3.0.2"></script>
-<script src="ticker.js?v=3.0.2"></script>
-<script src="yaris-ozet-hesap.js?v=3.0.2"></script>
-<script src="yaris-ozet-v2-hesap.js?v=3.0.2"></script>
-<script src="yaris-ozet-v2.js?v=3.0.2"></script>
-<script src="yaris-ozet.js?v=3.0.2"></script>
-<script src="ui-final.js?v=3.0.2"></script>
-<script src="diger-ui.js?v=3.0.2"></script>
-<script src="pwa.js?v=3.0.2"></script>
+<script src="diger-seriler.js?v=3.0.5"></script>
+<script src="yaris-notlari.js?v=3.0.5"></script>
+<script src="notlar-kaynaklar.js?v=3.0.5"></script>
+<script src="notlar-motor.js?v=3.0.5"></script>
+<script src="tasarim.js?v=3.0.5"></script>
+<script src="seri-ayarlari.js?v=3.0.5"></script>
+<script src="jolpica-istemci.js?v=3.0.5"></script>
+<script src="openf1-veri.js?v=3.0.5"></script>
+<script src="hafta-veri.js?v=3.0.5"></script>
+<script src="hafta-state.js?v=3.0.5"></script>
+<script src="program-yardimci.js?v=3.0.5"></script>
+<script src="program-degisiklik.js?v=3.0.5"></script>
+<script src="hafta-baglam.js?v=3.0.5"></script>
+<script src="baglam-ui.js?v=3.0.5"></script>
+<script src="race-control.js?v=3.0.5"></script>
+<script src="seans-olaylari.js?v=3.0.5"></script>
+<script src="laps-veri.js?v=3.0.5"></script>
+<script src="tur-analizi.js?v=3.0.5"></script>
+<script src="overtakes-veri.js?v=3.0.5"></script>
+<script src="gecisler.js?v=3.0.5"></script>
+<script src="pit-veri.js?v=3.0.5"></script>
+<script src="pitler.js?v=3.0.5"></script>
+<script src="seans-hava-veri.js?v=3.0.5"></script>
+<script src="seans-hava.js?v=3.0.5"></script>
+<script src="v3-bilesen.js?v=3.0.5"></script>
+<script src="hafta-ui.js?v=3.0.5"></script>
+<script src="gun-v3.js?v=3.0.5"></script>
+<script src="yaris-v3.js?v=3.0.5"></script>
+<script src="bugun-v3.js?v=3.0.5"></script>
+<script src="nav-v3.js?v=3.0.5"></script>
+<script src="motion-v1.js?v=3.0.5"></script>
+<script src="motion-v2.js?v=3.0.5"></script>
+<script src="favori-v1.js?v=3.0.5"></script>
+<script src="sezon-veri.js?v=3.0.5"></script>
+<script src="pist-siluetleri.js?v=3.0.5"></script>
+<script src="sezon-takvim.js?v=3.0.5"></script>
+<script src="yorum-motoru.js?v=3.0.5"></script>
+<script src="icerik-sozluk.js?v=3.0.5"></script>
+<script src="icerik-lastik.js?v=3.0.5"></script>
+<script src="icerik-sozluk-a3.js?v=3.0.5"></script>
+<script src="icerik-sozluk-a4.js?v=3.0.5"></script>
+<script src="icerik-sozluk-v2.js?v=3.0.5"></script>
+<script src="ogren-ui.js?v=3.0.5"></script>
+<script src="ogren-v2.js?v=3.0.5"></script>
+<script src="scroll-telemetry.js?v=3.0.5"></script>
+<script src="detay-panel.js?v=3.0.5"></script>
+<script src="detay-sezon.js?v=3.0.5"></script>
+<script src="sezon-hesap.js?v=3.0.5"></script>
+<script src="sezon-analiz-veri.js?v=3.0.5"></script>
+<script src="svg-grafik.js?v=3.0.5"></script>
+<script src="analiz-merkezi.js?v=3.0.5"></script>
+<script src="sezon-hesap-a32.js?v=3.0.5"></script>
+<script src="analiz-form.js?v=3.0.5"></script>
+<script src="pilot-karsilastirma.js?v=3.0.5"></script>
+<script src="sezon-hesap-a33.js?v=3.0.5"></script>
+<script src="analiz-sprint.js?v=3.0.5"></script>
+<script src="pist-siniflandirma.js?v=3.0.5"></script>
+<script src="sezon-hesap-a34.js?v=3.0.5"></script>
+<script src="analiz-pist.js?v=3.0.5"></script>
+<script src="lastik-hesap.js?v=3.0.5"></script>
+<script src="openf1-stint.js?v=3.0.5"></script>
+<script src="telemetry-data.js?v=3.0.5"></script>
+<script src="ghost-hesap.js?v=3.0.5"></script>
+<script src="ghost-lap.js?v=3.0.5"></script>
+<script src="analiz-lastik.js?v=3.0.5"></script>
+<script src="icerik-pilotlar.js?v=3.0.5"></script>
+<script src="icerik-takimlar.js?v=3.0.5"></script>
+<script src="profil-veri.js?v=3.0.5"></script>
+<script src="profil-pilot.js?v=3.0.5"></script>
+<script src="profil-takim.js?v=3.0.5"></script>
+<script src="profil-giris.js?v=3.0.5"></script>
+<script src="icerik-pistler.js?v=3.0.5"></script>
+<script src="prediction-data.js?v=3.0.5"></script>
+<script src="prediction-engine.js?v=3.0.5"></script>
+<script src="prediction-ui.js?v=3.0.5"></script>
+<script src="pist-hesap.js?v=3.0.5"></script>
+<script src="profil-pist.js?v=3.0.5"></script>
+<script src="hafta-bilmen.js?v=3.0.5"></script>
+<script src="arama.js?v=3.0.5"></script>
+<script src="arama-ui.js?v=3.0.5"></script>
+<script src="feed-canli.js?v=3.0.5"></script>
+<script src="ticker.js?v=3.0.5"></script>
+<script src="yaris-ozet-hesap.js?v=3.0.5"></script>
+<script src="yaris-ozet-v2-hesap.js?v=3.0.5"></script>
+<script src="yaris-ozet-v2.js?v=3.0.5"></script>
+<script src="yaris-ozet.js?v=3.0.5"></script>
+<script src="ui-final.js?v=3.0.5"></script>
+<script src="diger-ui.js?v=3.0.5"></script>
+<script src="pwa.js?v=3.0.5"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root { --zemin:#eef1f5; --yazi:#14202e; --vurgu:#d4161c; --cizgi:#c9d1dc; --kart:#ffffff; --soluk:#4a5a6c; }
@@ -139,38 +146,41 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
   .rozet { font-size:.7rem; color:var(--soluk); border:1px solid var(--cizgi); border-radius:4px; padding:0 4px; margin-left:2px; }
   #feed-debug-metin { font-size:.8rem; white-space:pre-wrap; }
 </style>
-<link rel="stylesheet" href="tasarim.css?v=3.0.2">
-<link rel="stylesheet" href="v3-bilesen.css?v=3.0.2">
-<link rel="stylesheet" href="hafta.css?v=3.0.2">
-<link rel="stylesheet" href="gun-v3.css?v=3.0.2">
-<link rel="stylesheet" href="yaris-v3.css?v=3.0.2">
-<link rel="stylesheet" href="seans-olaylari.css?v=3.0.2">
-<link rel="stylesheet" href="sezon-takvim.css?v=3.0.2">
-<link rel="stylesheet" href="yorum-motoru.css?v=3.0.2">
-<link rel="stylesheet" href="ogren.css?v=3.0.2">
-<link rel="stylesheet" href="detay-panel.css?v=3.0.2">
-<link rel="stylesheet" href="svg-grafik.css?v=3.0.2">
-<link rel="stylesheet" href="analiz-merkezi.css?v=3.0.2">
-<link rel="stylesheet" href="analiz-form.css?v=3.0.2">
-<link rel="stylesheet" href="pilot-karsilastirma.css?v=3.0.2">
-<link rel="stylesheet" href="analiz-sprint.css?v=3.0.2">
-<link rel="stylesheet" href="analiz-pist.css?v=3.0.2">
-<link rel="stylesheet" href="analiz-lastik.css?v=3.0.2">
-<link rel="stylesheet" href="profil.css?v=3.0.2">
-<link rel="stylesheet" href="profil-pist.css?v=3.0.2">
-<link rel="stylesheet" href="hafta-bilmen.css?v=3.0.2">
-<link rel="stylesheet" href="arama.css?v=3.0.2">
-<link rel="stylesheet" href="ticker.css?v=3.0.2">
-<link rel="stylesheet" href="yaris-ozet.css?v=3.0.2">
-<link rel="stylesheet" href="ui-final.css?v=3.0.2">
-<link rel="stylesheet" href="diger-ui.css?v=3.0.2">
-<link rel="stylesheet" href="v3-rozet.css?v=3.0.2">
-<link rel="stylesheet" href="bugun-v3.css?v=3.0.2">
-<link rel="stylesheet" href="nav-v3.css?v=3.0.2">
-<link rel="stylesheet" href="motion-v1.css?v=3.0.2">
-<link rel="stylesheet" href="favori-v1.css?v=3.0.2">
-<link rel="stylesheet" href="ogren-v2.css?v=3.0.2">
-<link rel="stylesheet" href="scroll-telemetry.css?v=3.0.2">
+<link rel="stylesheet" href="tasarim.css?v=3.0.5">
+<link rel="stylesheet" href="v3-bilesen.css?v=3.0.5">
+<link rel="stylesheet" href="hafta.css?v=3.0.5">
+<link rel="stylesheet" href="gun-v3.css?v=3.0.5">
+<link rel="stylesheet" href="yaris-v3.css?v=3.0.5">
+<link rel="stylesheet" href="seans-olaylari.css?v=3.0.5">
+<link rel="stylesheet" href="sezon-takvim.css?v=3.0.5">
+<link rel="stylesheet" href="yorum-motoru.css?v=3.0.5">
+<link rel="stylesheet" href="ogren.css?v=3.0.5">
+<link rel="stylesheet" href="detay-panel.css?v=3.0.5">
+<link rel="stylesheet" href="svg-grafik.css?v=3.0.5">
+<link rel="stylesheet" href="analiz-merkezi.css?v=3.0.5">
+<link rel="stylesheet" href="analiz-form.css?v=3.0.5">
+<link rel="stylesheet" href="pilot-karsilastirma.css?v=3.0.5">
+<link rel="stylesheet" href="analiz-sprint.css?v=3.0.5">
+<link rel="stylesheet" href="analiz-pist.css?v=3.0.5">
+<link rel="stylesheet" href="analiz-lastik.css?v=3.0.5">
+<link rel="stylesheet" href="ghost-lap.css?v=3.0.5">
+<link rel="stylesheet" href="profil.css?v=3.0.5">
+<link rel="stylesheet" href="profil-pist.css?v=3.0.5">
+<link rel="stylesheet" href="hafta-bilmen.css?v=3.0.5">
+<link rel="stylesheet" href="arama.css?v=3.0.5">
+<link rel="stylesheet" href="ticker.css?v=3.0.5">
+<link rel="stylesheet" href="yaris-ozet.css?v=3.0.5">
+<link rel="stylesheet" href="ui-final.css?v=3.0.5">
+<link rel="stylesheet" href="diger-ui.css?v=3.0.5">
+<link rel="stylesheet" href="v3-rozet.css?v=3.0.5">
+<link rel="stylesheet" href="bugun-v3.css?v=3.0.5">
+<link rel="stylesheet" href="nav-v3.css?v=3.0.5">
+<link rel="stylesheet" href="motion-v1.css?v=3.0.5">
+<link rel="stylesheet" href="motion-v2.css?v=3.0.5">
+<link rel="stylesheet" href="favori-v1.css?v=3.0.5">
+<link rel="stylesheet" href="prediction-ui.css?v=3.0.5">
+<link rel="stylesheet" href="ogren-v2.css?v=3.0.5">
+<link rel="stylesheet" href="scroll-telemetry.css?v=3.0.5">
 </head>
 <body>
   <nav>
@@ -200,6 +210,7 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
   <section id="sekme-bugun" hidden aria-label="Bugün">
     <h1 class="bg-sr">Bugün</h1>
     <div id="bg-kok"></div>
+    <div id="tp-bugun"></div>
   </section>
   <section id="sekme-sampiyonlar" hidden>
   <h1>Dünya Şampiyonları</h1>
@@ -341,6 +352,7 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
   </section>
 
   <section id="sekme-grafik" hidden>
+    <div id="tp-analiz"></div>
     <div id="a3-merkez"></div>
     <h1>Puan grafiği</h1>
     <p id="grafik-durum">İlk 6 pilotun sezon boyunca puan gelişimi.</p>
@@ -489,10 +501,18 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
     var bt = document.getElementById("btn-" + b); if (bt) { bt.addEventListener("click", function () { sekmeAc(b); }); }
   });
 
+  // Geçmiş yarış v1: tamamlanmış yarışa ait değişmez yollar (sonuç / pit / tur) bellekte tutulur → aynı yarış tekrar açılınca duplicate fetch yok. Başarısız istek önbelleğe girmez.
+  const GECMIS_YOL = /^\d{4}\/\d+\/(results|pitstops|drivers\/[^/]+\/laps)\//;
+  const jsonOnbellek = new Map();
+  window.__jsonAlSayac = 0;
   async function jsonAl(yol) {
+    if (GECMIS_YOL.test(yol) && jsonOnbellek.has(yol)) { return jsonOnbellek.get(yol); }
+    window.__jsonAlSayac++;
     const cevap = await fetch("https://api.jolpi.ca/ergast/f1/" + yol);
     if (!cevap.ok) { throw new Error(yol + " -> sunucu cevabı: " + cevap.status); }
-    return (await cevap.json()).MRData;
+    const veri = (await cevap.json()).MRData;
+    if (GECMIS_YOL.test(yol) && veri && veri.RaceTable && veri.RaceTable.Races && veri.RaceTable.Races.length) { jsonOnbellek.set(yol, veri); }   // boş yanıt (sonuç henüz yayımlanmadı) önbelleğe girmez
+    return veri;
   }
   function bekle2(ms) { return new Promise(function (coz) { setTimeout(coz, ms); }); }
 
@@ -545,6 +565,7 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
                      "<div class='sayac' id='sayac'></div>";
     clearInterval(sayacZamanlayici);
     function guncelle() {
+      if (!document.getElementById("sayac")) { return; }      // sekme yeniden çizildi / başka ekran: sayaç yoksa sessizce atla
       let fark = Math.floor((yarisZamani(siradaki) - new Date()) / 1000);
       if (fark < 0) { document.getElementById("sayac").textContent = "Yarış başladı!"; return; }
       const gun = Math.floor(fark / 86400); fark %= 86400;
@@ -732,7 +753,15 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
     sec.innerHTML = biten.map(function (y) {
       return "<option value='" + y.round + "'>" + y.round + ". " + y.raceName + "</option>";
     }).reverse().join("");   // en son yarış üstte
-    sec.onchange = function () { yarisYukle(sec.value); };
+    // Seçili yarış: ?season=YYYY&round=N (yalnız tamamlanmış ve bu sezonun yarışı kabul edilir; geçersiz/gelecek → son tamamlanan). Router yok: replaceState ile yalnız bu iki parametre güncellenir.
+    try {
+      const q = new URLSearchParams(location.search), r0 = q.get("round");
+      if (r0 && String(q.get("season") || SEZON) === String(SEZON) && biten.some(function (y) { return String(y.round) === r0; })) { sec.value = r0; }
+    } catch (e) { /* URL okunamazsa son tamamlanan yarış */ }
+    sec.onchange = function () {
+      try { const u = new URL(location.href); u.searchParams.set("season", SEZON); u.searchParams.set("round", sec.value); history.replaceState(history.state, "", u.pathname + u.search + u.hash); } catch (e) { /* önemsiz */ }
+      yarisYukle(sec.value);
+    };
     if (biten.length) { yarisYukle(sec.value); }
   }
 
@@ -1332,14 +1361,14 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
     let olaylar = [];
     if (window.RaceFeed && gunYaris) { olaylar = RaceFeed.yukle(feedCtx().raceKey).olaylar; }
     if (olaylar.length) {
-      // UI v3: ilk görünüm = son 3–5 ÖNEMLİ not; [TÜM FEED] mevcut 40 olaya açar (yeni fetch/timer yok)
+      // UI v3: ilk görünüm = son 5 ÖNEMLİ not (en yeni üstte); [TÜMÜNÜ GÖSTER] mevcut 40 olaya açar (yeni fetch/timer yok)
       const acik = !!(window.GunV3 && GunV3.feedAcik());
       const yuksek = olaylar.filter(function (o) { return o.priority === "high"; });
       let sec = yuksek.slice(0, 5);
-      olaylar.forEach(function (o) { if (sec.length < 3 && sec.indexOf(o) < 0) { sec.push(o); } });
+      if (!sec.length) { sec = olaylar.slice(0, 3); }                  // hiç önemli olay yoksa boş kalmasın
       let gor = acik ? olaylar.slice(0, 40) : olaylar.filter(function (o) { return sec.indexOf(o) >= 0; });
       const tum = Math.min(olaylar.length, 40);
-      const dugme = (acik || tum > gor.length) ? "<button type='button' class='g3-mini' data-gun-feed aria-expanded='" + acik + "'>" + (acik ? "DARALT" : "TÜM FEED (" + tum + ")") + "</button>" : "";
+      const dugme = (acik || tum > gor.length) ? "<button type='button' class='g3-mini' data-gun-feed aria-expanded='" + acik + "'>" + (acik ? "DARALT" : "TÜMÜNÜ GÖSTER") + "</button>" : "";
       kutu.innerHTML = uyari + "<div class='g3-feed-ust'><b>RACE FEED</b><span>" + olaylar.length + " not" + (yuksek.length ? " · " + yuksek.length + " önemli" : "") + "</span>" + dugme + "</div>" +
         "<div class='tl'>" + gor.map(function (o) { return F1UI.olaySatiri(o, olayTakimlari(o)); }).join("") + "</div>";
       try { if (window.GunV3) { GunV3.satirlar(kutu); } } catch (e) {}

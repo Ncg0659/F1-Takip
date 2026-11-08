@@ -114,6 +114,7 @@
     else if (kan && kan.anahtar === "RACE_DAY") { etiket = "RACE DAY"; }
     if (m.aktif && m.aktif.anahtar !== "Race" && !(kan && KRITIK[kan.anahtar])) { etiket = m.gercek ? "LIVE" : "LIVE TAHMİNİ"; ton = m.gercek ? "live" : "bekle"; }
     if (kan && !KRITIK[kan.anahtar] && kan.anahtar === "LIVE" && !m.gercek) { etiket = "LIVE TAHMİNİ"; ton = "bekle"; }   // kanonik LIVE yalnız saatten geliyorsa dürüst etiket
+    if (kan && kan.anahtar === "LIVE" && m.gercek) { etiket = "LIVE"; ton = "live"; }   // bugun-v3 gerçek-feed kararı esas (gun-v3 kanonik yalnız Yarış Günü verisine bakar)
     var tahmini = !m.gercek;
     var secili = m.aktif || m.sonraki;
     var ses = "";

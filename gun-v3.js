@@ -18,7 +18,7 @@
     DELAYED: ["DELAYED", "bekle", "Delayed", "Başlangıç gecikti", "start", "once"],
     RED_FLAG: ["RED_FLAG", "kirmizi", "Red flag", "Yarış durduruldu", "kirmizi-bayrak", "canli"],
     SESSION_STOPPED: ["STOPPED", "bekle", "Stopped", "Yarış durduruldu", "kirmizi-bayrak", "canli"],
-    RESUMED: ["RESUMED", "live", "Resumed", "Yarış yeniden başladı", "restart", "canli"]
+    RESUMED: ["RESUMED", "live", "Resumed", "YARIŞ YENİDEN BAŞLADI", "restart", "canli"]
   };
   function K(anahtar, ton, etiket, baslik, terim, faz, rozetSinif, ipucu) {
     return { anahtar: anahtar, ton: ton, baslik: baslik, terim: terim, faz: faz, etiket: etiket, rozet: [rozetSinif || ton, etiket, ipucu || ""] };
@@ -26,6 +26,9 @@
   function kanonik(c) {
     if (!c || !c.yaris) { return null; }
     var chip = c.st && c.st.chip, f = c.fst && FEED[c.fst.durum];
+    if (f && c.fst.restartAciklandi && (f[0] === "RED_FLAG" || f[0] === "STOPPED")) {      // yeniden başlama AÇIKLANDI ≠ RESUMED: yarış hâlâ durmuş
+      return K(f[0], "bekle", "YENİDEN BAŞLAMA AÇIKLANDI", "Yarış henüz yeniden başlamadı", f[4], f[5], "bekle", "Race Feed'e göre");
+    }
     if (f && !(c.fst.durum === "RESUMED" && chip)) {      // RESUMED'dan SONRA yeni SC/VSC çıktıysa güncel olan chip'tir
       return K(f[0], f[1], f[2], f[3], f[4], f[5], f[1] === "kirmizi" ? "kirmizi" : (f[1] === "live" ? "live" : (f[0] === "STOPPED" ? "sc" : "bekle")), "Race Feed'e göre");
     }
@@ -37,11 +40,11 @@
     if (-c.fark < 3 * 3600 * 1000) {
       if (chip === "VSC") { return K("VSC", "bekle", "VSC", "VSC devrede", "vsc", "canli", "sc", "Race Feed'e göre"); }
       if (chip === "SAFETY CAR") { return K("SAFETY_CAR", "bekle", "Safety car", "Safety Car devrede", "safety-car", "canli", "sc", "Race Feed'e göre"); }
-      return K("LIVE", "live", "Live", "Yarış devam ediyor", "safety-car", "canli", "live");
+      return (c.st && c.st.kaynak === "feed" && c.st.durum === "LIVE") ? K("LIVE", "live", "Live", "Yarış devam ediyor", "safety-car", "canli", "live") : K("LIVE", "bekle", "LIVE TAHMİNİ", "Yarış devam ediyor olmalı", "safety-car", "canli", "bekle", "Saat tahmini");
     }
     return K("PENDING", "bekle", "Results pending", "Sonuçlar bekleniyor", "tur-farki", "bitti", "bekle");
   }
-  var ALT = { RED_FLAG: "Yeniden başlama bekleniyor", STOPPED: "Yeniden başlama bekleniyor" };
+  var ALT = { RED_FLAG: "Yeniden başlama bekleniyor", STOPPED: "Yeniden başlama bekleniyor" }, ALT_ACIK = "Yeniden başlama açıklandı · yarış henüz yeniden başlamadı";
   var DURUM_ALT = { LIVE: 1, SAFETY_CAR: 1, VSC: 1, RESUMED: 1, RACE_DAY: 1, UPCOMING: 1, PENDING: 1, RESCHEDULED: 1, DELAYED: 1 };
   function kisa(s, n) { s = String(s || "").replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1).replace(/\s+\S*$/, "") + "…" : s; }
 
@@ -49,9 +52,9 @@
   function serit(c, d) {
     var kap = $("gun-v3-serit"), blok = $("gun-v3-durum"); if (!kap || !blok) { return; }
     var bg = $("gun-baglam"), bgVar = !!(bg && bg.children.length), sayac = $("gun-sayac"), satir = "";
-    if (ALT[d.anahtar]) { satir = bgVar ? "" : ALT[d.anahtar]; }
+    if (ALT[d.anahtar]) { satir = bgVar ? "" : (c && c.fst && c.fst.restartAciklandi ? ALT_ACIK : ALT[d.anahtar]); }
     else if (DURUM_ALT[d.anahtar]) { satir = (d.anahtar === "DELAYED" && bgVar) ? "" : kisa(sayac && sayac.textContent, 110); }
-    var anahtar = d.anahtar + "|" + d.ton;
+    var anahtar = d.anahtar + "|" + d.ton + "|" + d.etiket;
     if (kap.dataset.k !== anahtar) {
       kap.dataset.k = anahtar;
       kap.innerHTML = "<span class='g3-kod'>" + esc(d.etiket.toUpperCase()) + "</span><b class='g3-baslik'>" + esc(d.baslik) + "</b><span class='g3-satir'></span>";

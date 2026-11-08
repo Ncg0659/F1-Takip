@@ -118,8 +118,11 @@
       if (Y && Number(Y.tur) === Number(h.tur) && Y.seanslar) { h = Y; }
       for (j = 0; j < h.seanslar.length; j++) {
         s = h.seanslar[j];
-        if (s.anahtar !== "Sprint" && s.anahtar !== "Race") { continue; }
         var eski = HV.seansDurumu(s, h, simdi);
+        if (s.anahtar !== "Sprint" && s.anahtar !== "Race") {                                  // FP1-3 / Sıralama / Sprint Sıralaması: yalnız ticker (poll yok, feed yok) → saat tahmini
+          if (eski === "canli") { return { oturum: s.anahtar, tur: Number(h.tur), ad: h.ad, bas: s.baslangic.getTime(), bit: s.bitis.getTime(), raceKey: (y.season || new Date(simdi).getFullYear()) + "-" + y.round + "-" + s.anahtar, durum: "canli", feedYok: true }; }
+          continue;
+        }
         if (eski === "tamamlandi") { continue; }                                              // COMPLETED: override ticker'ı etkilemez
         var bas = s.baslangic.getTime(), bit = s.bitis.getTime(), yil = y.season || new Date(simdi).getFullYear();
         var raceKey = yil + "-" + y.round + (s.anahtar === "Sprint" ? "-sprint" : "");

@@ -156,6 +156,7 @@
   var RE_YENI_SAAT_2 = /\b(?:re-?scheduled|moved|pushed back|put back|postponed|delayed|now (?:set|scheduled))\b[^.!?]{0,30}\b(?:to|until|for|at)\s*(\d{1,2})[:.](\d{2})\b/i;
   var RE_YENI_SAAT_3 = /\bnew (?:start )?time\b[^.!?]{0,15}(\d{1,2})[:.](\d{2})/i;
   var RE_KONTROL = /\binspect\w*\b/i;
+  var RE_YENIDEN_BASLAMA = /\b(?:re-?start\w*|resum\w*|safety car (?:in|ending)|rolling start|standing start)\b/i;
   var RE_HAVA = /\b(rain\w*|downpour|storm\w*|weather|standing water|aquaplan\w*|wet|lightning|thunder\w*)\b/i;
 
   function climaParcala(t) { return t.split(/[.!?;]+\s*|\s*,\s*(?:so|and|but|therefore|with)\b|\s+so\s+/i).map(function (x) { return x.trim(); }).filter(Boolean); }
@@ -174,7 +175,7 @@
       var kendiMi = anahtar === kendi && !acik;
       var tipi = null, yeni = null;
       if (RE_IPTAL.test(c) && acik) { tipi = "SESSION_CANCELLED"; }
-      else if (!RE_KONTROL.test(c)) {
+      else if (!RE_KONTROL.test(c) && !RE_YENIDEN_BASLAMA.test(c)) {   // yarış içi "restart … at 12:45" duyurusu başlangıç saati DEĞİŞİKLİĞİ değildir
         var m = RE_YENI_SAAT_1.exec(c) || RE_YENI_SAAT_2.exec(c) || RE_YENI_SAAT_3.exec(c);
         var pl = planli(hafta, anahtar);
         if (m && pl && hafta.pistTz) {

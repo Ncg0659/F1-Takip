@@ -58,6 +58,7 @@
       if (st.durum === "CANCELLED") { return "<span class='dr kirmizi' title='Program değişikliği'>İPTAL</span>"; }
       if (st.durum === "UPCOMING" && st.yeniSaat) { return "<span class='dr bekle' title='Program değişikliği: yeni saat açıklandı'>YENİ SAAT</span>"; }
       if (st.durum === "DELAYED") { return "<span class='dr bekle' title='Race Feed (Chris Medland) notlarına göre'>BAŞLANGIÇ GECİKTİ</span>"; }
+      if ((st.durum === "RED_FLAG" || st.durum === "SESSION_STOPPED") && st.restartAciklandi) { return "<span class='dr bekle' title='Race Feed notlarına göre: yarış henüz yeniden başlamadı'>YENİDEN BAŞLAMA AÇIKLANDI</span>" + chip; }
       if (st.durum === "RED_FLAG") { return "<span class='dr kirmizi' title='Race Feed notlarına göre'>KIRMIZI BAYRAK</span>"; }
       if (st.durum === "SESSION_STOPPED") { return "<span class='dr sc' title='Race Feed notlarına göre'>SEANS DURDURULDU</span>"; }
       if (st.durum === "RESUMED") { return "<span class='dr live' title='Race Feed notlarına göre'>YENİDEN BAŞLADI</span>" + chip; }

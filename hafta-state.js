@@ -62,13 +62,14 @@
   // Restart ÖNCESİ ifadeler ("restart in 2 minutes", "restart procedure", "cars lining up") yeniden başlama gerçekleşti demek DEĞİLDİR
   var RE_ONCE = /\b(restart\w*|resum\w*|start\w*|lights out|green flag)\b[^.!?]{0,25}\b(in|within)\s+(about |around |roughly )?\d+\s*(min\w*|sec\w*|lap\w*)|\b(restart|resumption)\s+(procedure|sequence|preparations?|is imminent|imminent|soon|shortly)\b|\b(about to|preparing to|getting ready to|set to|ready to)\s+(restart|resume|start)\b|\bwill (soon|shortly) (restart|resume)\b|\b(line[sd]? up|lining up|queue\w*|heading (out )?to the grid)\b/i;
   var RE_GELECEK_DEVAM = /\b(will|to|expected to|should|set to|scheduled to|aims? to|hopes? to|plans? to|could|may)\b[^.]{0,30}\b(resum\w*|restart\w*|re-?start\w*|get under way|go green|begin)\b/i;
-  var RE_DEVAM = /\b(resum(ed|es|ing)|restart(ed|s)?|green flag|back (under ?way|to green|racing)|racing (is )?(back|resum\w*)|under ?way again|(race|sprint|session) (is )?(now )?(live|under ?way)|lights out)\b/i;
+  var RE_DEVAM = /\b(resum(ed|es|ing)|restarted|green flag|back (under ?way|to green|racing)|racing (is )?(back|resum\w*)|under ?way again|(race|sprint|session) (is )?(now )?(live|under ?way)|lights out)\b/i;
   var RE_PLAN_ZAMAN = /\b(resum\w*|restart\w*|start|lights out)\b[^.]{0,15}\b(at|in|for|by|not before|no earlier than)\s*\d{1,2}[:.]\d{2}\b/i;   // "restart at 17:30" = plan, gerçekleşme değil
   var RE_BASLANGIC = /\b(start procedure|formation lap|pit[- ]?lane (is )?open(ed)?|cars (are )?(leaving|heading|going|out of) (the pits?|the pit ?lane|to the grid)|(grid|cars) (is |are )?(forming|formed|on the grid))\b/i;
   // GECİKME: yalnızca BAŞLANGICA bağlı ifadeler ("delayed start", "isn't starting for at least 15 minutes"); "Hamilton delayed his pit stop" gecikme değildir
   var RE_GECIKME_START = /\b(start|session|race|sprint|lights out|formation lap|green flag)\b[^.!?]{0,30}\b(delay\w*|postpone\w*|push\w* back)\b|\b(delay\w*|postpone\w*)\b[^.!?]{0,15}\b(start|session|race|sprint|lights out|formation lap)\b/i;
   var RE_GECIKME_DEGIL = /\b(isn'?t|aren'?t|won'?t|will not|is not|not)\s+(be\s+)?(start(ing)?|begin(ning)?|get(ting)? under ?way|going to (start|begin)|happening)\b|\bno earlier than\b|\bnot before\b/i;
   var RE_ENAZ_SERBEST = /\bat least \d+\s*(?:more\s+)?(min|minutes)\b/i;
+  var RE_DUYURU = /\b(restart\w*|re-start\w*|resum\w*)\b/i;
   function gecikmeMi(t, durum) {
     return RE_GECIKME_START.test(t) || RE_GECIKME_DEGIL.test(t) || (durum === "DELAYED" && RE_ENAZ_SERBEST.test(t));
   }
@@ -102,6 +103,7 @@
       .filter(function (x) { return x.t != null && x.t <= simdi && x.t >= alt; })
       .sort(function (a, b) { return a.t - b.t; });
     if (!liste.length) { return null; }
+    var restartAck = false, restartTs = null;
     var durum = null, ts = null, gercekBas = null, sonKontrol = null, enAz = null, neden = [], chip = null, chipTs = null, bitti = false, bittiTs = null, havaGecmis = [];
     liste.forEach(function (x) {
       if (durum === "ENDED") { return; }      // seans bitti: sonraki yorumlar (restart/red flag geçmiş referansları dahil) durumu değiştirmez
@@ -123,10 +125,15 @@
       // Hava/pist notları: yalnızca gecikme/durdurma ile birlikte "neden" olur (son 60 dk'daki notlar hatırlanır)
       if (RE_KONTROL.test(t)) { havaGecmis.push({ t: x.t, n: nedenTr(t) }); }
       // 3) Durduran olaylar
+      var onceDurum = durum, onceTs = ts;
       if (kirmizi && !gelecekDevam) { durum = "RED_FLAG"; ts = x.t; chip = null; }
       else if (kirmizi && gelecekDevam && durum !== "RED_FLAG" && durum !== "SESSION_STOPPED") { durum = "RED_FLAG"; ts = x.t; chip = null; }
       else if (RE_DURDU.test(t) && durum !== "RED_FLAG") { durum = "SESSION_STOPPED"; ts = x.t; chip = null; }
       else if (gecikmeMi(t, durum) && (durum === null || durum === "DELAYED" || durum === "UPCOMING")) { durum = "DELAYED"; ts = x.t; }
+      if (durum === "RED_FLAG" || durum === "SESSION_STOPPED") {   // yeniden başlama DUYURUSU (açıklandı) ≠ gerçek yeniden başlama (RESUMED yalnız devam dalında)
+        if (durum !== onceDurum || ts !== onceTs) { restartAck = false; restartTs = null; }
+        if (RE_DUYURU.test(t)) { restartAck = true; restartTs = x.t; }
+      }
       // 4) Gecikme/durdurma sırasında ikincil bilgi (pist kontrol saati, en az süre, neden)
       if (durum === "DELAYED" || durum === "RED_FLAG" || durum === "SESSION_STOPPED") {
         havaGecmis.forEach(function (h) { if (x.t - h.t <= 60 * DK) { h.n.forEach(function (n) { if (neden.indexOf(n) < 0) { neden.push(n); } }); } });
@@ -143,7 +150,8 @@
     if (durum && (durum === "DELAYED" || durum === "RED_FLAG" || durum === "SESSION_STOPPED") && ts != null && simdi - ts > KARAR_YASI_MS) { return null; }   // eski/bayat durum: normal akışa dön
     if (!durum && !chip) { return null; }
     if (durum === "RESUMED" && ts != null && simdi - ts > DEVAM_GOSTER_MS) { durum = "LIVE"; }
-    return { tip: durum, ts: ts, gercekBas: gercekBas, sonKontrol: sonKontrol, enAz: enAz, neden: neden, chip: chip, bitti: bitti, bittiTs: bittiTs };
+    var ackGec = restartAck && (durum === "RED_FLAG" || durum === "SESSION_STOPPED");
+    return { restartAciklandi: ackGec, restartTs: ackGec ? restartTs : null, tip: durum, ts: ts, gercekBas: gercekBas, sonKontrol: sonKontrol, enAz: enAz, neden: neden, chip: chip, bitti: bitti, bittiTs: bittiTs };
   }
 
   // ---------- Ana hesap ----------
@@ -197,8 +205,8 @@
     if (fd && fd.tip) {
       cikti.kaynak = "feed"; cikti.tahmini = false; cikti.sonKontrol = fd.sonKontrol; cikti.enAz = fd.enAz;
       if (fd.tip === "DELAYED") { return delayedKart(cikti, fd, simdi, bit); }
-      if (fd.tip === "RED_FLAG") { cikti.durum = "RED_FLAG"; cikti.ozet = "Kırmızı bayrak: seans durduruldu. Yeniden başlama bekleniyor."; return ekSatirlar(cikti, fd, simdi, bit); }
-      if (fd.tip === "SESSION_STOPPED") { cikti.durum = "SESSION_STOPPED"; cikti.ozet = "Seans durduruldu. Yeniden başlama bekleniyor."; return ekSatirlar(cikti, fd, simdi, bit); }
+      if (fd.tip === "RED_FLAG") { cikti.durum = "RED_FLAG"; cikti.restartAciklandi = !!fd.restartAciklandi; cikti.ozet = fd.restartAciklandi ? "Kırmızı bayrak: yeniden başlama açıklandı; yarış henüz yeniden başlamadı." : "Kırmızı bayrak: seans durduruldu. Yeniden başlama bekleniyor."; return ekSatirlar(cikti, fd, simdi, bit); }
+      if (fd.tip === "SESSION_STOPPED") { cikti.durum = "SESSION_STOPPED"; cikti.restartAciklandi = !!fd.restartAciklandi; cikti.ozet = fd.restartAciklandi ? "Seans durduruldu: yeniden başlama açıklandı; henüz yeniden başlamadı." : "Seans durduruldu. Yeniden başlama bekleniyor."; return ekSatirlar(cikti, fd, simdi, bit); }
       if (fd.tip === "RESUMED") { cikti.durum = "RESUMED"; cikti.ozet = "Seans yeniden başladı."; return ekSatirlar(cikti, fd, simdi, bit); }
       if (fd.tip === "ENDED") { cikti.durum = "RESULT_PENDING"; return cikti; }
       if (fd.tip === "LIVE") {

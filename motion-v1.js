@@ -58,6 +58,7 @@
   }
   // ---- pist: yalnız yeni pist/round ----
   function pistKontrol(p) {
+    if (window.MotionV2 && window.MotionV2.pist) { window.MotionV2.pist(p); return; }   // Motion v2 (görününce çiz + tur noktası) devralır
     if (!p || gizliMi(p)) { return; }
     var d = p.getAttribute("d"); if (!d) { return; }
     var s = sekmeId(p) + "|" + String(p.parentNode && p.parentNode.id || "") + "|" + String(p.getAttribute("class"));
@@ -173,6 +174,7 @@
       oyna(sec, "sekme");
       Object.keys(S.hk).forEach(function (k) { if (k.indexOf(sec.id + "|") === 0) { delete S.hk[k]; } });
       Object.keys(S.pk).forEach(function (k) { if (k.indexOf(sec.id + "|") === 0) { delete S.pk[k]; } });
+      if (window.MotionV2 && window.MotionV2.sekme) { window.MotionV2.sekme(sec.id); }   // Motion v2 sekme girişi (pist/grafik/tablo yeniden)
       Array.prototype.forEach.call(sec.querySelectorAll(HERO), heroKontrol);
       Array.prototype.forEach.call(sec.querySelectorAll(PATH), pistKontrol);
       kartKontrol($("yo-kart"));

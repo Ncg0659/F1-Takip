@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenF1 FP / Sprint Sıralaması testi</title>
+<script src="seri-ayarlari.js?v=2"></script>
+<script src="jolpica-istemci.js?v=1"></script>
+<script src="openf1-veri.js?v=1"></script>
+<script src="hafta-veri.js?v=2"></script>
+<style>
+  body { font-family: "Trebuchet MS", sans-serif; margin:16px; background:#eef1f5; color:#14202e; max-width:980px; }
+  h1 { margin:0 0 4px; } h2 { margin:22px 0 8px; font-size:1.2rem; } p { color:#4a5a6c; margin:0 0 10px; }
+  button, input { padding:8px 14px; font-size:1rem; border:1px solid #c9d1dc; background:#fff; border-radius:6px; margin-right:6px; }
+  input { width:70px; } button.ana { background:#d4161c; color:#fff; border-color:#d4161c; font-weight:bold; cursor:pointer; }
+  .kutu { background:#fff; border-left:6px solid #c9d1dc; padding:10px 12px; margin-bottom:10px; }
+  .OK { border-left-color:#2e9d57; } .FAIL { border-left-color:#d4161c; } .BEKLE { border-left-color:#e8a317; }
+  .chip { display:inline-block; padding:1px 8px; border-radius:10px; font-size:.8rem; font-weight:bold; color:#fff; background:#888; }
+  .chip.OK { background:#2e9d57; } .chip.FAIL { background:#d4161c; } .chip.BEKLE { background:#e8a317; }
+  table { border-collapse:collapse; font-size:.85rem; margin:6px 0; } td, th { border:1px solid #c9d1dc; padding:3px 8px; text-align:left; }
+  code, pre { font-size:.8rem; word-break:break-all; white-space:pre-wrap; } .satir { font-size:.9rem; margin:3px 0; }
+  #ozet { background:#14202e; color:#fff; padding:12px 14px; white-space:pre-wrap; font-family:monospace; font-size:.9rem; }
+</style>
+</head>
+<body>
+  <h1>OpenF1 FP / Sprint Sıralaması testi</h1>
+  <p>Gerçek 2025 verisiyle, uygulamadaki aynı kodu (openf1-veri.js + hafta-veri.js) çalıştırır. Yalnızca ücretsiz geçmiş veri uç noktaları kullanılır. Bu dosya ile aynı klasörde seri-ayarlari.js, jolpica-istemci.js, openf1-veri.js, hafta-veri.js bulunmalıdır.</p>
+  <p>Normal hafta sonu turu: <input id="tur-normal" value="1"> Sprint hafta sonu turu: <input id="tur-sprint" value="2"> Sezon: <input id="sezon" value="2025">
+     <button class="ana" id="calistir">OpenF1 testini çalıştır</button><button id="kopyala">Raporu kopyala</button></p>
+  <p>2025 sprint turları: 2 (Çin), 6 (Miami), 12 (Belçika), 19 (ABD), 21 (Brezilya), 23 (Katar).</p>
+  <h2>Özet</h2>
+  <div id="ozet">Henüz çalıştırılmadı.</div>
+  <div id="detay"></div>
+
+<script>
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  var rapor = null;
+
+  function tablo(satirlar, basliklar) {
+    return "<table><thead><tr>" + basliklar.map(function (b) { return "<th>" + esc(b) + "</th>"; }).join("") + "</tr></thead><tbody>" +
+      satirlar.map(function (r) { return "<tr>" + r.map(function (h) { return "<td>" + esc(h) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table>";
+  }
+
+  async function haftaTest(sezon, tur, sprintBeklenen) {
+    var cikti = { tur: tur, sezon: sezon, satirlar: [], html: "", sonuc: {} };
+    function kutu(durum, baslik, icerik) { cikti.html += "<div class='kutu " + durum + "'><b>" + esc(baslik) + "</b> <span class='chip " + durum + "'>" + durum + "</span>" + icerik + "</div>"; }
+    var takvim = await HaftaVeri.takvimYukle(sezon);
+    var kayit = takvim.yarislar.filter(function (y) { return Number(y.round) === Number(tur); })[0];
+    if (!kayit) { kutu("FAIL", "Jolpica takvimi", "<div class='satir'>Tur " + tur + " bulunamadı.</div>"); return cikti; }
+    var h = HaftaVeri.haftaKur(kayit, "f1");
+    var seansListesi = h.seanslar.map(function (s) { return [s.anahtar, s.ad, s.baslangic.toISOString(), s.sonucKaynagi + " (" + s.saglayici + ")"]; });
+    kutu(h.sprintMi === sprintBeklenen ? "OK" : "BEKLE", sezon + " Tur " + tur + " · " + h.ad + " (" + (h.sprintMi ? "sprint hafta sonu" : "normal hafta sonu") + ")",
+      "<div class='satir'>Jolpica takvim seansları:</div>" + tablo(seansListesi, ["Jolpica anahtarı", "Ad", "Başlangıç (UTC)", "Sonuç kaynağı"]));
+    if (!h.seanslar.some(function (x) { return x.saglayici === "openf1"; })) {
+      kutu("FAIL", "Jolpica takviminde FP/SQ seans saati yok", "<div class='satir'>Bu tur için Jolpica takvim kaydında antrenman/sprint sıralaması saatleri bulunmuyor; uygulama bu seansları göstermez. Başka bir tur deneyin.</div>");
+    }
+    var gunlukBas = OpenF1Veri.gunluk.length;
+    await HaftaVeri.haftaYukle(h, Date.now());
+
+    // meeting + oturumlar
+    var mt = await OpenF1Veri.meetingBul(h);
+    var oturumlar = [];
+    if (mt.durum === "ok") {
+      var m = OpenF1Veri._bellek.oturumlar[mt.meeting.meeting_key];
+      oturumlar = m ? m.liste : [];
+      cikti.sonuc.meeting = mt.meeting.meeting_name + " (meeting_key " + mt.meeting.meeting_key + ")";
+      kutu("OK", "OpenF1 meeting eşleşmesi", "<div class='satir'>" + esc(mt.meeting.meeting_name) + " · meeting_key " + mt.meeting.meeting_key + " · " + esc(mt.meeting.date_start) + " → " + esc(mt.meeting.date_end) + "</div>" +
+        "<div class='satir'>OpenF1 oturumları (session_name / session_type bu sezon veride nasıl geçiyorsa):</div>" +
+        tablo(oturumlar.map(function (o) { return [o.session_key, o.session_name, o.session_type, o.date_start]; }), ["session_key", "session_name", "session_type", "date_start"]));
+      cikti.sonuc.oturumAdlari = oturumlar.map(function (o) { return o.session_name + " [" + o.session_type + "]"; });
+    } else {
+      kutu("FAIL", "OpenF1 meeting eşleşmesi", "<div class='satir'>Durum: " + esc(mt.durum) + "</div>");
+    }
+
+    // Sonuçlar
+    h.seanslar.filter(function (s) { return s.saglayici === "openf1"; }).forEach(function (s) {
+      var k = s.sonucKaynagi, o = h.of[k] || {}, sonuc = h.sonuclar[k];
+      if (!sonuc) {
+        kutu("FAIL", s.ad + " (" + s.kisa + ")", "<div class='satir'>OpenF1 durumu: " + esc(o.durum || "denenmedi") + (o.oturumlar ? " · bulunan oturum adları: " + esc(o.oturumlar.join(", ")) : "") + "</div>");
+        cikti.sonuc[k] = "FAIL (" + (o.durum || "denenmedi") + ")";
+        return;
+      }
+      var liste = sonuc.liste;
+      var ilk10 = liste.slice(0, 10);
+      var satirlar, kontrol = "";
+      if (k === "sq") {
+        satirlar = ilk10.map(function (r) { return [r.sira, r.kod, r.takim, r.Q1, r.Q2, r.Q3]; });
+        var sprint = h.sonuclar.sprint, uyum = "";
+        if (sprint) {
+          var gridKod = {}; sprint.liste.forEach(function (r) { gridKod[r.kod] = r.grid; });
+          var eslesen = 0, farkli = [];
+          liste.forEach(function (r) { if (gridKod[r.kod] == null) { return; } if (gridKod[r.kod] === r.sira) { eslesen++; } else { farkli.push(r.kod + " SQ P" + r.sira + " → Sprint grid " + gridKod[r.kod]); } });
+          uyum = "<div class='satir'>Sprint grid (Jolpica) ile karşılaştırma: " + eslesen + "/" + liste.length + " pilot aynı sırada. Farklı olanlar (grid cezası/pit çıkışı olabilir): " + esc(farkli.join("; ") || "yok") + "</div>";
+          cikti.sonuc.sqGridUyumu = eslesen + "/" + liste.length;
+        } else { uyum = "<div class='satir'>Jolpica sprint sonucu yok, grid karşılaştırması yapılamadı.</div>"; }
+        kontrol = "<div class='satir'>SQ pole: " + esc(sonuc.pole.kod) + " " + esc(sonuc.pole.sure) + " · eleme güvenilir: " + sonuc.elemeGuvenilir + (sonuc.elemeGuvenilir ? " · SQ1'de " + sonuc.q1Elenen + ", SQ2'de " + sonuc.q2Elenen + " pilot elendi (" + sonuc.n + "→" + sonuc.q2Sayisi + "→" + sonuc.q3Sayisi + ")" : "") + "</div>" + uyum;
+        cikti.sonuc[k] = "OK (" + liste.length + " pilot, pole " + sonuc.pole.kod + ")";
+        kutu("OK", s.ad + " (OpenF1 oturumu: " + (o.oturum ? o.oturum.ad + " [" + o.oturum.tur + "] key " + o.oturum.anahtar : "?") + ")",
+          kontrol + tablo(satirlar, ["Sıra", "Pilot", "Takım", "SQ1", "SQ2", "SQ3"]));
+      } else {
+        satirlar = ilk10.map(function (r) { return [r.sira, r.kod, r.takim, r.sure, r.fark, r.tur]; });
+        // Yalnızca bilgi: süreler position sırasında artıyor mu (sayısal karşılaştırma). Sonucu engellemez.
+        function sn(t) { var m = /^(?:(\d+):)?(\d+(?:\.\d+)?)$/.exec(t || ""); return m ? (m[1] ? Number(m[1]) * 60 : 0) + Number(m[2]) : null; }
+        var artan = true, onceki = null; liste.forEach(function (r) { var x = sn(r.sure); if (x != null) { if (onceki != null && x < onceki - 1e-9) { artan = false; } onceki = x; } });
+        cikti.sonuc[k] = "OK (" + liste.length + " pilot, ilk 3: " + liste.slice(0, 3).map(function (r) { return r.kod; }).join("-") + ")";
+        var uyari = (o.uyarilar || []).slice(); if (!artan) { uyari.push("süreler position sırasında artmıyor (yalnızca uyarı)"); }
+        kutu("OK", s.ad + " (OpenF1 oturumu: " + (o.oturum ? o.oturum.ad + " [" + o.oturum.tur + "] key " + o.oturum.anahtar : "?") + ")",
+          "<div class='satir'>İlk 3: " + esc(liste.slice(0, 3).map(function (r) { return "P" + r.sira + " " + r.kod + " " + r.sure; }).join(" · ")) + " · kayıt: " + liste.length + "</div>" + (uyari.length ? "<div class='satir'>Debug uyarıları (sonucu engellemez): " + esc(uyari.join(" | ")) + "</div>" : "") +
+          "<div class='satir'>Kontrol için: bu sıralamayı formula1.com sonuç sayfasıyla karşılaştırın.</div>" + tablo(satirlar, ["Sıra", "Pilot", "Takım", "En iyi süre", "Fark", "Tur"]));
+      }
+    });
+    var kullanilan = OpenF1Veri.gunluk.slice(gunlukBas);
+    cikti.html += "<div class='kutu'><b>Bu hafta sonu için çağrılan OpenF1 endpointleri</b>" + tablo(kullanilan.map(function (g) { return [g.yol, g.http, g.tur]; }), ["endpoint", "HTTP", "sonuç"]) +
+      "<div class='satir'>(Önbellekten gelen sonuç için çağrı yapılmaz; temiz test için tarayıcı depolamasındaki 'f1-hafta-v1-' anahtarlarını silin.)</div></div>";
+    cikti.endpointler = kullanilan;
+    return cikti;
+  }
+
+  async function calistir() {
+    var dugme = document.getElementById("calistir"); dugme.disabled = true; dugme.textContent = "Çalışıyor...";
+    var kap = document.getElementById("detay"); kap.innerHTML = ""; document.getElementById("ozet").textContent = "Çalışıyor... (yaklaşık 15-30 sn)";
+    var sezon = Number(document.getElementById("sezon").value);
+    var normal = await haftaTest(sezon, Number(document.getElementById("tur-normal").value), false);
+    kap.insertAdjacentHTML("beforeend", "<h2>Normal hafta sonu</h2>" + normal.html);
+    var sprint = await haftaTest(sezon, Number(document.getElementById("tur-sprint").value), true);
+    kap.insertAdjacentHTML("beforeend", "<h2>Sprint hafta sonu</h2>" + sprint.html);
+    function s(c, k) { return c.sonuc[k] || "yok"; }
+    var ozet = "OPENF1 FP / SQ TESTİ (" + sezon + ")\n\nNORMAL HAFTA SONU (Tur " + normal.tur + ")\nOpenF1 oturum adları: " + (normal.sonuc.oturumAdlari || []).join(", ") +
+      "\nFP1: " + s(normal, "fp1") + "\nFP2: " + s(normal, "fp2") + "\nFP3: " + s(normal, "fp3") +
+      "\n\nSPRINT HAFTA SONU (Tur " + sprint.tur + ")\nOpenF1 oturum adları: " + (sprint.sonuc.oturumAdlari || []).join(", ") +
+      "\nFP1: " + s(sprint, "fp1") + "\nSprint Sıralaması: " + s(sprint, "sq") + "\nSQ - Sprint grid uyumu: " + s(sprint, "sqGridUyumu");
+    document.getElementById("ozet").textContent = ozet;
+    rapor = { zaman: new Date().toISOString(), ozet: ozet, normal: { sonuc: normal.sonuc, endpointler: normal.endpointler }, sprint: { sonuc: sprint.sonuc, endpointler: sprint.endpointler } };
+    dugme.disabled = false; dugme.textContent = "OpenF1 testini çalıştır";
+  }
+  document.getElementById("calistir").addEventListener("click", function () { calistir().catch(function (e) { document.getElementById("ozet").textContent = "Test hatası: " + e.message; document.getElementById("calistir").disabled = false; }); });
+  document.getElementById("kopyala").addEventListener("click", async function () {
+    if (!rapor) { return; }
+    var yazi = JSON.stringify(rapor, null, 1);
+    try { await navigator.clipboard.writeText(yazi); this.textContent = "Kopyalandı"; }
+    catch (e) { var ta = document.createElement("textarea"); ta.value = yazi; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); this.textContent = "Kopyalandı"; }
+  });
+</script>
+</body>
+</html>

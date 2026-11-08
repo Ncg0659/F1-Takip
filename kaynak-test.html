@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kaynak testi</title>
+<style>
+  body { font-family: "Trebuchet MS", sans-serif; margin:16px; background:#eef1f5; color:#14202e; }
+  h1 { margin:0 0 4px; } h2 { margin:22px 0 8px; font-size:1.2rem; }
+  p { color:#4a5a6c; margin:0 0 12px; }
+  button { padding:8px 14px; font-size:1rem; border:1px solid #c9d1dc; background:#fff; border-radius:6px; cursor:pointer; margin-right:6px; }
+  .kutu { background:#fff; border-left:6px solid #c9d1dc; padding:10px 12px; margin-bottom:10px; }
+  .DIRECT { border-left-color:#2e9d57; } .PROXY_REQUIRED { border-left-color:#e8a317; } .FAILED { border-left-color:#d4161c; }
+  .chip { display:inline-block; padding:1px 8px; border-radius:10px; font-size:.8rem; font-weight:bold; color:#fff; background:#888; }
+  .chip.DIRECT { background:#2e9d57; } .chip.PROXY_REQUIRED { background:#e8a317; } .chip.FAILED { background:#d4161c; }
+  .f1 { color:#2e9d57; font-weight:bold; } .degil { color:#8a97a6; }
+  code, pre { font-size:.8rem; word-break:break-all; white-space:pre-wrap; }
+  .satir { font-size:.9rem; margin:3px 0; }
+  #ozet { background:#14202e; color:#fff; padding:12px 14px; white-space:pre-wrap; font-family:monospace; font-size:.9rem; }
+</style>
+</head>
+<body>
+  <h1>Kaynak testi</h1>
+  <p>Her kaynak bu tarayıcıdan denenir. Bittiğinde "Raporu kopyala" ile sonucu bana gönder.</p>
+  <button id="y0-dugme" style="background:#d4161c;color:#fff;border-color:#d4161c;font-weight:bold">Y0 testini çalıştır</button><button id="baslat">Bluesky/RSS testini yeniden çalıştır</button><button id="kopyala">Raporu kopyala</button>
+  <h2 id="y0-baslik">Y0 — OpenF1 / Jolpica Testi</h2>
+  <p>Yarış Haftası için kaynaklar tek tek denenir. OpenF1 başarısız olsa bile Yarış Haftası Jolpica ile çalışır.</p>
+  <div id="y0-ozet" style="background:#14202e;color:#fff;padding:12px 14px;white-space:pre-wrap;font-family:monospace;font-size:.9rem">Y0 testi bekleniyor... (üstteki "Y0 testini çalıştır" düğmesi)</div>
+  <div id="y0-detay"></div>
+  <h2>Özet</h2>
+  <div id="ozet">Test çalışıyor...</div>
+  <h2>Bluesky (getAuthorFeed, giriş yok)</h2>
+  <div id="bsky"></div>
+  <h2>RSS</h2>
+  <div id="rss"></div>
+  <h2>Örnek ham veri</h2>
+  <div id="ham"></div>
+
+<script>
+  // ---- Kaynak listesi ----
+  const BSKY = [
+    { ad: "Chris Medland", handle: "chrismedlandf1.bsky.social", oncelik: "YÜKSEK (yarış sırasında anlık pist olayları)" },
+    { ad: "Albert Fabrega", handle: "albertfabrega.bsky.social", oncelik: "normal" }
+  ];
+  // Adaylar: RSS rehberlerinde listelenen adresler. Hangisinin gerçekten cevap verdiğini test belirler.
+  const RSS = [
+    { ad: "Formula 1", adaylar: ["https://www.formula1.com/en/latest/all.xml", "https://www.formula1.com/content/fom-website/en/latest/all.xml"] },
+    { ad: "Autosport", adaylar: ["https://www.autosport.com/rss/f1/news", "https://www.autosport.com/rss/feed/f1"] },
+    { ad: "Motorsport.com", adaylar: ["https://www.motorsport.com/rss/f1/news/"] },
+    { ad: "The Race", adaylar: ["https://www.the-race.com/rss/", "https://the-race.com/rss/"] },
+    { ad: "BBC Sport", adaylar: ["https://feeds.bbci.co.uk/sport/formula1/rss.xml", "https://feeds.bbci.co.uk/sport/rss.xml"] },
+    { ad: "RaceFans", adaylar: ["https://www.racefans.net/feed/", "https://www.racefans.net/category/formula-1/feed/"] },
+    { ad: "FIA", adaylar: ["https://www.fia.com/rss/press-release"] }
+  ];
+  const ANAHTAR = ["F1", "Formula 1", "Grand Prix", "GP", "race", "qualifying", "sprint", "pit", "penalty",
+    "investigation", "safety car", "red flag", "VSC", "Hamilton", "Verstappen", "Leclerc", "Norris",
+    "Piastri", "Russell", "Antonelli", "Alonso", "Sainz"];
+  // Kısa kısaltmalar (F1, GP, VSC) olduğu gibi eşleşir; diğer kelimeler çoğul "s" ile de eşleşir (pits, penalties hariç basit kural)
+  const F1_REGEX = new RegExp("\\b(" + ANAHTAR.map(function (k) {
+    const kalip = k.replace(/ /g, "\\s+");
+    return k.length <= 3 ? kalip : kalip + "s?";
+  }).join("|") + ")\\b", "i");
+
+  let rapor = null;
+
+  function f1Mi(metin) { return F1_REGEX.test(metin) ? "F1_RELEVANT" : "IRRELEVANT"; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function zamanYaz(iso) {
+    const t = new Date(iso);
+    if (isNaN(t)) { return "-"; }
+    const dk = Math.round((Date.now() - t.getTime()) / 60000);
+    const goreli = dk < 60 ? dk + " dk önce" : (dk < 2880 ? Math.round(dk / 60) + " sa önce" : Math.round(dk / 1440) + " gün önce");
+    return t.toLocaleString("tr-TR") + " (" + goreli + ")";
+  }
+
+  // fetch + zaman aşımı
+  async function fetchZamanli(url, secenek) {
+    const kontrol = new AbortController();
+    const sayac = setTimeout(function () { kontrol.abort(); }, 12000);
+    try {
+      const ayar = Object.assign({}, secenek || {}, { signal: kontrol.signal });
+      return await fetch(url, ayar);
+    } catch (e) {
+      throw new Error(e.name === "AbortError" ? "zaman aşımı (12 sn)" : e.message);
+    } finally { clearTimeout(sayac); }
+  }
+
+  // Önce normal dene (DIRECT). Olmazsa no-cors ile "sunucu cevap veriyor mu" diye bak (PROXY_REQUIRED).
+  async function erisimDene(url) {
+    try {
+      const r = await fetchZamanli(url, {});
+      const metin = await r.text();
+      return { tur: r.ok ? "DIRECT" : "FAILED", http: r.status, metin: metin, hata: r.ok ? "" : "HTTP " + r.status };
+    } catch (e1) {
+      try {
+        await fetchZamanli(url, { mode: "no-cors" });
+        return { tur: "PROXY_REQUIRED", http: null, metin: "",
+                 hata: "Sunucu cevap veriyor (feed olduğu doğrulanamadı) ama tarayıcı CORS nedeniyle içeriği okuyamıyor." };
+      } catch (e2) {
+        return { tur: "FAILED", http: null, metin: "", hata: "Bağlantı kurulamadı: " + e2.message };
+      }
+    }
+  }
+
+  // ---- Bluesky ----
+  async function blueskyTest(h) {
+    const url = "https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=" + encodeURIComponent(h.handle) + "&limit=10";
+    const s = { ad: h.ad, handle: h.handle, oncelik: h.oncelik, url: url, tur: "FAILED", http: null, adet: 0, postlar: [], hata: "", ham: null };
+    const r = await erisimDene(url);
+    s.tur = r.tur; s.http = r.http; s.hata = r.hata;
+    if (r.tur === "DIRECT") {
+      try {
+        const veri = JSON.parse(r.metin);
+        const feed = veri.feed || [];
+        s.adet = feed.length;
+        s.ham = feed[0] || null;
+        s.postlar = feed.map(function (o) {
+          const kayit = (o.post && o.post.record) || {};
+          const metin = kayit.text || "";
+          return { zaman: kayit.createdAt || (o.post && o.post.indexedAt) || "", metin: metin, repost: !!o.reason, etiket: f1Mi(metin) };
+        });
+      } catch (e) { s.tur = "FAILED"; s.hata = "Cevap JSON değil: " + e.message; }
+    }
+    return s;
+  }
+
+  // ---- RSS ----
+  function rssCoz(metin) {
+    const doc = new DOMParser().parseFromString(metin, "text/xml");
+    if (doc.querySelector("parsererror")) { return null; }
+    const ogeler = Array.prototype.slice.call(doc.querySelectorAll("item, entry"));
+    if (!ogeler.length) { return null; }
+    function al(o, sec) { const e = o.querySelector(sec); return e ? e.textContent.trim() : ""; }
+    return ogeler.map(function (o) {
+      return { baslik: al(o, "title"), tarih: al(o, "pubDate, updated, published"), link: al(o, "link") };
+    });
+  }
+
+  async function rssTest(k) {
+    const s = { ad: k.ad, tur: "FAILED", url: "", http: null, adet: 0, ilk: null, hata: "", denemeler: [], hamParca: "" };
+    let proxyAday = null;
+    for (let i = 0; i < k.adaylar.length; i++) {
+      const url = k.adaylar[i];
+      const r = await erisimDene(url);
+      s.denemeler.push(url + " -> " + r.tur + (r.http ? " (HTTP " + r.http + ")" : "") + (r.hata ? " - " + r.hata : ""));
+      if (r.tur === "DIRECT") {
+        const ogeler = rssCoz(r.metin);
+        if (ogeler) {
+          s.tur = "DIRECT"; s.url = url; s.http = r.http; s.adet = ogeler.length; s.ilk = ogeler[0];
+          s.hamParca = r.metin.slice(0, 700); s.hata = "";
+          return s;
+        }
+        s.denemeler[s.denemeler.length - 1] += " - içerik RSS/Atom değil";
+      } else if (r.tur === "PROXY_REQUIRED" && !proxyAday) {
+        proxyAday = { url: url, hata: r.hata };
+      }
+    }
+    if (proxyAday) { s.tur = "PROXY_REQUIRED"; s.url = proxyAday.url; s.hata = proxyAday.hata; }
+    else { s.tur = "FAILED"; s.hata = "RSS bulunamadı veya erişilemiyor."; }
+    return s;
+  }
+
+  // ---- Ekrana çizim ----
+  function bskyKart(s) {
+    let h = "<div class='kutu " + s.tur + "'><b>" + esc(s.ad) + "</b> <code>" + esc(s.handle) + "</code> <span class='chip " + s.tur + "'>" + s.tur + "</span>" +
+            "<div class='satir'>Öncelik: " + esc(s.oncelik) + "</div>" +
+            "<div class='satir'>Bağlantı: " + (s.tur === "DIRECT" ? "başarılı" : "başarısız") + " | HTTP: " + (s.http === null ? "-" : s.http) +
+            " | Alınan kayıt: " + s.adet + "</div>";
+    if (s.postlar.length) {
+      const son = s.postlar[0];
+      const f1Sayi = s.postlar.filter(function (p) { return p.etiket === "F1_RELEVANT"; }).length;
+      h += "<div class='satir'>Son post zamanı: " + esc(zamanYaz(son.zaman)) + "</div>" +
+           "<div class='satir'>Son post (ilk 150 karakter): " + esc(son.metin.slice(0, 150)) + "</div>" +
+           "<div class='satir'>Son " + s.postlar.length + " postun " + f1Sayi + " tanesi F1_RELEVANT</div><hr>";
+      h += s.postlar.map(function (p) {
+        return "<div class='satir'>" + esc(new Date(p.zaman).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })) +
+               " <span class='" + (p.etiket === "F1_RELEVANT" ? "f1" : "degil") + "'>" + p.etiket + "</span>" + (p.repost ? " [repost]" : "") +
+               " " + esc(p.metin.slice(0, 90)) + "</div>";
+      }).join("");
+    }
+    if (s.hata) { h += "<div class='satir'>Hata: " + esc(s.hata) + "</div>"; }
+    return h + "</div>";
+  }
+
+  function rssKart(s) {
+    let h = "<div class='kutu " + s.tur + "'><b>" + esc(s.ad) + "</b> <span class='chip " + s.tur + "'>" + s.tur + "</span>";
+    if (s.url) { h += "<div class='satir'><code>" + esc(s.url) + "</code></div>"; }
+    if (s.tur === "DIRECT") {
+      h += "<div class='satir'>HTTP " + s.http + " | " + s.adet + " kayıt | En yeni: " + esc(s.ilk.baslik.slice(0, 100)) +
+           " (" + esc(s.ilk.tarih ? zamanYaz(s.ilk.tarih) : "tarih yok") + ")</div>";
+    }
+    if (s.hata) { h += "<div class='satir'>" + esc(s.hata) + "</div>"; }
+    h += "<details><summary>Denenen adresler</summary>" + s.denemeler.map(function (d) { return "<div class='satir'><code>" + esc(d) + "</code></div>"; }).join("") + "</details>";
+    return h + "</div>";
+  }
+
+  function ozetYaz(b, r) {
+    const hepsi = b.concat(r);
+    function say(t) { return hepsi.filter(function (x) { return x.tur === t; }).length; }
+    function satir(x) {
+      const ad = x.handle ? x.ad + " (Bluesky)" : x.ad;
+      const durum = x.tur === "DIRECT" ? "OK - Direct" : (x.tur === "PROXY_REQUIRED" ? "Proxy required" : "FAILED");
+      return ad + " - " + durum + (x.tur === "FAILED" && x.hata ? " - " + x.hata : "");
+    }
+    const f1 = b.map(function (x) { return x.postlar.filter(function (p) { return p.etiket === "F1_RELEVANT"; }).length + "/" + x.adet; }).join(", ");
+    return "KAYNAK TEST SONUCU\n\nBluesky\n" + b.map(satir).join("\n") + "\n\nRSS\n" + r.map(satir).join("\n") +
+           "\n\nToplam:\n" + hepsi.length + " kaynak\n" + say("DIRECT") + " DIRECT (doğrudan çalışıyor)\n" +
+           say("PROXY_REQUIRED") + " PROXY_REQUIRED (Cloudflare gerekir)\n" + say("FAILED") + " FAILED" +
+           "\n\nBluesky F1_RELEVANT oranı (son 10 post): " + f1;
+  }
+
+  async function testiCalistir() {
+    document.getElementById("ozet").textContent = "Test çalışıyor...";
+    document.getElementById("bsky").innerHTML = "";
+    document.getElementById("rss").innerHTML = "";
+    document.getElementById("ham").innerHTML = "";
+    const bs = [];
+    for (let i = 0; i < BSKY.length; i++) {
+      const s = await blueskyTest(BSKY[i]); bs.push(s);
+      document.getElementById("bsky").insertAdjacentHTML("beforeend", bskyKart(s));
+    }
+    const rs = [];
+    for (let i = 0; i < RSS.length; i++) {
+      const s = await rssTest(RSS[i]); rs.push(s);
+      document.getElementById("rss").insertAdjacentHTML("beforeend", rssKart(s));
+    }
+    const ozet = ozetYaz(bs, rs);
+    document.getElementById("ozet").textContent = ozet;
+    // Ham veri
+    const bornek = bs.find(function (x) { return x.ham; });
+    const rornek = rs.find(function (x) { return x.hamParca; });
+    let ham = "";
+    if (bornek) { ham += "<b>Bluesky ham kayıt (" + esc(bornek.handle) + ", ilk öğe)</b><pre>" + esc(JSON.stringify(bornek.ham, null, 1).slice(0, 2500)) + "</pre>"; }
+    if (rornek) { ham += "<b>RSS ham başlangıç (" + esc(rornek.ad) + ")</b><pre>" + esc(rornek.hamParca) + "</pre>"; }
+    document.getElementById("ham").innerHTML = ham || "Okunabilen ham veri yok.";
+    rapor = {
+      zaman: new Date().toISOString(), ozet: ozet,
+      bluesky: bs.map(function (x) { return { ad: x.ad, handle: x.handle, tur: x.tur, http: x.http, adet: x.adet, hata: x.hata,
+        sonPost: x.postlar[0] ? { zaman: x.postlar[0].zaman, metin: x.postlar[0].metin.slice(0, 150) } : null,
+        postlar: x.postlar.map(function (p) { return { zaman: p.zaman, etiket: p.etiket, repost: p.repost, metin: p.metin.slice(0, 90) }; }) }; }),
+      rss: rs.map(function (x) { return { ad: x.ad, tur: x.tur, url: x.url, http: x.http, adet: x.adet, hata: x.hata, ilk: x.ilk, denemeler: x.denemeler }; }),
+      ornekHam: { bluesky: bornek ? bornek.ham : null, rss: rornek ? rornek.hamParca : null }
+    };
+  }
+
+
+
+  // ---- Y0 — OpenF1 / Jolpica testi (Bluesky/RSS testlerinden bağımsız) ----
+  function y0Bekle(ms) { return new Promise(function (c) { setTimeout(c, ms); }); }
+  // Tek istek: HTTP durumu, kayıt sayısı, hata, CORS ve ilk kayıt örneği döner
+  async function y0Dene(kaynak, ad, url, kayitCikar) {
+    const s = { kaynak: kaynak, ad: ad, endpoint: url, http: null, ok: false, adet: null, hata: "", cors: "hayır", ornek: null, veri: null };
+    try {
+      const r = await fetchZamanli(url, {});
+      s.http = r.status;
+      const metin = await r.text();
+      let veri = null;
+      try { veri = JSON.parse(metin); } catch (e) { s.hata = "Cevap JSON değil: " + metin.slice(0, 120); }
+      if (r.ok && veri !== null) {
+        s.veri = veri;
+        const liste = kayitCikar(veri);
+        s.adet = liste.length;
+        s.ornek = liste[0] || null;
+        s.ok = true;
+      } else if (!r.ok) {
+        s.hata = "HTTP " + r.status + (metin ? " - " + metin.slice(0, 160) : "");
+      }
+    } catch (e1) {
+      s.hata = e1.message;
+      try { await fetchZamanli(url, { mode: "no-cors" }); s.cors = "EVET (sunucu cevap veriyor ama tarayıcı içeriği okutmuyor)"; }
+      catch (e2) { s.cors = "hayır, sunucuya hiç ulaşılamadı (ağ/engel): " + e2.message; }
+    }
+    return s;
+  }
+  function y0Kutu(s) {
+    const durum = s.ok ? "OK" : "FAIL";
+    return "<div class='kutu " + (s.ok ? "DIRECT" : "FAILED") + "'><b>" + esc(s.kaynak) + " — " + esc(s.ad) + "</b> <span class='chip " + (s.ok ? "DIRECT" : "FAILED") + "'>" + durum + "</span>" +
+      "<div class='satir'>Endpoint: <code>" + esc(s.endpoint) + "</code></div>" +
+      "<div class='satir'>HTTP status: " + (s.http === null ? "-" : s.http) + " | Başarılı: " + (s.ok ? "evet" : "hayır") + " | Dönen kayıt sayısı: " + (s.adet === null ? "-" : s.adet) + "</div>" +
+      "<div class='satir'>Hata mesajı: " + esc(s.hata || "yok") + "</div>" +
+      "<div class='satir'>CORS sorunu: " + esc(s.cors) + "</div>" +
+      "<div class='satir'>Örnek ilk kayıt:</div><pre>" + esc(s.ornek ? JSON.stringify(s.ornek, null, 1).slice(0, 700) : "(kayıt yok)") + "</pre></div>";
+  }
+  function y0Durum(s) {
+    if (!s) { return "FAIL (denenmedi)"; }
+    if (!s.ok) { return "FAIL - " + (s.http !== null ? "HTTP " + s.http : s.hata.slice(0, 80)) + (s.cors.indexOf("EVET") === 0 ? " (CORS)" : ""); }
+    return "OK (" + s.adet + " kayıt)";
+  }
+  async function y0Calistir() {
+    const dugme = document.getElementById("y0-dugme");
+    dugme.disabled = true; dugme.textContent = "Y0 çalışıyor...";
+    document.getElementById("y0-ozet").textContent = "Y0 testi çalışıyor...";
+    const kap = document.getElementById("y0-detay"); kap.innerHTML = "";
+    const OF = "https://api.openf1.org/v1/", JO = "https://api.jolpi.ca/ergast/f1/";
+    const sonuc = {};
+    function goster(s) { kap.insertAdjacentHTML("beforeend", y0Kutu(s)); }
+    // OPENF1 (3 istek/sn sınırı için aralıklı)
+    const mt = await y0Dene("OpenF1", "meetings", OF + "meetings?year=2025", function (v) { return Array.isArray(v) ? v : []; });
+    goster(mt); sonuc.meetings = mt; await y0Bekle(500);
+    const se = await y0Dene("OpenF1", "sessions", OF + "sessions?year=2025&session_name=Qualifying", function (v) { return Array.isArray(v) ? v : []; });
+    goster(se); sonuc.sessions = se; await y0Bekle(500);
+    let anahtar = null, secilen = null;
+    if (se.ok && se.veri.length) {
+      secilen = se.veri.find(function (x) { return /singapore|marina/i.test((x.country_name || "") + " " + (x.location || "") + " " + (x.circuit_short_name || "")); }) || se.veri[se.veri.length - 1];
+      anahtar = secilen.session_key;
+    }
+    if (anahtar) {
+      const sr = await y0Dene("OpenF1", "session_result (session_key=" + anahtar + ", " + (secilen.location || "") + " Qualifying)", OF + "session_result?session_key=" + anahtar, function (v) { return Array.isArray(v) ? v : []; });
+      goster(sr); sonuc.session_result = sr;
+    } else {
+      const sr = { kaynak: "OpenF1", ad: "session_result", endpoint: OF + "session_result?session_key=<sessions sonucundan>", http: null, ok: false, adet: null,
+                   hata: "denenmedi: sessions başarısız olduğu için session_key alınamadı", cors: "bilinmiyor", ornek: null };
+      goster(sr); sonuc.session_result = sr;
+    }
+    // JOLPICA
+    const bos = function (alan) { return function (v) { const r = v.MRData.RaceTable.Races[0]; return r ? (r[alan] || []) : []; }; };
+    const jc = await y0Dene("Jolpica", "2026 takvim", JO + "2026/races/?limit=100", function (v) { return v.MRData.RaceTable.Races || []; });
+    goster(jc); sonuc.calendar = jc; await y0Bekle(500);
+    const jq = await y0Dene("Jolpica", "Singapur Tur 17 qualifying", JO + "2026/17/qualifying/?limit=100", bos("QualifyingResults"));
+    goster(jq); sonuc.qualifying = jq; await y0Bekle(500);
+    const js = await y0Dene("Jolpica", "Singapur Tur 17 sprint", JO + "2026/17/sprint/?limit=100", bos("SprintResults"));
+    goster(js); sonuc.sprint = js; await y0Bekle(500);
+    const jr = await y0Dene("Jolpica", "Singapur Tur 17 results", JO + "2026/17/results/?limit=100", bos("Results"));
+    goster(jr); sonuc.results = jr;
+    // Özet
+    const yarisYok = " (0 kayıt = yarış henüz yapılmadı; bağlantı çalışıyor)";
+    function jd(s) { return y0Durum(s) + (s && s.ok && s.adet === 0 ? yarisYok : ""); }
+    const ozet = "OPENF1\nMeetings: " + y0Durum(sonuc.meetings) + "\nSessions: " + y0Durum(sonuc.sessions) + "\nSession Result: " + y0Durum(sonuc.session_result) +
+      "\n\nJOLPICA\nCalendar: " + y0Durum(sonuc.calendar) + "\nQualifying: " + jd(sonuc.qualifying) + "\nSprint: " + jd(sonuc.sprint) + "\nResults: " + jd(sonuc.results) +
+      "\n\nMEETINGS: " + (sonuc.meetings.ok ? "OK" : "FAIL") + "\nSESSIONS: " + (sonuc.sessions.ok ? "OK" : "FAIL") + "\nSESSION_RESULT: " + (sonuc.session_result.ok ? "OK" : "FAIL");
+    document.getElementById("y0-ozet").textContent = ozet;
+    window.y0Rapor = { zaman: new Date().toISOString(), ozet: ozet, testler: Object.keys(sonuc).map(function (k) { const x = sonuc[k]; return { ad: k, endpoint: x.endpoint, http: x.http, ok: x.ok, adet: x.adet, hata: x.hata, cors: x.cors, ornek: x.ornek }; }) };
+    dugme.disabled = false; dugme.textContent = "Y0 testini çalıştır";
+  }
+  document.getElementById("y0-dugme").addEventListener("click", y0Calistir);
+  y0Calistir();
+
+  document.getElementById("baslat").addEventListener("click", function () { testiCalistir(); });
+  document.getElementById("kopyala").addEventListener("click", async function () {
+    if (!rapor) { return; }
+    const yazi = JSON.stringify(Object.assign({}, rapor, { y0: window.y0Rapor || null }), null, 1);
+    try { await navigator.clipboard.writeText(yazi); this.textContent = "Kopyalandı"; }
+    catch (e) {
+      const ta = document.createElement("textarea"); ta.value = yazi; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); document.body.removeChild(ta); this.textContent = "Kopyalandı";
+    }
+  });
+
+  testiCalistir();
+</script>
+</body>
+</html>

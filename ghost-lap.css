@@ -1,0 +1,36 @@
+/* GHOST LAP + LOCATION REPLAY v1 — yalnızca #gl-ghost kapsamı. Mevcut ANALİZ tasarım dili (kart, çizgi, soluk, yazı değişkenleri). */
+#gl-ghost { --gl-a:#e10600; --gl-b:#2f7de1; margin:12px 0; background:var(--kart); border:1px solid var(--cizgi); border-radius:10px; padding:0 12px; min-width:0; }
+#gl-ghost > summary { cursor:pointer; min-height:44px; display:flex; align-items:center; font-weight:700; font-size:1rem; letter-spacing:.04em; }
+#gl-ghost .gl-ic { padding:0 0 12px; min-width:0; max-width:100%; overflow-x:hidden; }
+#gl-ghost .gl-bilgi, #gl-ghost .gl-not, #gl-ghost .gl-mesaj { margin:6px 0; font-size:.82rem; color:var(--soluk); }
+#gl-ghost .gl-form { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0; }
+#gl-ghost .gl-alan { display:flex; flex-direction:column; gap:2px; min-width:0; font-size:.74rem; color:var(--soluk); }
+#gl-ghost .gl-tam { grid-column:1 / -1; }
+#gl-ghost select { font:inherit; font-size:.9rem; min-height:40px; max-width:100%; min-width:0; width:100%; padding:4px 8px; border:1px solid var(--cizgi); border-radius:8px; background:var(--kart); color:var(--yazi); box-sizing:border-box; }
+#gl-ghost .gl-a { color:var(--gl-a); font-weight:700; } #gl-ghost .gl-b { color:var(--gl-b); font-weight:700; }
+#gl-ghost .gl-baslik { margin:14px 0 4px; font-size:.95rem; letter-spacing:.05em; }
+#gl-ghost .gl-tur { margin:2px 0; font-size:.84rem; }
+#gl-ghost .gl-delta { margin:6px 0; font-size:1.1rem; font-variant-numeric:tabular-nums; }
+#gl-ghost .gl-kap { overflow-x:auto; max-width:100%; }
+#gl-ghost .gl-tablo { width:100%; border-collapse:collapse; font-size:.84rem; font-variant-numeric:tabular-nums; }
+#gl-ghost .gl-tablo th, #gl-ghost .gl-tablo td { padding:5px 6px; border-bottom:1px solid var(--cizgi); text-align:right; white-space:nowrap; }
+#gl-ghost .gl-tablo th:first-child, #gl-ghost .gl-tablo th[scope=row] { text-align:left; font-weight:600; }
+#gl-ghost .gl-sekme, #gl-ghost .gl-rp-1 { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 6px; }
+#gl-ghost .gl-btn { font:inherit; font-size:.84rem; min-height:40px; padding:6px 12px; border:1px solid var(--cizgi); border-radius:8px; background:var(--kart); color:var(--yazi); cursor:pointer; }
+#gl-ghost .gl-btn[aria-pressed=true] { border-color:var(--yazi); font-weight:700; }
+#gl-ghost .gl-lej { display:flex; flex-wrap:wrap; gap:4px 14px; font-size:.78rem; margin:2px 0 4px; }
+#gl-ghost .gl-svg { display:block; width:100%; height:auto; max-width:100%; }
+#gl-ghost .gl-cerceve { fill:none; stroke:var(--cizgi); stroke-width:1; }
+#gl-ghost .gl-sifir { stroke:var(--soluk); stroke-width:1; stroke-dasharray:3 3; }
+#gl-ghost .gl-eks, #gl-ghost .gl-pbaslik { font-size:10px; fill:var(--soluk); }
+#gl-ghost .gl-l-a { stroke:var(--gl-a); stroke-width:1.6; } #gl-ghost .gl-l-b { stroke:var(--gl-b); stroke-width:1.6; stroke-dasharray:5 3; } #gl-ghost .gl-l-d { stroke:var(--yazi); stroke-width:1.8; }
+#gl-ghost .gl-pist { margin:8px 0; max-width:100%; }
+#gl-ghost .gl-pist-svg { display:block; width:100%; height:auto; max-height:320px; }
+#gl-ghost .gl-hat-alt { fill:none; stroke:var(--cizgi); stroke-width:7; stroke-linejoin:round; stroke-linecap:round; }
+#gl-ghost .gl-hat { fill:none; stroke:var(--soluk); stroke-width:2; stroke-linejoin:round; stroke-linecap:round; }
+#gl-ghost .gl-isa circle { fill:var(--gl-a); stroke:#fff; stroke-width:1.5; } #gl-ghost .gl-isb circle { fill:var(--gl-b); stroke:#fff; stroke-width:1.5; }
+#gl-ghost .gl-isaret text { font-size:9px; font-weight:700; fill:var(--yazi); paint-order:stroke; stroke:var(--kart); stroke-width:2px; }
+#gl-ghost .gl-rp-2 { display:flex; align-items:center; gap:10px; margin:4px 0; }
+#gl-ghost .gl-kaydir { flex:1 1 auto; min-width:0; width:100%; min-height:40px; }
+#gl-ghost .gl-sure { flex:0 0 auto; font-size:.78rem; font-variant-numeric:tabular-nums; color:var(--soluk); }
+@media (max-width:480px) { #gl-ghost .gl-rp-2 { flex-wrap:wrap; } #gl-ghost .gl-sure { flex-basis:100%; } #gl-ghost .gl-btn { padding:6px 10px; } }
