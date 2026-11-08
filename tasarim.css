@@ -220,12 +220,14 @@ td.sayi, td.puan { font-family:var(--f-sayi); }
    Kırmızı üst çizgi (body::before) viewport üstünde sabit KALIR. Aşağı kaydırınca header/top bar çizginin hemen altında
    yarım kesilmiş görünmesin diye: ilk 44px kaydırmada saf CSS scroll-timeline ile solar (JS/dinleyici yok), yukarı kaydırınca geri gelir.
    • yalnız mobil (≤600px) ve hareket azaltma KAPALIYKEN; desteklemeyen tarayıcıda header normal (doğal) kayar. Masaüstü etkilenmez.
-   • Çentikli/uçtan uca (standalone) ekranlarda: çizgi güvenli alanın hemen altına iner; çizginin üstündeki alan düz zemin rengiyle kapanır
+   • Çentikli/uçtan uca (standalone) ekranlarda: çizgi güvenli alanın hemen altına iner; çizginin üstündeki alan opak maskeyle kapanır
      → çizginin üstünde hiçbir UI parçası görünmez. Güvenli alan 0 ise (normal tarayıcı) hiçbir fark yok. */
 @media (max-width:600px) {
   body::before { top:env(safe-area-inset-top, 0px); box-shadow:0 7px 12px -6px var(--gol); }   /* ışıma yalnız aşağı (yukarı taşan ışıma çizginin üstünü kirletmesin) */
   body { padding-top:calc(14px + env(safe-area-inset-top, 0px)); }          /* içerik güvenli alanın altından başlar (alan 0 ise 14px = mevcut değer) */
-  body::after { content:""; position:fixed; left:0; right:0; top:0; height:env(safe-area-inset-top, 0px); background:var(--zemin); z-index:49; pointer-events:none; }
+  /* ÜST MASKE: viewport üstünden kırmızı çizginin ALT sınırına kadar TAM OPAK tema zemini (güvenli alan + 3px çizgi). Sayfa içeriği bu şeridin arkasından görünmez;
+     çizgi (body::before) maskenin alt sınırında oturur. Güvenli alan 0 ise mask yalnız 3px çizgi şeridi (çizgi sağa doğru saydamlaşsa da arkası düz zemin). */
+  body::after { content:""; position:fixed; left:0; right:0; top:0; height:calc(env(safe-area-inset-top, 0px) + 3px); background-color:var(--zemin); background-image:none; opacity:1; z-index:49; pointer-events:none; }
 }
 @media (max-width:600px) and (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: scroll()) {

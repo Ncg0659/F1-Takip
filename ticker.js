@@ -12,7 +12,7 @@
   // ---------- 1) SAF KATMAN ----------
   var KRITIK = { SAFETY_CAR: 1, VSC: 1, RED_FLAG: 1, RESTART: 1, PENALTY: 1, INVESTIGATION: 1, TECHNICAL: 1, WEATHER: 1, PIT: 1, POSITION: 1, RESULT: 1 };
   // Çevirisi bulunamayıp ham (İngilizce) metne düşen olaylar için yalnızca sabit etiketi olan kategoriler; diğer yedek (EN) olaylar ticker'a girmez
-  var SABIT = { SAFETY_CAR: "Safety Car", VSC: "Sanal Safety Car (VSC)", RED_FLAG: "Kırmızı bayrak", RESTART: "Yarış yeniden başladı" };
+  var SABIT = { SAFETY_CAR: "Safety Car", VSC: "Sanal Safety Car (VSC)", RED_FLAG: "Kırmızı bayrak", RESTART: "Yeniden başlama açıklandı · yarış henüz başlamadı" };
   // Sebep/yorum/tahmin içeren ifadeler ticker'a alınmaz (ham olay → kısa bilgi)
   var YORUM = /favori|avantaj|yanlış|kazandırabilir|bekleniyor|muhtemel|olabilir|belki|sanırım|bence|iyi (?:görünüyor|olabilir)|güçlü görünüyor/i;
   var TOP3 = /(^|[^\dA-Za-z])P[123](?!\d)/;
@@ -98,7 +98,16 @@
     if (FeedCanli.tickerOturum) { return bul(function () { return FeedCanli.tickerOturum(simdi); }, null); }
     return bul(function () { return FeedCanli.canli(simdi); }, null);
   }
-    function durumSatiri(m) { var t = (m.oturum === "Sprint" ? "SPRINT" : "YARIŞ") + " — " + (m.durum === "gecikti" ? "BAŞLANGIÇ GECİKTİ" : (m.durum === "ertelendi" ? "ERTELENDİ" : "İPTAL EDİLDİ")); return t + (m.durum !== "iptal" && !(m.durum === "gecikti" && m.yeniSaat) ? " · Yeni saat bekleniyor" : ""); }
+  var OTURUM_AD = { FirstPractice: "ANTRENMAN 1", SecondPractice: "ANTRENMAN 2", ThirdPractice: "ANTRENMAN 3", SprintQualifying: "SPRINT SIRALAMASI", SprintShootout: "SPRINT SIRALAMASI", Sprint: "SPRINT", Qualifying: "SIRALAMA", Race: "YARIŞ" };
+  function oturumAd(m) {
+    var ad = OTURUM_AD[m.oturum] || "YARIŞ";
+    if (m.oturum === "Qualifying" || m.oturum === "SprintQualifying" || m.oturum === "SprintShootout") {     // saat tabanlı faz (Q1-3 / SQ1-3); etiket zaten "TAHMİNİ"
+      var f = bul(function () { return HaftaState.fazHesapla(HaftaState.turBul(m.oturum), m.bas, m.simdi); }, null);
+      if (f && f.id && f.tip === "aktif") { ad += " " + f.id; }
+    }
+    return ad;
+  }
+  function durumSatiri(m) { var t = (m.oturum === "Sprint" ? "SPRINT" : "YARIŞ") + " — " + (m.durum === "gecikti" ? "BAŞLANGIÇ GECİKTİ" : (m.durum === "ertelendi" ? "ERTELENDİ" : "İPTAL EDİLDİ")); return t + (m.durum !== "iptal" && !(m.durum === "gecikti" && m.yeniSaat) ? " · Yeni saat bekleniyor" : ""); }
   function durumHtml(m) { var t = durumSatiri(m), i = t.indexOf(" · "); return i < 0 ? esc(t) : esc(t.slice(0, i)) + "<span class='tk-pr2'>" + esc(t.slice(i)) + "</span>"; }   // yeni saat zaten kesinse "yeni saat bekleniyor" denmez
 
   // Akış, canlı oturumda sekmeden bağımsız sürer (FeedCanli); yine de son poll çok eskiyse (gizli tarayıcı sekmesi vb.) "bekleniyor" denmez
@@ -107,16 +116,18 @@
   // Etiket doğruluğu (BUGÜN hero ile AYNI kural; yeni state motoru yok): yalnız Race Feed'in DOĞRULADIĞI durum düz LIVE / gerçek state; saat tabanlı → "LIVE TAHMİNİ"
   var FEED_LIVE = { LIVE: 1, RESUMED: 1, RED_FLAG: 1, SESSION_STOPPED: 1 };
   function etiketHesapla(o, olaylar, simdi) {
+    if (o.feedYok) { return { ad: "LIVE TAHMİNİ", ton: "tahmin", fd: null }; }       // FP/Sıralama: Race Feed yok → saat tahmini
     var fd = bul(function () {
       return HaftaState.feedDurumu(olaylar || [], { anahtar: o.oturum, baslangic: new Date(o.bas), bitis: new Date(o.bit), planliBaslangic: new Date(o.bas) }, simdi);
     }, null), tip = fd && fd.tip ? fd.tip : null;
     if (o.oturum === "Race" && fd) {                      // Sprint'te hero yalnız LIVE/LIVE TAHMİNİ der → burada da
-      if (tip === "RED_FLAG") { return { ad: "RED FLAG", ton: "kirmizi" }; }
-      if (tip === "SESSION_STOPPED") { return { ad: "STOPPED", ton: "bekle" }; }
-      if (fd.chip === "SAFETY CAR" || fd.chip === "VSC") { return { ad: fd.chip, ton: "bekle" }; }
-      if (tip === "RESUMED") { return { ad: "RESUMED", ton: "live" }; }
+      if ((tip === "RED_FLAG" || tip === "SESSION_STOPPED") && fd.restartAciklandi) { return { ad: "YENİDEN BAŞLAMA AÇIKLANDI", ton: "bekle", fd: fd }; }   // yarış hâlâ durmuş
+      if (tip === "RED_FLAG") { return { ad: "RED FLAG", ton: "kirmizi", fd: fd }; }
+      if (tip === "SESSION_STOPPED") { return { ad: "STOPPED", ton: "bekle", fd: fd }; }
+      if (fd.chip === "SAFETY CAR" || fd.chip === "VSC") { return { ad: fd.chip, ton: "bekle", fd: fd }; }
+      if (tip === "RESUMED") { return { ad: "RESUMED", ton: "live", fd: fd }; }
     }
-    return FEED_LIVE[tip] ? { ad: "LIVE", ton: "live" } : { ad: "LIVE TAHMİNİ", ton: "tahmin" };
+    return FEED_LIVE[tip] ? { ad: "LIVE", ton: "live", fd: fd } : { ad: "LIVE TAHMİNİ", ton: "tahmin", fd: fd };
   }
 
   function modelKur() {
@@ -125,8 +136,13 @@
     if (o.durum && o.durum !== "canli") { return { oturum: o.oturum, tur: o.tur, ad: o.ad, anahtar: o.raceKey, olaylar: [], oturumOlay: 0, akis: false, hata: false, simdi: simdi, durum: o.durum, yeniSaat: !!o.yeniSaat }; }
     var ol = bul(function () { return kok.RaceFeed ? RaceFeed.yukle(o.raceKey).olaylar : []; }, []);
     var r = sec(ol, { bas: o.bas, simdi: simdi });
-    var et = etiketHesapla(o, ol, simdi);
-    return { etiket: et.ad, ton: et.ton, oturum: o.oturum, tur: o.tur, ad: o.ad, anahtar: o.raceKey, olaylar: r.gorunen, oturumOlay: r.oturumOlaySayisi, akis: akisAktif(), hata: bul(function () { return FeedCanli.durum().hata; }, false), simdi: simdi };
+    var et = etiketHesapla(o, ol, simdi), gor = r.gorunen, fd = et.fd;
+    if (fd && o.oturum === "Race") {                                   // durum satırı: restart AÇIKLANDI (yarış durmuş) ≠ gerçek RESUMED
+      if (fd.restartAciklandi && fd.restartTs != null) { gor = [{ id: "rs-ack", ts: fd.restartTs, kat: "RESTART", metin: "Yarış henüz yeniden başlamadı" }].concat(gor.filter(function (e) { return e.kat !== "RESTART"; })).slice(0, VARSAYILAN.max); }
+      else if (fd.tip === "RESUMED" && fd.ts != null && simdi - fd.ts <= VARSAYILAN.yasMs) { gor = [{ id: "rs-ok", ts: fd.ts, kat: "RESTART", metin: "YARIŞ YENİDEN BAŞLADI" }].concat(gor.filter(function (e) { return e.kat !== "RESTART"; })).slice(0, VARSAYILAN.max); }
+    }
+    r = { gorunen: gor, oturumOlaySayisi: r.oturumOlaySayisi };
+    return { feedYok: !!o.feedYok, bas: o.bas, oturumAnahtar: o.oturum, etiket: et.ad, ton: et.ton, oturum: o.oturum, tur: o.tur, ad: o.ad, anahtar: o.raceKey, olaylar: r.gorunen, oturumOlay: r.oturumOlaySayisi, akis: akisAktif(), hata: bul(function () { return FeedCanli.durum().hata; }, false), simdi: simdi };
   }
 
   function kur() {
@@ -157,6 +173,7 @@
   }
 
   function durumMetni(m) {
+    if (m.feedYok) { return "Seans sürüyor · saat tahmini (bu seans için canlı akış yok)"; }
     if (m.hata && m.oturumOlay === 0) { return "Canlı akışa şu an ulaşılamıyor"; }
     if (m.oturumOlay === 0) { return "Canlı akış bekleniyor…"; }
     return "Son 15 dakikada kritik gelişme yok";
@@ -175,7 +192,7 @@
       h = m.olaylar.map(function (e, i) {
         var kt = bul(function () { return F1UI.KATEGORI[e.kat].renk; }, null);
         return "<span class='tk-o" + (i === 0 ? " tk-yeni" : "") + "' data-id='" + esc(e.id) + "'" + (kt ? " style='--kc:" + esc(kt) + "'" : "") + "><i class='tk-kn' aria-hidden='true'></i><b class='tk-yas'>" +
-          esc(yasYaz(m.simdi - e.ts)) + "</b> <span class='tk-m'>" + esc(e.metin) + "</span></span>";
+          esc(yasYaz(m.simdi - e.ts)) + "</b> <span class='tk-m'><span class='tk-mi'>" + (i === 0 ? "<b class='tk-on'>" + esc(oturumAd(m)) + " · </b>" : "") + esc(e.metin) + "</span></span></span>";
       }).join("");
     } else { h = "<span class='tk-bos'>" + esc(durumMetni(m)) + "</span>"; }
     var imza = h + "|" + m.oturum;
@@ -183,11 +200,11 @@
     var et = m.etiket || "LIVE", ton = m.ton || "live";
     if (S.et && S.et.textContent !== et) { S.et.textContent = et; }
     if (S.live && S.live.getAttribute("data-ton") !== ton) { S.live.setAttribute("data-ton", ton); }
-    S.oturum.textContent = m.oturum === "Sprint" ? "SPRINT" : "YARIŞ";
+    S.oturum.textContent = oturumAd(m);
     if (prg) { S.btn.setAttribute("aria-label", durumSatiri(m) + ". Yarış Günü'nü aç"); }
-    else S.btn.setAttribute("aria-label", et + " " + (m.oturum === "Sprint" ? "Sprint" : "yarış") + ": " + (m.olaylar.length ? m.olaylar[0].metin : durumMetni(m)) + ". Yarış Günü'nde Race Feed'i aç");
+    else S.btn.setAttribute("aria-label", et + " " + oturumAd(m).toLocaleLowerCase("tr") + ": " + (m.olaylar.length ? m.olaylar[0].metin : durumMetni(m)) + ". Yarış Günü'nde Race Feed'i aç");
     if (S.el.hidden) { S.el.hidden = false; }
-    sigdir();
+    sigdir(); kaydir();
     // ekran okuyucu: yalnızca YENİ kritik olay geldiğinde (ilk çizim sessiz)
     var ids = m.olaylar.map(function (e) { return e.id; });
     if (S.bildirilen == null) { S.bildirilen = {}; ids.forEach(function (i) { S.bildirilen[i] = 1; }); }
@@ -204,6 +221,29 @@
     Array.prototype.forEach.call(oge, function (e) { e.hidden = false; });
     var i;
     for (i = oge.length - 1; i > 0 && S.akis.scrollWidth > S.akis.clientWidth + 1; i--) { oge[i].hidden = true; }
+    kaydir();
+  }
+
+  // Kayan yazı (marquee): yalnız ilk olayın haber metni; etiket/ikon/ok sabit. Sığıyorsa sabit; taşıyorsa sağdan sola ~40 px/sn, başta ~1 sn, sonda kısa bekleme, döngü.
+  // Web Animations API (yeni timer/fetch yok). Yeni mesaj → baştan; aynı mesaj (yalnız yaş değişti) → ilerleme korunur. prefers-reduced-motion → hareket yok (ellipsis).
+  var KAY_HIZ = 40, KAY_BAS_MS = 1000, KAY_SON_MS = 800;
+  function kaydir() {
+    if (!S.akis) { return; }
+    var m = S.akis.querySelector(".tk-o:not([hidden]) .tk-m"), mi = m && m.querySelector(".tk-mi");
+    if (S.kay && (!m || S.kay.el !== mi)) { var eski = S.kay; eski.t = eski.a.currentTime; try { eski.a.cancel(); } catch (e) { /* önemsiz */ } S.kay = null; S.kayOnce = eski; }
+    if (!m || !mi) { return; }
+    if (bul(function () { return kok.matchMedia("(prefers-reduced-motion: reduce)").matches; }, false) || !mi.animate) { return; }
+    var tasma = Math.ceil(mi.scrollWidth - m.clientWidth);
+    var metin = mi.textContent, imza = metin + "|" + tasma;
+    if (S.kay && S.kay.el === mi) { if (S.kay.imza === imza) { return; } try { S.kay.a.cancel(); } catch (e) { /* önemsiz */ } S.kay = null; }
+    if (tasma <= 1) { m.classList.remove("tk-kay"); return; }
+    var sure = KAY_BAS_MS + tasma / KAY_HIZ * 1000 + KAY_SON_MS, o1 = KAY_BAS_MS / sure, o2 = (KAY_BAS_MS + tasma / KAY_HIZ * 1000) / sure;
+    m.classList.add("tk-kay");
+    var a = mi.animate([{ transform: "translateX(0)", offset: 0 }, { transform: "translateX(0)", offset: o1 }, { transform: "translateX(-" + tasma + "px)", offset: o2 }, { transform: "translateX(-" + tasma + "px)", offset: 1 }],
+                       { duration: sure, iterations: Infinity, easing: "linear" });
+    var onc = S.kayOnce && S.kayOnce.metin === metin && S.kayOnce.tasma === tasma ? S.kayOnce.t : null;     // aynı mesaj yeniden çizildi → kaldığı yerden
+    if (onc != null) { try { a.currentTime = onc; } catch (e) { /* önemsiz */ } }
+    S.kay = { el: mi, a: a, imza: imza, metin: metin, tasma: tasma }; S.kayOnce = null;
   }
 
   function guncelle() {
