@@ -190,7 +190,7 @@
 
   // ---------- LOCATION REPLAY ----------
   function replayAlani(s) {
-    var sa = GH.konumSeri(s.ra.telemetri.ornekler), sb = GH.konumSeri(s.rb.telemetri.ornekler);
+    var sa = GH.replaySeri(s.ra.telemetri), sb = GH.replaySeri(s.rb.telemetri);   // location'ın kendi zaman damgaları (akıcı); yoksa eski eşlenmiş seri
     var baslik = "<h3 class='gl-baslik'>LOCATION REPLAY</h3>";
     if (!sa.length && !sb.length) { return baslik + "<p class='gl-mesaj' data-gl-replay-yok>Bu turlar için OpenF1 konum verisi yok; replay gösterilmiyor.</p>"; }
     var id = G.kayit && G.kayit.Circuit && G.kayit.Circuit.circuitId, yol = PS && PS.YOL && id ? PS.YOL[id] : null;
@@ -213,14 +213,14 @@
       "<button type='button' class='gl-btn gl-oynat' data-gl-rp='oynat' aria-pressed='false'>▶ Oynat</button>" +
       [0.5, 1, 2].map(function (h) { return "<button type='button' class='gl-btn gl-hiz' data-gl-hiz='" + h + "' aria-pressed='" + (G.rp.hiz === h) + "'>" + h + "×</button>"; }).join("") +
       "</div><div class='gl-rp-2'><input type='range' class='gl-kaydir' data-gl-kaydir min='0' max='" + Math.round(s._rp.toplam) + "' step='10' value='0' aria-label='Zaman çizgisi'><output class='gl-sure' data-gl-sure>0.0 / " + (s._rp.toplam / 1000).toFixed(1) + " s</output></div></div>" +
-      "<p class='gl-not'>Konumlar OpenF1 x/y ölçümleridir; pist çizgisine yapıştırılmaz. Çizim ölçeği/dönüşü yalnız görsel hizalamadır. Turu biten pilot son ölçülen konumunda kalır.</p>";
+      "<p class='gl-not'>Konumlar OpenF1 x/y ölçümleridir; pist çizgisine yapıştırılmaz. İşaretçi, ölçümler arasında ölçülen noktalardan geçen yumuşak bir eğriyle ilerler; ölçüm boşluğunda gizlenir. Çizim ölçeği/dönüşü yalnız görsel hizalamadır. Turu biten pilot son ölçülen konumunda kalır.</p>";
   }
   function replayCiz() {
     var s = G.sonuc, k = kok(); if (!s || !s._rp || !k) { return; }
     var R = s._rp, poz = G.rp.poz;
     [["A", R.sa], ["B", R.sb]].forEach(function (x) {
       var g = k.querySelector("[data-gl-isaret='" + x[0] + "']"); if (!g) { return; }
-      var p = GH.konumZaman(x[1], poz);
+      var p = GH.konumYumusak(x[1], poz);
       if (p.durum === "yok" || p.durum === "bosluk") { g.setAttribute("hidden", ""); return; }
       var u = GH.uygula(R.T, p.x, p.y);
       g.removeAttribute("hidden"); g.setAttribute("transform", "translate(" + u.x.toFixed(2) + " " + u.y.toFixed(2) + ")");

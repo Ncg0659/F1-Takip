@@ -121,6 +121,45 @@
     return { durum: "canli", x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f };
   }
 
+  // Replay serisi: varsa OpenF1 location örneklerinin KENDİ zaman damgaları (telemetri.konumHam); yoksa car_data'ya eşlenmiş örnekler (eski davranış).
+  // Art arda AYNI (x,y) tekrarları (kısa süreli bayat yayın; ≤ TEKRAR_MAKS ms) tek örneğe iner: ilk ölçüm kalır. Daha uzun aynı-konum dizisi (gerçek duruş) korunur. Değer üretilmez.
+  var TEKRAR_MAKS = 600;
+  function replaySeri(telemetri) {
+    var ham = telemetri && telemetri.konumHam && telemetri.konumHam.length ? konumSeri(telemetri.konumHam) : konumSeri(telemetri && telemetri.ornekler);
+    var out = [], i = 0;
+    while (i < ham.length) {
+      var j = i;
+      while (j + 1 < ham.length && ham[j + 1].x === ham[i].x && ham[j + 1].y === ham[i].y) { j++; }
+      out.push(ham[i]);
+      if (j > i && ham[j].t - ham[i].t > TEKRAR_MAKS) { out.push(ham[j]); }     // gerçek duruş: başı ve sonu korunur
+      i = j + 1;
+    }
+    return out;
+  }
+  // Akıcı oynatım: GERÇEK örneklerin hepsinden, kendi zamanlarında geçen Hermite (Catmull-Rom) eğrisi. Örnek aralığı > KONUM_ARA_MAKS ise "bosluk" (tahmin yok);
+  // boşluk komşusu / uç örneklerde teğet doğrusal eğime düşer. Durum sözleşmesi konumZaman ile aynı.
+  function konumYumusak(seri, t) {
+    if (!seri || !seri.length) { return { durum: "yok", x: null, y: null }; }
+    var son = seri[seri.length - 1];
+    if (t < seri[0].t) { return { durum: "yok", x: null, y: null }; }
+    if (t >= son.t) { return { durum: "bitti", x: son.x, y: son.y }; }
+    var lo = 0, hi = seri.length - 1;
+    while (lo < hi) { var m = (lo + hi) >> 1; if (seri[m].t <= t) { lo = m + 1; } else { hi = m; } }
+    var b = seri[lo], a = seri[lo - 1], dt = b.t - a.t;
+    if (dt > KONUM_ARA_MAKS) { return { durum: "bosluk", x: null, y: null }; }
+    if (!(dt > 0)) { return { durum: "canli", x: b.x, y: b.y }; }
+    var o = seri[lo - 2], s2 = seri[lo + 1];
+    function teget(p, q, r) {   // q'daki hız (birim/ms): komşular arası sonlu fark; komşu yok ya da boşluk ötesindeyse segment eğimi
+      if (!p || !r || q.t - p.t > KONUM_ARA_MAKS || r.t - q.t > KONUM_ARA_MAKS || !(r.t - p.t > 0)) { return null; }
+      return { x: (r.x - p.x) / (r.t - p.t), y: (r.y - p.y) / (r.t - p.t) };
+    }
+    var dog = { x: (b.x - a.x) / dt, y: (b.y - a.y) / dt };
+    var ma = teget(o, a, b) || dog, mb = teget(a, b, s2) || dog;
+    var u = (t - a.t) / dt, u2 = u * u, u3 = u2 * u;
+    var h00 = 2 * u3 - 3 * u2 + 1, h10 = u3 - 2 * u2 + u, h01 = -2 * u3 + 3 * u2, h11 = u3 - u2;
+    return { durum: "canli", x: h00 * a.x + h10 * dt * ma.x + h01 * b.x + h11 * dt * mb.x, y: h00 * a.y + h10 * dt * ma.y + h01 * b.y + h11 * dt * mb.y };
+  }
+
   // ---------- Pist dönüşümü (yalnız görsel benzerlik) ----------
   function yolNoktalari(d) {
     var n = String(d || "").match(/-?\d+(?:\.\d+)?/g) || [], p = [];
@@ -221,7 +260,7 @@
   function sureBic(sn) { if (sn == null) { return "—"; } var m = Math.floor(sn / 60), s = sn - m * 60; return (m ? m + ":" : "") + (m ? (s < 10 ? "0" : "") : "") + s.toFixed(3); }
 
   var API = { ilerleme: ilerleme, zamanS: zamanS, deltaHesap: deltaHesap, karsilastir: karsilastir, konumSeri: konumSeri, konumZaman: konumZaman,
-              yolNoktalari: yolNoktalari, pistDonusumu: pistDonusumu, uygula: uygula, bic: bic, sureBic: sureBic,
+              replaySeri: replaySeri, konumYumusak: konumYumusak, yolNoktalari: yolNoktalari, pistDonusumu: pistDonusumu, uygula: uygula, bic: bic, sureBic: sureBic,
               ARA_MAKS: ARA_MAKS, KAPSAM_MIN: KAPSAM_MIN, KONUM_ARA_MAKS: KONUM_ARA_MAKS, HATA_MAKS: HATA_MAKS };
   if (typeof module !== "undefined" && module.exports) { module.exports = API; }
   if (kok) { kok.GhostHesap = API; }
