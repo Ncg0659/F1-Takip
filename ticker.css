@@ -15,11 +15,17 @@
 .tk-o[hidden] { display:none; }
 .tk-o + .tk-o { padding-left:14px; border-left:1px solid var(--cizgi); }
 .tk-o:first-child { flex:0 1 auto; min-width:0; }
+/* olay içeriği tek parça (ikon + yaş/etiket + metin): sığarsa sabit; taşarsa .tk-kay ile TAMAMI birlikte kayar (ticker.js) */
+.tk-oi { display:flex; align-items:center; gap:6px; min-width:0; max-width:100%; }
+.tk-o:first-child { overflow:hidden; }
+.tk-o.tk-kay { -webkit-mask-image:linear-gradient(90deg, transparent 0, #000 10px, #000 calc(100% - 14px), transparent 100%); mask-image:linear-gradient(90deg, transparent 0, #000 10px, #000 calc(100% - 14px), transparent 100%); }
+.tk-o.tk-kay .tk-oi { display:inline-flex; max-width:none; padding-left:8px; will-change:transform; }
+.tk-o.tk-kay .tk-m { overflow:visible; text-overflow:clip; flex:none; }
 .tk-m { min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
 .tk-mi { display:inline-block; white-space:nowrap; will-change:auto; }
-.tk-kay .tk-mi { will-change:transform; }
+
 .tk-on { display:none; font-family:var(--f-sayi, inherit); font-size:.66rem; letter-spacing:.08em; color:var(--soluk); font-weight:600; }
-@media (prefers-reduced-motion:reduce) { .tk-mi { transform:none !important; } }
+@media (prefers-reduced-motion:reduce) { .tk-mi, .tk-oi { transform:none !important; } }
 .tk-kn { flex:none; width:7px; height:7px; border-radius:2px; background:var(--kc, var(--soluk)); }
 .tk-yas { flex:none; font-family:var(--f-sayi, inherit); font-weight:600; font-size:.7rem; color:var(--soluk); }
 .tk-yeni .tk-m { font-weight:700; }

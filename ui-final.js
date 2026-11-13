@@ -100,7 +100,7 @@
       tr.setAttribute("data-ui-pk", "1"); if (!p) { return; }
       tr.className += " pp-k-" + p.kategori;
       var td = tr.children[0], kt = K[p.kategori];
-      if (td && kt) { var gp = tr.children[2] ? tr.children[2].textContent.trim() : ""; td.innerHTML = "<b class='ui-pist-ad'>" + td.innerHTML + "</b><small class='ui-gp'>" + esc(gp) + "</small><span class='pp-sinifrozet'>" + esc(kt.ad) + "</span>"; }
+      if (td && kt) { var gp = tr.children[2] ? tr.children[2].textContent.trim() : ""; td.innerHTML = "<span class='ui-pist-h'><b class='ui-pist-ad'>" + td.innerHTML + "</b><span class='pp-sinifrozet'>" + esc(kt.ad) + "</span></span><small class='ui-gp'>" + esc(gp) + "</small>"; }
     });
   }
   function pistKur() {

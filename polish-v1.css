@@ -1,0 +1,133 @@
+/* F1 TAKİP — VISUAL POLISH v1. YALNIZ görünüm: veri/mantık/ağ yok. En son yüklenir.
+   Referans: ANALİZ → GRAFİK kart sistemi (.a3-kart / .a3-oz): kart zemini + 1px çizgi + 12px köşe; küçük büyük-harf etiket → güçlü ana değer → soluk açıklama.
+   Kurallar: kırmızı yalnız LIVE/kritik; amber tahmini/gecikmeli; glow/neon yok; yeni renkler tok ve koyu temayla uyumlu.
+   Bölümler: 1 Tokenlar · 2 Mobil üst çizgi · 3 Kart sistemi · 4 Tipografi hiyerarşisi · 5 Tahmin kolon renkleri · 6 Pist listesi (rozet boşluğu + mobil kart/akordeon)
+             7 Detay paneli (mobil Safari) */
+
+/* ---------- 1. Tokenlar ---------- */
+:root {
+  --pl-r: 12px;                         /* kart köşesi (a3-kart ile aynı) */
+  --pl-bosluk: 14px;                    /* kartlar arası dikey boşluk */
+  --pl-ic: 14px;                        /* kart iç boşluğu */
+  --pl-etiket: #5d6c80;                 /* küçük etiket (açık tema) */
+  --pl-kazan: #c2262b; --pl-podyum: #9a6a00; --pl-puan: #2f6fa8;      /* tahmin kolonları (açık tema) */
+}
+:root[data-tema="koyu"] {
+  --pl-etiket: #93a5ba;
+  --pl-kazan: #f0575b; --pl-podyum: #e3ae3f; --pl-puan: #78b0e0;
+}
+
+/* ---------- 2. Mobil üst kırmızı çizgi: tamamen kaldırıldı (maske de yok). Masaüstü çizgisi aynen kalır. ---------- */
+@media (max-width: 700px) {
+  body::before, body::after { content: none !important; display: none !important; }
+}
+
+/* ---------- 3. Kart sistemi: BUGÜN blokları + tahmin paneli GRAFİK kartlarıyla aynı kabukta ---------- */
+.bg-hero { padding: 16px var(--pl-ic) 14px 16px; border: 1px solid var(--cizgi); border-left: 3px solid var(--vurgu); border-radius: var(--pl-r);
+  background: linear-gradient(90deg, rgba(225, 6, 0, .07), transparent 55%), var(--kart); }
+.bg-hero[data-ton="bekle"], .bg-hero[data-ton="tahmin"] { border-left-color: #e0a800; background: linear-gradient(90deg, rgba(224, 168, 0, .07), transparent 55%), var(--kart); }
+.bg-blok { padding: 12px var(--pl-ic) 12px; border: 1px solid var(--cizgi); border-radius: var(--pl-r); background: var(--kart); }
+.bg-sol .bg-kritik { border-radius: 0; }
+.bg-kritik { border-radius: 8px; }
+.tp-kart, .tp-panel { padding: 14px var(--pl-ic) 12px; border: 1px solid var(--cizgi); border-radius: var(--pl-r); background: var(--kart); }
+#tp-bugun { margin-top: var(--pl-bosluk); }
+.tp-ch { border-top: 1px solid var(--cizgi); }
+.bg-feed li + li { padding-top: 6px; border-top: 1px solid color-mix(in srgb, var(--cizgi) 70%, transparent); }
+.bg-feed li span { color: var(--yazi); }
+@media (max-width: 480px) { .bg-hero, .bg-blok, .tp-kart, .tp-panel { padding-left: 12px; padding-right: 12px; } }
+
+/* ---------- 4. Tipografi hiyerarşisi: etiket → başlık → veri → açıklama ---------- */
+/* küçük bölüm etiketleri: aynı gri düz metin yerine belirgin, tek tip */
+.bg-h, .tp-baslik, .tp-h, .a3-oz-et, .dp-bolum-baslik { color: var(--pl-etiket); font-weight: 700; }
+.bg-h, .tp-h { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: .68rem; }
+.bg-h::before, .tp-h::before { content: ""; flex: none; width: 14px; height: 2px; border-radius: 1px; background: var(--pl-etiket); opacity: .7; }
+.bg-ne .bg-cumle { color: var(--yazi); font-size: .98rem; line-height: 1.5; }
+/* başlıklar */
+.bg-ad, .tp-ad { color: var(--yazi); font-weight: 700; }
+.a3-kart h2, .yo h2.yo-baslik, #gl-ghost .gl-baslik { color: var(--yazi); font-weight: 700; }
+/* veri: sayılar ve puanlar güçlü, birimleri soluk */
+.bg-std-pt { font-size: 1rem; font-weight: 700; color: var(--yazi); }
+.bg-std li { padding-top: 5px; padding-bottom: 5px; }
+.bg-std li + li { border-top: 1px solid color-mix(in srgb, var(--cizgi) 70%, transparent); }
+.bg-std li:first-child .pilot, .tp-top li:first-child .pilot { font-weight: 700; }
+.tp-y { color: var(--yazi); }
+/* açıklama / not metinleri: bir kademe soluk ve küçük, başlıkla yarışmaz */
+.tp-not, .tp-alt, .a3-not, .gl-not { line-height: 1.45; }
+/* durum rozeti (LIVE / SC / VSC / RED FLAG / tahmini): hero'da bir kademe büyük ve dolu zeminli */
+.bg-hero .bg-kod { font-size: .76rem; padding: 2px 10px; border-radius: 4px; background: color-mix(in srgb, currentColor 10%, transparent); }
+/* P1/P2/P3 sıra kutuları: tek tip boyut */
+.bg-std .sira, .tp-top .sira { min-width: 28px; text-align: center; font-weight: 800; }
+
+/* ---------- 5. Yarış tahmini: Kazanma (kırmızı) / Podyum (amber) / Puan (soğuk mavi). Yüzde + bar aynı renk ailesi; satırlar sade ---------- */
+.tp-tablo th:nth-child(2), .tp-tablo td:nth-child(2) .tp-y { color: var(--pl-kazan); }
+.tp-tablo th:nth-child(3), .tp-tablo td:nth-child(3) .tp-y { color: var(--pl-podyum); }
+.tp-tablo th:nth-child(4), .tp-tablo td:nth-child(4) .tp-y { color: var(--pl-puan); }
+.tp-tablo td:nth-child(2) .tp-bar b { background: var(--pl-kazan); }
+.tp-tablo td:nth-child(3) .tp-bar b { background: var(--pl-podyum); }
+.tp-tablo td:nth-child(4) .tp-bar b { background: var(--pl-puan); }
+.tp-tablo td:nth-child(2) .tp-bar { background: color-mix(in srgb, var(--pl-kazan) 16%, transparent); }
+.tp-tablo td:nth-child(3) .tp-bar { background: color-mix(in srgb, var(--pl-podyum) 16%, transparent); }
+.tp-tablo td:nth-child(4) .tp-bar { background: color-mix(in srgb, var(--pl-puan) 16%, transparent); }
+.tp-tablo th { font-weight: 700; }
+.tp-tablo th:first-child { color: var(--pl-etiket); }
+.tp-tablo .tp-bar { height: 4px; }
+.tp-tablo td:nth-child(n+2) { padding-left: 8px; }
+/* özet listesi (ilk 3 kazanma olasılığı) da kazanma rengini taşır */
+.tp-top .tp-y { color: var(--pl-kazan); }
+.tp-top .tp-bar b { background: var(--pl-kazan); }
+.tp-top .tp-bar { background: color-mix(in srgb, var(--pl-kazan) 16%, transparent); }
+
+/* ---------- 6. Sezonun pistleri ---------- */
+/* 6a) pist adı ↔ kategori rozeti: 10 px yatay boşluk; uzun adda rozet bütün olarak alt satıra geçer, sol hizayı korur */
+.ui-pist-h { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-width: 0; }
+.ui-pist-h .ui-pist-ad { min-width: 0; overflow-wrap: anywhere; }
+#pist-govde .ui-pist-h .pp-sinifrozet { margin-top: 0; flex: none; white-space: nowrap; }
+#pist-govde tr[class*="pp-k-"] td:first-child { padding-left: 14px; }
+
+/* 6b) satır içi pist profili (mobil akordeon): ilgili kartın HEMEN altında açılır; aynı karta dokununca kapanır */
+.pp-acc-ic { margin: 8px 0 4px; padding: 12px; border: 1px solid var(--cizgi); border-radius: var(--pl-r); background: var(--kart2); text-align: left; }
+.pp-acc-ust { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 10px; }
+.pp-acc-ust b { font-family: var(--f-sayi); font-size: .68rem; letter-spacing: .14em; color: var(--pl-etiket); }
+.pp-acc-kapat { min-height: 36px; padding: 4px 12px; border: 1px solid var(--cizgi); border-radius: 8px; background: var(--kart); color: var(--yazi); font: inherit; font-size: .82rem; cursor: pointer; }
+.pp-acc-kapat:focus-visible { outline: 2px solid var(--vurgu); outline-offset: 2px; }
+.pp-acc .pp-govde { font-size: .92rem; min-width: 0; overflow-x: hidden; overflow-x: clip; }   /* terim ipucu balonları sayfayı yatay taşırmasın */
+.pp-acc-ic { min-width: 0; max-width: 100%; }
+div.pp-acc { margin: 6px 0 10px; }
+.st-pist[aria-expanded="true"] { text-decoration-color: currentColor; }
+
+@media (max-width: 699px) {
+  /* tablo → kart listesi: her pist bir kart; Profil düğmesi ekran dışına taşmaz */
+  #sekme-profil .kap:has(#pist-govde) { border: 0; background: none; overflow: visible; padding: 0; }
+  #sekme-profil .kap:has(#pist-govde) table, #pist-govde { display: block; width: 100%; }
+  #sekme-profil .kap:has(#pist-govde) thead { display: none; }
+  #pist-govde > tr { display: block; position: relative; margin: 0 0 10px; padding: 12px 12px 12px 16px; border: 1px solid var(--cizgi); border-radius: var(--pl-r);
+    background: var(--kart); box-shadow: inset 4px 0 0 var(--pk, var(--cizgi)); cursor: pointer; }
+  #pist-govde > tr > td { display: block; padding: 0; border: 0; background: none; font-size: .86rem; }
+  #pist-govde tr[class*="pp-k-"] td:first-child { box-shadow: none; padding-left: 0; }
+  #pist-govde > tr > td:nth-child(2) { margin-top: 4px; color: var(--soluk); font-size: .8rem; }
+  #pist-govde > tr > td:nth-child(3) { display: none; }
+  #pist-govde > tr > td:nth-child(4) { margin-top: 10px; }
+  #pist-govde .pp-hucre { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; }
+  #pist-govde .pp-btn[aria-expanded="true"] { background: color-mix(in srgb, var(--pk, var(--vurgu)) 14%, transparent); }
+  /* açık kart: belirgin durum */
+  #pist-govde > tr.pp-acik { border-color: var(--pk, var(--vurgu)); background: var(--kart2); margin-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+  #pist-govde > tr.pp-acc { cursor: default; margin-top: 0; padding: 0 12px 12px 16px; border-top: 0; border-color: var(--pk, var(--vurgu)); border-top-left-radius: 0; border-top-right-radius: 0; background: var(--kart2); }
+  #pist-govde > tr.pp-acc .pp-acc-ic { margin: 0; background: var(--kart); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pp-acc-ic { animation: pl-ac 220ms cubic-bezier(.22, .72, .24, 1) both; }
+  @keyframes pl-ac { from { opacity: 0; transform: translateY(-6px); } }
+}
+
+/* ---------- 7. Detay paneli, mobil: içerik yüksekliği flex ile hesaplanır (mobil Safari'de panelin tek satıra çökmesini önler) ---------- */
+@media (max-width: 699px) {
+  .dp-panel[open] { display: flex; flex-direction: column; max-height: 88vh; max-height: 88dvh; }
+  .dp-panel[open] .dp-ic { flex: 1 1 auto; height: auto; min-height: 0; }
+  .dp-panel[open] .dp-govde { flex: 1 1 auto; min-height: 120px; }
+}
+#pist-govde td a { color: var(--pl-etiket); text-underline-offset: 3px; }
+#pist-govde td a:hover { color: var(--yazi); }
+/* şampiyonluk tahmini listesi kazanma kolonu değildir: nötr kalır */
+.tp-ch .tp-top .tp-y { color: var(--yazi); }
+.tp-ch .tp-top .tp-bar b { background: var(--soluk); }
+.tp-ch .tp-top .tp-bar { background: color-mix(in srgb, var(--soluk) 18%, transparent); }

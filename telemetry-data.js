@@ -221,7 +221,9 @@
         else if (tur.pitOut === true) { pit = true; }
         var ornek = orneklerNormalle(cd.veri, { session: oturum.session_key, driver: surucu, lap: Number(turNo), start: tur.start, konum: konum, stint: stint, pit: pit });
         if (!ornek.length) { return { durum: "bos", neden: "car-data-gecersiz" }; }
-        return { durum: "ok", session: Number(oturum.session_key), driver: Number(surucu), lap: Number(turNo), tur: tur, ornekler: ornek, konumVar: konum.length > 0 && ornek.some(function (o) { return o.x != null; }), stint: stint };
+        // konumHam: OpenF1 location örnekleri KENDİ zaman damgalarıyla (t = tur başından ms). Yalnız replay'in akıcı oynatımı için; değer üretilmez/değiştirilmez.
+        var konumHam = konum.map(function (k) { return { t: k.timestamp - tur.start, x: k.x, y: k.y }; }).filter(function (k) { return k.t >= 0 && k.t <= tur.duration * 1000 + 1; });
+        return { durum: "ok", session: Number(oturum.session_key), driver: Number(surucu), lap: Number(turNo), tur: tur, ornekler: ornek, konumHam: konumHam, konumVar: konum.length > 0 && ornek.some(function (o) { return o.x != null; }), stint: stint };
       });
     }
 

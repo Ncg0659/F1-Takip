@@ -108,12 +108,57 @@
       yukle: async function () { var g = modelAl(id) || m; node.innerHTML = icerik(g); return node; } });
   }
 
+  // ---------- MOBİL: satır içi pist profili (akordeon) ----------
+  // ≤699 px'te Sezon kartındaki pist adı ve "Sezonun pistleri" kartları profili alttan açılan panel yerine İLGİLİ KARTIN HEMEN ALTINDA açar.
+  // Aynı karta/düğmeye tekrar dokununca kapanır; aynı anda tek pist açık kalır. Masaüstü davranışı (DetayPanel) değişmez. Ağ yok.
+  var A = null;   // { dugme, kutu, ev }
+  function mobil() { return bul(function () { return window.matchMedia("(max-width: 699px)").matches; }, false); }
+  function accKapat() {
+    if (!A) { return; }
+    try {
+      if (A.kutu && A.kutu.parentNode) { A.kutu.parentNode.removeChild(A.kutu); }
+      if (A.ev) { A.ev.classList.remove("pp-acik"); }
+      if (A.dugme) { A.dugme.setAttribute("aria-expanded", "false"); }
+    } catch (e) { /* önemsiz */ }
+    A = null;
+  }
+  function accAc(b, id) {
+    if (A && A.kutu && !A.kutu.isConnected) { A = null; }                 // liste yeniden çizildiyse eski kayıt geçersiz
+    if (A && A.dugme === b) { accKapat(); return true; }
+    var m = id ? modelAl(id) : null;
+    if (!m) { return false; }
+    accKapat();
+    var ic = "<div class='pf pf-pist pp-acc-ic'><div class='pp-acc-ust'><b>PİST PROFİLİ</b><button type='button' class='pp-acc-kapat' data-pp-kapat aria-label='Pist profilini kapat'>Kapat ×</button></div>" + icerik(m) + "</div>";
+    var tr = b.closest("tr"), kutu, ev;
+    if (tr && tr.parentNode) {
+      kutu = document.createElement("tr"); kutu.className = "pp-acc " + (tr.className.match(/pp-k-[a-z]+/) || [""])[0]; kutu.setAttribute("data-ui-pk", "1");
+      kutu.innerHTML = "<td colspan='" + (tr.cells ? tr.cells.length : 1) + "'>" + ic + "</td>";
+      tr.parentNode.insertBefore(kutu, tr.nextSibling); ev = tr;
+    } else {
+      ev = b.closest("p, li, div") || b;
+      if (!ev.parentNode) { return false; }
+      kutu = document.createElement("div"); kutu.className = "pp-acc"; kutu.innerHTML = ic;
+      ev.parentNode.insertBefore(kutu, ev.nextSibling);
+    }
+    ev.classList.add("pp-acik"); b.setAttribute("aria-expanded", "true");
+    A = { dugme: b, kutu: kutu, ev: ev };
+    try { var r = kutu.getBoundingClientRect(); if (r.top > window.innerHeight * 0.6) { ev.scrollIntoView({ block: "start", behavior: "auto" }); } } catch (e) { /* önemsiz */ }
+    return true;
+  }
+  document.addEventListener("f1-sekme", accKapat);                         // başka sekmeye geçilince açık profil kapanır
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && A) { var d = A.dugme; accKapat(); try { d.focus(); } catch (x) { /* önemsiz */ } } });
+
   // ---------- giriş noktaları ----------
   // (A) ve (B): data-pist düğmeleri. Yalnızca bu düğme; çevresindeki satır/kart/bağlantı tıklamaları değişmez.
   document.addEventListener("click", function (e) {
     if (e.defaultPrevented || e.button > 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) { return; }
     var t = e.target, b = t && t.closest ? t.closest("button[data-pist]") : null;
+    if (t && t.closest && t.closest("[data-pp-kapat]")) { var od = A && A.dugme; accKapat(); if (od) { try { od.focus(); } catch (x) { /* önemsiz */ } } return; }
+    if (!b && mobil() && t && t.closest && !t.closest("a, button, select, input, .pp-acc")) {     // mobil: pist kartının kendisine dokunmak = Profil düğmesi
+      var satir = t.closest("#pist-govde > tr"); b = satir ? satir.querySelector("button[data-pist]") : null;
+    }
     if (!b) { return; }
+    if (mobil() && b.closest("#pist-govde, #sekme-sezon") && accAc(b, b.getAttribute("data-pist"))) { return; }
     ac(b.getAttribute("data-pist"), b);
   });
 

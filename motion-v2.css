@@ -5,9 +5,14 @@
 /* 1) PİST: ekrana girene kadar çizgi gizli (alt çizgi .xx-hat-alt görünür kalır), sonra motion-v1 mo-ciz ile çizilir */
 .mo2-p-bekle { stroke-dasharray: 1; stroke-dashoffset: 1; }
 
-/* 2) PİSTTE TUR ATAN NOKTA: 1.8 sn tur (SVG animateMotion), yumuşak belirip söner */
-.mo2-nokta { fill: var(--vurgu); stroke: var(--kart); stroke-width: 1.5; pointer-events: none; animation: mo2-nokta-omur 2.1s linear forwards; }
-@keyframes mo2-nokta-omur { 0% { opacity: 0; } 6% { opacity: 1; } 84% { opacity: 1; } 100% { opacity: 0; } }
+/* 1b) Pist çizimi daha yavaş ve okunur (yalnız pist hatları; motion-v1 genel --motion-draw değişmez). Hareket azaltmada motion-v1 kuralı geçerli. */
+@media (prefers-reduced-motion: no-preference) {
+  .bg-hat.mo-ciz-a, .bg-hat.mo-ciz-b, .g3-hat.mo-ciz-a, .g3-hat.mo-ciz-b, .h-hat.mo-ciz-a, .h-hat.mo-ciz-b, .st-p-hat.mo-ciz-a, .st-p-hat.mo-ciz-b {
+    animation-duration: 2400ms; animation-timing-function: cubic-bezier(.45, .05, .25, 1); }
+}
+
+/* 2) PİSTTE TUR ATAN NOKTA: 5.2 sn tek tur (motion-v2.js Web Animations: transform + opacity), masaüstü ve mobil aynı */
+.mo2-nokta { fill: var(--vurgu); stroke: var(--kart); stroke-width: 1.5; pointer-events: none; }
 
 /* 3) PUAN GRAFİĞİ: düz çizgiler soldan sağa çizilir; kesikli çizgi, noktalar ve uç etiketleri ardından belirir.
    "from"-only keyframe + backwards: bitince öğenin kendi değeri (ör. sg-soluk saydamlığı) aynen kalır. */
@@ -48,18 +53,46 @@ tr.mo2-kay-b { animation: mo2-kay-b 700ms var(--motion-ease) backwards; }
 @keyframes mo2-kay-a { from { transform: translateY(var(--mo2-dy, 0)); } }
 @keyframes mo2-kay-b { from { transform: translateY(var(--mo2-dy, 0)); } }
 
-/* 6) START IŞIKLARI: oturumda bir kez; 5 ışık 150 ms arayla yanar, veri gelince söner ve ekran açılır */
-.mo2-isik { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center;
-  background: var(--zemin); animation: mo2-fade-a 140ms ease both; cursor: pointer; }
-.mo2-isik-sira { display: flex; gap: 14px; padding: 16px 20px; border-radius: 14px; background: #05080c; border: 1px solid var(--cizgi); }
-.mo2-isik i { display: block; width: 28px; height: 28px; border-radius: 50%; background: #1a2230; animation: mo2-yan 110ms ease forwards; }
-.mo2-isik i:nth-child(1) { animation-delay: 100ms; }
-.mo2-isik i:nth-child(2) { animation-delay: 250ms; }
-.mo2-isik i:nth-child(3) { animation-delay: 400ms; }
-.mo2-isik i:nth-child(4) { animation-delay: 550ms; }
-.mo2-isik i:nth-child(5) { animation-delay: 700ms; }
+/* 6) GİRİŞ (~5.8 sn, oturumda bir kez): ışıklar sırayla yanar (0.35–2.35 sn) → bekler → söner (3.0 sn) → çizgiler + kinetik yazı (3.1–5.3 sn) → ekran açılır (5.4–5.8 sn).
+   Yalnız opacity/transform/background; tek seferlik, döngü yok. Renkler F1 TAKİP paleti: kırmızı (vurgu), amber, soğuk mavi-gri, nötr. */
+.mo2-isik { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; overflow: hidden;
+  background: #080c12; color: #e9eef5; cursor: pointer; animation: mo2-cik 420ms 5400ms ease forwards; }
+.mo2-isik-sira { position: absolute; display: flex; gap: 14px; padding: 16px 20px; border-radius: 14px; background: #05080c; border: 1px solid #1f2c3d;
+  animation: mo2-sira-git 320ms 3050ms cubic-bezier(.4, 0, .7, .2) forwards; }
+.mo2-isik-sira i { display: block; width: clamp(28px, 4.6vw, 44px); height: clamp(28px, 4.6vw, 44px); border-radius: 50%; background: #1a2230;
+  animation: mo2-yan 140ms ease forwards, mo2-son 120ms 2950ms ease forwards; }
+.mo2-isik-sira i:nth-child(1) { animation-delay: 350ms, 2950ms; }
+.mo2-isik-sira i:nth-child(2) { animation-delay: 850ms, 2950ms; }
+.mo2-isik-sira i:nth-child(3) { animation-delay: 1350ms, 2950ms; }
+.mo2-isik-sira i:nth-child(4) { animation-delay: 1850ms, 2950ms; }
+.mo2-isik-sira i:nth-child(5) { animation-delay: 2350ms, 2950ms; }
 @keyframes mo2-yan { to { background: #e10600; } }
-.mo2-isik-son i { animation: none; background: #1a2230; }
-.mo2-isik-son { animation: mo2-cik 240ms 90ms ease forwards; pointer-events: none; }
+@keyframes mo2-son { to { background: #1a2230; } }
+@keyframes mo2-sira-git { to { opacity: 0; transform: scale(.94); } }
+/* renkli çizgiler: soldan sağa tek geçiş */
+.mo2-cizgiler { position: absolute; inset: 0; pointer-events: none; }
+.mo2-cizgiler i { position: absolute; left: 0; height: 4px; width: 46%; border-radius: 2px; transform: translateX(-110%); animation: mo2-cizgi 1300ms cubic-bezier(.5, 0, .2, 1) forwards; }
+.mo2-cizgiler i:nth-child(1) { top: 34%; background: #e10600; animation-delay: 3100ms; }
+.mo2-cizgiler i:nth-child(2) { top: 41%; background: #e0a800; width: 30%; animation-delay: 3230ms; }
+.mo2-cizgiler i:nth-child(3) { top: 61%; background: #7ea6c9; width: 38%; animation-delay: 3360ms; }
+.mo2-cizgiler i:nth-child(4) { top: 68%; background: #e9eef5; width: 22%; height: 2px; opacity: .7; animation-delay: 3490ms; }
+@keyframes mo2-cizgi { to { transform: translateX(110vw); } }
+/* kinetik yazı */
+.mo2-yazi { position: relative; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; padding: 0 20px; }
+.mo2-marka { display: flex; align-items: center; gap: 12px; overflow: hidden; padding: 4px 6px; font-family: var(--f-baslik); }
+.mo2-marka b { background: #e10600; color: #fff; font-weight: 800; font-size: clamp(1.6rem, 7vw, 2.6rem); padding: 0 12px; border-radius: 4px; letter-spacing: .04em;
+  transform: skewX(-10deg) translateY(130%); animation: mo2-kalk-e 520ms 3300ms cubic-bezier(.2, .8, .2, 1) forwards; }
+.mo2-marka span { font-weight: 700; font-size: clamp(1.6rem, 7vw, 2.6rem); letter-spacing: .22em; transform: translateY(130%); animation: mo2-kalk 520ms 3420ms cubic-bezier(.2, .8, .2, 1) forwards; }
+@keyframes mo2-kalk-e { to { transform: skewX(-10deg) translateY(0); } }
+@keyframes mo2-kalk { to { transform: translateY(0); } }
+.mo2-kelime { position: relative; height: 1.5em; width: min(86vw, 420px); overflow: hidden; font-family: var(--f-sayi); font-size: clamp(.85rem, 3.6vw, 1.15rem); letter-spacing: .32em; font-weight: 600; color: #8a9db3; }
+.mo2-kelime span { position: absolute; left: 0; right: 0; top: 0; line-height: 1.5; white-space: nowrap; opacity: 0; transform: translateY(100%); }
+.mo2-kelime span:nth-child(1) { animation: mo2-kel 520ms 3850ms cubic-bezier(.2, .8, .2, 1) forwards, mo2-kel-cik 220ms 4300ms ease forwards; }
+.mo2-kelime span:nth-child(2) { animation: mo2-kel 520ms 4330ms cubic-bezier(.2, .8, .2, 1) forwards, mo2-kel-cik 220ms 4780ms ease forwards; color: #e0a800; }
+.mo2-kelime span:nth-child(3) { animation: mo2-kel 520ms 4810ms cubic-bezier(.2, .8, .2, 1) forwards; color: #e9eef5; }
+@keyframes mo2-kel { to { opacity: 1; transform: translateY(0); } }
+@keyframes mo2-kel-cik { to { opacity: 0; transform: translateY(-100%); } }
+.mo2-isik-son { animation: mo2-cik-hizli 300ms ease forwards; pointer-events: none; }
 @keyframes mo2-cik { to { opacity: 0; visibility: hidden; } }
-@media (max-width: 380px) { .mo2-isik i { width: 22px; height: 22px; } .mo2-isik-sira { gap: 10px; } }
+@keyframes mo2-cik-hizli { to { opacity: 0; visibility: hidden; } }
+@media (max-width: 380px) { .mo2-isik-sira i { width: 24px; height: 24px; } .mo2-isik-sira { gap: 10px; } }

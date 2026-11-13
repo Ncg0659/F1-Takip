@@ -191,8 +191,8 @@
     else if (m.olaylar.length) {
       h = m.olaylar.map(function (e, i) {
         var kt = bul(function () { return F1UI.KATEGORI[e.kat].renk; }, null);
-        return "<span class='tk-o" + (i === 0 ? " tk-yeni" : "") + "' data-id='" + esc(e.id) + "'" + (kt ? " style='--kc:" + esc(kt) + "'" : "") + "><i class='tk-kn' aria-hidden='true'></i><b class='tk-yas'>" +
-          esc(yasYaz(m.simdi - e.ts)) + "</b> <span class='tk-m'><span class='tk-mi'>" + (i === 0 ? "<b class='tk-on'>" + esc(oturumAd(m)) + " · </b>" : "") + esc(e.metin) + "</span></span></span>";
+        return "<span class='tk-o" + (i === 0 ? " tk-yeni" : "") + "' data-id='" + esc(e.id) + "'" + (kt ? " style='--kc:" + esc(kt) + "'" : "") + "><span class='tk-oi'><i class='tk-kn' aria-hidden='true'></i><b class='tk-yas'>" +
+          esc(yasYaz(m.simdi - e.ts)) + "</b> <span class='tk-m'><span class='tk-mi'>" + (i === 0 ? "<b class='tk-on'>" + esc(oturumAd(m)) + " · </b>" : "") + esc(e.metin) + "</span></span></span></span>";
       }).join("");
     } else { h = "<span class='tk-bos'>" + esc(durumMetni(m)) + "</span>"; }
     var imza = h + "|" + m.oturum;
@@ -224,22 +224,32 @@
     kaydir();
   }
 
-  // Kayan yazı (marquee): yalnız ilk olayın haber metni; etiket/ikon/ok sabit. Sığıyorsa sabit; taşıyorsa sağdan sola ~40 px/sn, başta ~1 sn, sonda kısa bekleme, döngü.
-  // Web Animations API (yeni timer/fetch yok). Yeni mesaj → baştan; aynı mesaj (yalnız yaş değişti) → ilerleme korunur. prefers-reduced-motion → hareket yok (ellipsis).
-  var KAY_HIZ = 40, KAY_BAS_MS = 1000, KAY_SON_MS = 800;
+  // Kayan şerit (marquee): ilk olayın TAMAMI (kategori ikonu + yaş/etiket + metin) tek parça kayar; LIVE rozeti ve ok sabit. Sığıyorsa hareket yok;
+  // taşıyorsa sağdan sola ~32 px/sn, başta ~1.2 sn ve sonda ~1 sn bekleme, yumuşak hız geçişi, döngü. Web Animations API (yeni timer/fetch yok).
+  // Yeni mesaj → baştan; aynı mesaj (yalnız yaş değişti) → ilerleme korunur. prefers-reduced-motion → hareket yok (metin … ile kısalır).
+  var KAY_HIZ = 32, KAY_BAS_MS = 1200, KAY_SON_MS = 1000;
   function kaydir() {
     if (!S.akis) { return; }
-    var m = S.akis.querySelector(".tk-o:not([hidden]) .tk-m"), mi = m && m.querySelector(".tk-mi");
-    if (S.kay && (!m || S.kay.el !== mi)) { var eski = S.kay; eski.t = eski.a.currentTime; try { eski.a.cancel(); } catch (e) { /* önemsiz */ } S.kay = null; S.kayOnce = eski; }
-    if (!m || !mi) { return; }
-    if (bul(function () { return kok.matchMedia("(prefers-reduced-motion: reduce)").matches; }, false) || !mi.animate) { return; }
-    var tasma = Math.ceil(mi.scrollWidth - m.clientWidth);
-    var metin = mi.textContent, imza = metin + "|" + tasma;
-    if (S.kay && S.kay.el === mi) { if (S.kay.imza === imza) { return; } try { S.kay.a.cancel(); } catch (e) { /* önemsiz */ } S.kay = null; }
-    if (tasma <= 1) { m.classList.remove("tk-kay"); return; }
-    var sure = KAY_BAS_MS + tasma / KAY_HIZ * 1000 + KAY_SON_MS, o1 = KAY_BAS_MS / sure, o2 = (KAY_BAS_MS + tasma / KAY_HIZ * 1000) / sure;
-    m.classList.add("tk-kay");
-    var a = mi.animate([{ transform: "translateX(0)", offset: 0 }, { transform: "translateX(0)", offset: o1 }, { transform: "translateX(-" + tasma + "px)", offset: o2 }, { transform: "translateX(-" + tasma + "px)", offset: 1 }],
+    var o = S.akis.querySelector(".tk-o:not([hidden])"), mi = o && o.querySelector(".tk-oi"), m = o && o.querySelector(".tk-m"), ic = m && m.querySelector(".tk-mi");
+    if (S.kay && (!o || S.kay.el !== mi)) { var eski = S.kay; eski.t = eski.a.currentTime; try { eski.a.cancel(); } catch (e) { /* önemsiz */ } S.kay = null; S.kayOnce = eski; }
+    if (!o || !mi || !m || !ic) { return; }
+    if (bul(function () { return kok.matchMedia("(prefers-reduced-motion: reduce)").matches; }, false) || !mi.animate) {
+      if (S.kay) { try { S.kay.a.cancel(); } catch (e) { /* önemsiz */ } S.kay = null; }
+      o.classList.remove("tk-kay"); return;
+    }
+    var metin = mi.textContent, kayiyor = o.classList.contains("tk-kay");
+    if (kayiyor) { o.classList.remove("tk-kay"); }                      // ölçüm her zaman sabit (kısaltılmış) düzende yapılır
+    var tasma = Math.ceil(ic.scrollWidth - m.clientWidth), imza = metin + "|" + tasma;
+    if (S.kay && S.kay.el === mi) {
+      if (S.kay.imza === imza) { if (kayiyor) { o.classList.add("tk-kay"); } return; }
+      try { S.kay.a.cancel(); } catch (e) { /* önemsiz */ } S.kay = null;
+    }
+    if (tasma <= 1) { return; }                                          // kısa içerik: hareket yok
+    var yol = tasma + 22,   /* 8 px sol iç boşluk + 14 px sağ solma payı */
+         git = yol / KAY_HIZ * 1000, sure = KAY_BAS_MS + git + KAY_SON_MS, o1 = KAY_BAS_MS / sure, o2 = (KAY_BAS_MS + git) / sure;
+    o.classList.add("tk-kay");
+    var a = mi.animate([{ transform: "translateX(0)", offset: 0 }, { transform: "translateX(0)", offset: o1, easing: "cubic-bezier(.3,0,.7,1)" },
+                        { transform: "translateX(-" + yol + "px)", offset: o2 }, { transform: "translateX(-" + yol + "px)", offset: 1 }],
                        { duration: sure, iterations: Infinity, easing: "linear" });
     var onc = S.kayOnce && S.kayOnce.metin === metin && S.kayOnce.tasma === tasma ? S.kayOnce.t : null;     // aynı mesaj yeniden çizildi → kaldığı yerden
     if (onc != null) { try { a.currentTime = onc; } catch (e) { /* önemsiz */ } }

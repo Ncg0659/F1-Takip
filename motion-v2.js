@@ -1,15 +1,15 @@
-/* F1 TAKİP — MOTION v2 (v3.0.3). Motion v1'in üstüne, aynı kurallarla çalışan ek hareket katmanı.
+/* F1 TAKİP — MOTION v2 (v3.0.3; v3.0.6 giriş + nokta güncellemesi). Motion v1'in üstüne, aynı kurallarla çalışan ek hareket katmanı.
    • Ağ çağrısı YOK, polling YOK, requestAnimationFrame döngüsü YOK. Veri/state üretmez; yalnız mevcut DOM'u okuyup .mo2-* sınıfı ekler.
    • Animasyonlar tek seferlik; prefers-reduced-motion açıksa hiçbiri oynamaz (▲▼ rozetleri bilgi olduğu için yine görünür).
    • Hata olursa sessizce atlanır; uygulamanın geri kalanı etkilenmez.
    1) Pist çizimi: pist EKRANDA GÖRÜNÜNCE çizilir (IntersectionObserver); sekmeye her girişte ve uygulamaya geri dönünce yeniden.
       (motion-v1.js pistKontrol bu dosyaya devreder.)
-   2) Pistte tek tur atan nokta: çizim bitince SVG animateMotion ile bir tur, sonra söner. Desteklemeyen tarayıcıda sessizce atlanır.
+   2) Pistte tek tur atan nokta: çizim bitince path geometrisinden (getPointAtLength) örneklenen Web Animations ile bir tur, sonra söner. Desteklemeyen tarayıcıda atlanır.
    3) Puan grafiği (svg-grafik.js): çizgiler soldan sağa çizilir; yeni veri/seçimde ve sekmeye her girişte; yeniden boyutlandırmada tekrar etmez.
    4) Lastik stint şeridi (analiz-lastik.js): parçalar soldan sağa sırayla dolar.
    5) Puan tablosu ▲▼ (pilot + takım): son görülen sıralama YALNIZ bu cihazda tutulur (localStorage "f1-mo2-sira").
       Yeni yarış sonrası sırası değişen satır eski yerinden kayar ve yanında ▲/▼ rozeti çıkar. İlk kullanımda karşılaştıracak kayıt yoktur.
-   6) Start ışıkları: oturumda bir kez, 5 kırmızı ışık; takvim verisi gelince (en geç 1.6 sn) söner. Dokununca hemen kapanır. */
+   6) Giriş: oturumda bir kez ~5.8 sn; 5 kırmızı ışık sırayla yanar (tamamı yanmadan açılmaz), söner, kinetik "F1 TAKİP" yazısı; dokununca atlanır. */
 (function () {
   "use strict";
   var D = document, W = window;
@@ -50,16 +50,30 @@
   }
 
   // ---------- 1) PİST ÇİZİMİ + 2) TUR ATAN NOKTA ----------
+  // Nokta: pist path'inin KENDİ geometrisi boyunca (getPointAtLength, eşit yay aralıklı ~140 örnek) sabit hızla tek tur. Web Animations API (transform + opacity);
+  // SMIL/animateMotion kullanılmaz (mobil Safari'de noktanın pistten kopup sabit kalmasının nedeni). Masaüstü ve mobil AYNI süre. rAF döngüsü yok.
+  var TUR_MS = 5200;
   function nokta(p, d) {
     var svg = p.ownerSVGElement; if (!svg || !p.isConnected || D.hidden || reduced()) { return; }
-    var am = D.createElementNS(NS, "animateMotion");
-    if (typeof am.beginElement !== "function") { return; }          // SMIL yok → nokta yok (pist çizimi yine çalışır)
+    if (typeof p.getTotalLength !== "function" || typeof p.getPointAtLength !== "function") { return; }
+    var L = 0; try { L = p.getTotalLength(); } catch (x) { return; }
+    if (!(L > 0)) { return; }
+    var eski = svg.querySelector(".mo2-nokta"); if (eski && eski.parentNode) { eski.parentNode.removeChild(eski); }   // aynı pistte tek nokta
     var c = D.createElementNS(NS, "circle");
-    c.setAttribute("r", "4.2"); c.setAttribute("class", "mo2-nokta");
-    am.setAttribute("dur", "1.8s"); am.setAttribute("fill", "freeze"); am.setAttribute("begin", "indefinite"); am.setAttribute("path", d);
-    c.appendChild(am); svg.appendChild(c);
-    c.addEventListener("animationend", function (e) { if (e.animationName === "mo2-nokta-omur" && c.parentNode) { c.parentNode.removeChild(c); } });
-    try { am.beginElement(); } catch (x) { if (c.parentNode) { c.parentNode.removeChild(c); } }
+    if (typeof c.animate !== "function") { return; }                  // WAAPI yok → nokta yok (pist çizimi yine çalışır)
+    var N = 140, kare = [], i, pt;
+    for (i = 0; i <= N; i++) {
+      try { pt = p.getPointAtLength(L * i / N); } catch (x) { return; }
+      kare.push({ transform: "translate(" + pt.x.toFixed(2) + "px, " + pt.y.toFixed(2) + "px)", opacity: i === 0 || i === N ? 0 : 1, offset: i / N });
+    }
+    kare[1].opacity = 1; kare[N - 1].opacity = 1;
+    c.setAttribute("r", "4.2"); c.setAttribute("cx", "0"); c.setAttribute("cy", "0"); c.setAttribute("class", "mo2-nokta");
+    c.style.opacity = "0";
+    svg.appendChild(c);
+    var a;
+    try { a = c.animate(kare, { duration: TUR_MS, easing: "linear", fill: "forwards" }); } catch (x) { if (c.parentNode) { c.parentNode.removeChild(c); } return; }
+    var kaldir = function () { if (c.parentNode) { c.parentNode.removeChild(c); } };
+    a.onfinish = kaldir; a.oncancel = kaldir;
   }
   function pist(p) {
     if (!p || gizliMi(p) || reduced()) { return; }
@@ -167,32 +181,29 @@
     siraIsle("p", pl.map(function (k) { return { id: k.Driver && k.Driver.driverId, poz: k.position, puan: k.points }; }), tb);
   }
 
-  // ---------- 6) START IŞIKLARI ----------
+  // ---------- 6) GİRİŞ: START IŞIKLARI + KİNETİK YAZI ----------
+  // Oturumda bir kez, toplam ~5.8 sn: 5 kırmızı ışık SIRAYLA yanar (hepsi yanmadan ekran açılmaz) → ışıklar söner → renkli çizgiler + "F1 TAKİP" + kısa kelimeler → ekran açılır.
+  // Tamamı CSS animasyonu (gecikmeli, tek seferlik); rAF/loop yok. Dokununca atlanır. prefers-reduced-motion → hiç gösterilmez.
+  var INTRO_MS = 5800;
   function isiklar() {
     if (reduced() || !D.body) { return; }
     try { if (sessionStorage.getItem("f1-mo2-isik")) { return; } sessionStorage.setItem("f1-mo2-isik", "1"); } catch (e) { return; }
-    var o = D.createElement("div"), kapandi = false, gozcu = null;
+    var o = D.createElement("div"), kapandi = false;
     o.className = "mo2-isik"; o.setAttribute("aria-hidden", "true");
-    o.innerHTML = "<div class='mo2-isik-sira'><i></i><i></i><i></i><i></i><i></i></div>";
+    o.innerHTML = "<div class='mo2-cizgiler'><i></i><i></i><i></i><i></i></div>" +
+      "<div class='mo2-isik-sira'><i></i><i></i><i></i><i></i><i></i></div>" +
+      "<div class='mo2-yazi'><div class='mo2-marka'><b>F1</b><span>TAKİP</span></div>" +
+      "<div class='mo2-kelime'><span>TAKİP ET</span><span>ANALİZ ET</span><span>YARIŞI YAŞA</span></div></div>";
     function kaldir() { if (o.parentNode) { o.parentNode.removeChild(o); } }
-    function kapat() {
+    function kapat() {                                                // dokunuş: hemen kapan
       if (kapandi) { return; } kapandi = true;
-      if (gozcu) { gozcu.disconnect(); }
-      o.classList.add("mo2-isik-son");                                // ışıklar söner → ekran açılır
-      o.addEventListener("animationend", function (e) { if (e.target === o) { kaldir(); } });
-      setTimeout(kaldir, 700);                                        // güvenlik: animasyon olayı gelmezse
+      o.classList.add("mo2-isik-son");
+      setTimeout(kaldir, 400);
     }
     o.addEventListener("click", kapat);
+    o.addEventListener("animationend", function (e) { if (e.target === o && /^mo2-cik/.test(e.animationName)) { kaldir(); } });
     D.body.appendChild(o);
-    var tk = D.getElementById("takvim-govde"), sn = D.getElementById("sonraki");
-    function hazirMi() { return (tk && tk.querySelector("tr")) || (sn && /alınamadı/i.test(sn.textContent || "")); }
-    if (hazirMi()) { kapat(); return; }
-    if (W.MutationObserver) {
-      gozcu = new MutationObserver(function () { if (hazirMi()) { kapat(); } });
-      if (tk) { gozcu.observe(tk, { childList: true }); }
-      if (sn) { gozcu.observe(sn, { childList: true, subtree: true, characterData: true }); }
-    }
-    setTimeout(kapat, 1600);                                          // en geç 1.6 sn: veri gecikse de ekran kapalı kalmaz
+    setTimeout(kaldir, INTRO_MS + 900);                               // güvenlik: animasyon olayı gelmezse ekran kapalı kalmaz
   }
 
   // ---------- olaylar ----------
@@ -241,5 +252,5 @@
     isiklar();
   }
   if (D.readyState === "loading") { D.addEventListener("DOMContentLoaded", baslat); } else { baslat(); }
-  W.MotionV2 = { pist: pist, sekme: sekme, _durum: S };
+  W.MotionV2 = { pist: pist, sekme: sekme, giris: isiklar, _durum: S };
 })();
