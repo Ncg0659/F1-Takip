@@ -279,7 +279,7 @@
     return "<div class='v3-bk" + (acik ? " acik" : "") + "'>" + bk.html +
       (ek ? "<button type='button' class='h-ac v3-mini' data-act='bk' data-key='" + esc(key) + "' aria-expanded='" + acik + "'>" + (acik ? "DARALT" : "DETAY") + "</button>" : "") + "</div>";
   }
-  function feedPanel(h, s) {            // Race Feed: MEVCUT depodan salt-okunur; son 3 önemli not + [TÜMÜ]. Yeni fetch/timer yok.
+  function feedPanel(h, s) {            // Race Feed: MEVCUT depodan salt-okunur; son 5 önemli not + [TÜMÜNÜ GÖSTER]. Yeni fetch/timer yok.
     var ol = feedOlaylari(h, s);
     if (!ol || !ol.length) { return ""; }
     var bas = s.baslangic.getTime() - 90 * 60000;
@@ -288,12 +288,12 @@
     var yuksek = ol.filter(function (o) { return o.priority === "high"; }).length, gor;
     if (S.feedPAcik) { gor = ol.slice(0, 40); }
     else {
-      gor = ol.filter(function (o) { return o.priority === "high"; }).slice(0, 3);
-      ol.forEach(function (o) { if (gor.length < 3 && gor.indexOf(o) < 0) { gor.push(o); } });
+      gor = ol.filter(function (o) { return o.priority === "high"; }).slice(0, 5);
+      ol.forEach(function (o) { if (gor.length < 5 && gor.indexOf(o) < 0) { gor.push(o); } });
       gor = ol.filter(function (o) { return gor.indexOf(o) >= 0; });
     }
     var ozet = ol.length + " not" + (yuksek ? " · " + yuksek + " yüksek öncelikli" : "");
-    var dugme = ol.length > 3 || S.feedPAcik ? "<button type='button' class='h-ac v3-mini' data-act='feedp' aria-expanded='" + !!S.feedPAcik + "'>" + (S.feedPAcik ? "DARALT" : "TÜMÜ (" + ol.length + ")") + "</button>" : "";
+    var dugme = ol.length > 5 || S.feedPAcik ? "<button type='button' class='h-ac v3-mini' data-act='feedp' aria-expanded='" + !!S.feedPAcik + "'>" + (S.feedPAcik ? "DARALT" : "TÜMÜNÜ GÖSTER (" + ol.length + ")") + "</button>" : "";
     return "<section class='v3-feed' aria-label='Race Feed'><div class='v3-feed-ust'><b>RACE FEED</b><span>" + esc(ozet) + "</span>" + dugme + "</div>" +
       "<div class='tl'>" + gor.map(function (o) { return U.olaySatiri(o, olayTakimlari(o)); }).join("") + "</div></section>";
   }

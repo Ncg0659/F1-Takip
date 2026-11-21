@@ -80,7 +80,7 @@ with sync_playwright() as p:
     kontrol("D4 CTA → sekme-gun, HAFTA SONU/GÜN vurgusu", sekme(pg)==["sekme-gun"] and aktif(pg)==["nav-haftasonu"] and ctxa(pg)==["ctx-gun"], (sekme(pg),aktif(pg),ctxa(pg))); b.close()
     FEED=[ev("e1","2026-10-11T12:10:00Z","PENALTY","5 saniye zaman cezası: Verstappen."),ev("e2","2026-10-11T12:15:00Z","SAFETY_CAR","Safety Car devrede."),ev("e3","2026-10-11T12:20:00Z","PIT","Norris pit yaptı."),ev("e4","2026-10-11T12:25:00Z","WEATHER","Pistte yağmur başladı.")]
     pg,errs,c,b=ac(p,"2026-10-11T12:30:00Z",feed=FEED)
-    n=pg.locator("#bg-kok .bg-feed li").count(); kontrol("H2 Race Feed deposu var → en çok 3 not", 1<=n<=3, n)
+    n=pg.locator("#bg-kok .bg-feed li").count(); kontrol("H2 Race Feed deposu var → en çok 5 not", 1<=n<=5, n)
     ts=pg.evaluate("[...document.querySelectorAll('#bg-kok .bg-feed li time')].map(t=>t.textContent)")
     kontrol("H3 feed notları en yeni üstte (saat azalan), Türkçe metin", n>=1 and ts==sorted(ts,reverse=True) and "yağmur" in pg.inner_text("#bg-kok .bg-feed").lower(), (ts,pg.inner_text("#bg-kok .bg-feed")))
     temiz(pg,"H4"); b.close()

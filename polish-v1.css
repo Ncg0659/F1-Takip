@@ -131,3 +131,12 @@ div.pp-acc { margin: 6px 0 10px; }
 .tp-ch .tp-top .tp-y { color: var(--yazi); }
 .tp-ch .tp-top .tp-bar b { background: var(--soluk); }
 .tp-ch .tp-top .tp-bar { background: color-mix(in srgb, var(--soluk) 18%, transparent); }
+
+/* ---------- 8. BUGÜN Race Feed: başlık + TÜMÜNÜ GÖSTER, EN etiketi ---------- */
+.bg-feed-ust { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.bg-feed-ust .bg-h { margin-bottom: 0; }
+.bg-feed-dug { min-height: 32px; padding: 4px 10px; border: 1px solid var(--cizgi); border-radius: 8px; background: var(--kart2); color: var(--yazi);
+  font: inherit; font-family: var(--f-sayi); font-size: .66rem; font-weight: 700; letter-spacing: .12em; cursor: pointer; white-space: nowrap; }
+.bg-feed-dug:focus-visible { outline: 2px solid var(--vurgu); outline-offset: 2px; }
+.bg-feed-en { display: inline-block; padding: 0 5px; margin-right: 2px; border: 1px solid var(--cizgi); border-radius: 4px; font-family: var(--f-sayi); font-size: .62rem;
+  font-weight: 700; letter-spacing: .08em; color: var(--pl-etiket); vertical-align: 1px; }

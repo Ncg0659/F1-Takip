@@ -26,7 +26,7 @@ with sync_playwright() as p:
             b.close()
     pg,errs,c,b=ac(p,"2026-10-11T12:30:00Z",w=390,feed=UZUN)
     tz=tasma(pg); n=pg.locator("#bg-kok .bg-feed li").count(); ids=pg.evaluate("[...document.querySelectorAll('#bg-kok .bg-feed li')].map(l=>l.textContent)")
-    kontrol("uzun feed metni: en çok 3 not, taşma 0, tekrar yok", 1<=n<=3 and tz["doc"]<=tz["W"] and not tz["bad"] and len(set(ids))==len(ids), (n,tz))
+    kontrol("uzun feed metni: en çok 5 not, taşma 0, tekrar yok", 1<=n<=5 and tz["doc"]<=tz["W"] and not tz["bad"] and len(set(ids))==len(ids), (n,tz))
     b.close()
     # Prediction: yarış başlayınca SABİT etiketi
     pg,errs,c,b=ac(p,"2026-10-11T12:30:00Z",w=390,feed=[START])
