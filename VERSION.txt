@@ -1,18 +1,19 @@
 F1 TAKİP
-Version: 3.0.0
-Release: Production
+Version: 3.0.7
+Release: Sezon arası modu + Race Feed (BUGÜN) + kararlılık
 
-Stable modules:
-- Navigation v3
-- BUGÜN Hub
-- Race State / Ticker
-- Motion v1
-- Personalization v1
-- İzlerken Öğren v2
-- Season
-- Race Weekend
-- Race Day
-- Post-Race Analysis
+3.0.7
+- Sezon arası: yeni sezonun takvimi veya puan durumu henüz yokken hata yerine bilgi gösterilir
+  (BUGÜN "SEZON ARASI", HAFTA SONU / SEZON / KEŞFET boş durum mesajları). Geçen yılın puanı yeni yılınki gibi gösterilmez.
+- Geçmiş şampiyonlar: son yarış bitince o yılın satırı artık "lider / SEZON DEVAM EDİYOR" göstermez.
+- BUGÜN Race Feed: son 5 önemli not + TÜMÜNÜ GÖSTER; çevirisi bulunamayan not özgün metniyle ve EN etiketiyle. HAFTA SONU seans kartında 5 not.
+- Chart.js yüklenemezse (çevrimdışı) puan/tur grafikleri hata atmaz.
+
+3.0.6
+- Visual Polish + Motion Fixes (giriş animasyonu, pist çizimi/nokta, ticker, kart sistemi, Ghost Lap akıcılığı, tahmin renkleri, mobil pist profili).
+
+Service Worker cache: F1-TAKIP-v3.0.7-PWA1 (yalnız yerel statik dosyalar; API önbelleğe alınmaz)
+Önceki sürüme dönüş: GitHub'da main dalının geçmişi (3.0.6 = "Add files via upload", 13 Kasım 2026)
 
 Repository:
 https://github.com/Ncg0659/F1-Takip

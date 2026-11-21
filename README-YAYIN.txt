@@ -1,50 +1,21 @@
-F1 TAKİP v3.0.0 — GitHub Pages Yayını
+F1 TAKİP — Yayın (GitHub Pages)
 
-1. ZIP'i aç.
-2. "GITHUB-PAGES" klasörüne gir.
-3. GitHub'da şu repoyu aç:
-   https://github.com/Ncg0659/F1-Takip
-4. Repo root'una "GITHUB-PAGES" klasörünün KENDİSİNİ değil,
-   İÇİNDEKİ TÜM DOSYALARI yükle (113 dosya).
-5. Commit mesajı:
-   F1 TAKİP v3.0.0 — Production Release
-6. GitHub'da: Settings → Pages
-7. Build and deployment: Deploy from a branch
-8. Branch: main
-9. Folder: / (root)
-10. Save.
+Site, bu reponun main dalından yayınlanır. ZIP yüklemeye artık gerek yok.
 
-Beklenen canlı adres:
-https://ncg0659.github.io/F1-Takip/
+1. Claude/Codex değişiklikleri ayrı bir dalda yapar ve bir Pull Request (PR) açar.
+2. PR sayfasında açıklamayı ve test sonuçlarını oku.
+3. Uygunsa "Merge pull request" → "Confirm merge". Birkaç dakika içinde site güncellenir.
+4. iPhone'da siteyi aç; eski sürüm görünürse uygulamayı tamamen kapatıp yeniden aç.
+   Sayfa kaynağında app-version yeni sürüm numarası olmalı.
+5. Sorun olursa: GitHub'da birleştirilen PR'ın sayfasında "Revert" düğmesi önceki hâline döndürür.
 
-ÖNEMLİ — Repo root şöyle görünmeli:
-  index.html
-  *.css
-  *.js
-  ...
-Şöyle OLMAMALI:
-  GITHUB-PAGES/index.html
-
-Yeni sürüm yüklerken:
-- eski production dosyalarını yeni GITHUB-PAGES içeriğiyle değiştir
-- test/yedek dosyalarını repo root'una yükleme
-- Pages ayarını değiştirme
-
-Rollback:
-ROLLBACK/F1-Takip-pre-v3.0.0-YEDEK.zip (bir önceki sürüm; geri dönmek için içeriğini aynı şekilde yükle)
-
-Yayın öncesi test sonuçları (sandbox):
-- release test suiteleri: geçti (17 suite)
-- canli5: 53/53
-- viewport matrix: 100/100
-- local production asset: 112/112
-- JS critical error: 0
-- NAV v3 varsayılan, açılış BUGÜN; ?nav=off eski görünüme döner
-
-YAYINDAN SONRA KONTROL ET (sandbox'ta internet API'leri engelliydi, test edilemedi):
-- Sayfa temiz tarayıcıda (gizli pencere) açılıyor mu; sert yenileme (Cmd+Shift+R)
-- Gerçek sıradaki yarış ve sezon takvimi doğru mu; saatler Türkiye saati mi
-- Jolpica (puan durumu/sonuçlar), OpenF1, Bluesky/Race Feed, hava durumu verileri geliyor mu
-- SEZON, HAFTA SONU, YARIŞ GÜNÜ, ANALİZ/GRAFİK sekmeleri ilk girişte doluyor mu
-- Favori pilot, Öğren [?], koyu/açık tema, 390 px mobil görünüm
-- Tarayıcı konsolunda kırmızı hata ve 404 yok mu
+iPHONE'DA KONTROL (bilgisayarda test edildi; gerçek cihazda ayrıca bakılmalı)
+A. Giriş: 5 kırmızı ışık sırayla yanıyor, sonra "F1 TAKİP" yazısı; toplam 5–6 sn (aynı oturumda ikinci açılışta çıkmaz).
+B. En üstte kırmızı çizgi yok.
+C. BUGÜN: pist yavaşça çiziliyor, yan/ters durmuyor; kırmızı nokta çizginin üstünde bir tur atıp kayboluyor.
+D. SEZON kartında pist adına dokun: profil hemen altında açılıyor; tekrar dokununca / "Kapat" ile kapanıyor.
+E. Canlı oturumda üst şerit: uzun haberde ikon + etiket + metin birlikte kayıyor; kısa haberde durağan.
+F. BUGÜN Race Feed: 5 not + "TÜMÜNÜ GÖSTER"; açınca İngilizce kalan notlarda "EN" etiketi.
+G. ANALİZ > Ghost Lap: noktalar takılmadan ilerliyor; 0.5x / 1x / 2x ve kaydırma çalışıyor.
+H. Ayarlar > Erişilebilirlik > Hareketi Azalt açıkken giriş ve kaymalar kapalı.
+I. Sezon bitince (Aralık) BUGÜN "SEZON TAMAMLANDI"; yeni yılda takvim yoksa "SEZON ARASI" görünmeli.
