@@ -291,7 +291,7 @@
   });
   document.addEventListener("f1-sekme", function (e) { if (e.detail === "bugun") { S.tick = 0; saatGozle(); ciz(); } });
   document.addEventListener("f1-feed-guncel", function () { ciz(); });
-  document.addEventListener("f1-sezon-durumu", function () { S.html = null; ciz(); });
+  document.addEventListener("f1-sezon-durumu", function () { ciz(); });   // yalnız içerik değiştiyse DOM yenilenir (odak korunur)
   document.addEventListener("f1-yaris-sonuc", function (e) { try { if (e.detail && e.detail.liste) { S.liste[Number(e.detail.tur)] = e.detail.liste; } } catch (x) { /* önemsiz */ } ciz(); });
   function hazir() { saatGozle(); ciz(); }
   if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", hazir); } else { hazir(); }

@@ -1,12 +1,12 @@
 <!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <style>:root{--kart:#14161a;--cizgi:#2a2f38;--soluk:#8b93a1;--yazi:#e8ebf0}body{margin:0;background:#0b0d10;color:#e8ebf0;font:16px system-ui;padding:0 16px}</style>
-<link rel="stylesheet" href="../../f1/ghost-lap.css"></head><body>
+<link rel="stylesheet" href="../../ghost-lap.css"></head><body>
 <section id="sekme-yaris"><div id="yv-detay"><div id="yv-tur-ek"></div></div></section>
 <script>
 var SEZON=2023, sezonYarislar=[{season:"2023",round:"16",raceName:"Singapore GP",Circuit:{circuitId:"marina_bay"},Sprint:{date:"2026-10-03"}}];
 window.OpenF1Veri={sirali:async function(yol){var r=await fetch("https://api.openf1.org/v1/"+yol);if(r.status===404)return{tur:"bos",veri:null,http:404};if(r.status===429)return{tur:"hata",veri:null,http:429};if(!r.ok)return{tur:"hata",veri:null,http:r.status};return{tur:"ok",veri:await r.json(),http:200};}};
 </script>
-<script src="../../f1/pist-siluetleri.js"></script><script src="../../f1/telemetry-data.js"></script><script src="../../f1/ghost-hesap.js"></script><script src="../../f1/ghost-lap.js"></script>
+<script src="../../pist-siluetleri.js"></script><script src="../../telemetry-data.js"></script><script src="../../ghost-hesap.js"></script><script src="../../ghost-lap.js"></script>
 <script>
 window.__oturum=0;
 TelemetriVeri.oturumBul=async function(kayit,anahtar){window.__oturum++;return{durum:"ok",oturum:{season:2023,session_key:9161,meeting_key:1,ad:anahtar}};};
