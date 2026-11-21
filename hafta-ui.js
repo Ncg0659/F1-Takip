@@ -512,7 +512,8 @@
     var a = document.getElementById("sekme-hafta"), b = document.getElementById("sekme-sprint");
     if (!a || !b) { return; }
     if (!S.hafta) {
-      var msg = S.hata ? "<p class='h-uyari'>" + esc(S.hata) + "</p><button class='yenile' data-act='yenile'>Yeniden dene</button>" : "<p class='h-not'>Yükleniyor...</p>";
+      var msg = S.hata ? "<p class='h-uyari'>" + esc(S.hata) + "</p><button class='yenile' data-act='yenile'>Yeniden dene</button>" :
+        (S.takvimYok ? "<p class='h-not'>" + esc(S.takvimYok) + " takvimi henüz yayınlanmadı. Takvim yayınlanınca ilk yarış haftası burada görünür.</p>" : "<p class='h-not'>Yükleniyor...</p>");
       a.innerHTML = "<h1>Yarış Haftası</h1>" + msg; b.innerHTML = "<h1>Sprint</h1>" + msg;
       return;
     }
@@ -557,6 +558,7 @@
         var t = await V.takvimYukle(new Date().getFullYear());
         S.yarislar = t.yarislar; S.takvimEski = t.eski;
         var v = V.varsayilanTur(S.yarislar);
+        if (!S.yarislar || !S.yarislar.length) { S.takvimYok = new Date().getFullYear(); }   // sezon arası: takvim henüz yayınlanmadı (hata değil)
         if (v) {
           S.tur = Number(v.round);
           S.hafta = V.haftaKur(v, "f1");
@@ -573,6 +575,7 @@
     cizHafta();
     await hazirla();
     if (S.aktifSayfa !== sayfa) { return; }
+    if (S.takvimYok && !S.hafta) { cizHafta(); return; }
     if (S.tur != null && (!S.bekle && !S.yukleniyor)) {
       S.yukleniyor = true;
       try { await turYukle(S.tur); } finally { S.yukleniyor = false; }

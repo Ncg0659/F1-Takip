@@ -140,3 +140,6 @@ div.pp-acc { margin: 6px 0 10px; }
 .bg-feed-dug:focus-visible { outline: 2px solid var(--vurgu); outline-offset: 2px; }
 .bg-feed-en { display: inline-block; padding: 0 5px; margin-right: 2px; border: 1px solid var(--cizgi); border-radius: 4px; font-family: var(--f-sayi); font-size: .62rem;
   font-weight: 700; letter-spacing: .08em; color: var(--pl-etiket); vertical-align: 1px; }
+
+/* ---------- 9. Sezon arası boş durumları (hata değil, bilgi) ---------- */
+tr.sezon-bos td { white-space: normal; color: var(--soluk); font-size: .88rem; line-height: 1.45; padding: 14px 12px; text-align: left; }

@@ -286,13 +286,21 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
     }
   }
 
+  // Bu yılın son yarışı bitti mi (takvim yüklendiyse)? Bittiyse lider artık "(lider)" diye gösterilmez (final puan durumu).
+  function buYilBitti() {
+    try { const y = typeof sezonYarislar !== "undefined" ? sezonYarislar : []; if (!y.length || String(y[0].season) !== String(BU_YIL)) { return false; }
+      const son = y[y.length - 1]; return new Date(son.date + "T" + (son.time || "12:00:00Z")).getTime() + 3 * 3600 * 1000 < Date.now(); } catch (e) { return false; }
+  }
   function tabloyuCiz(liste) {
+    const bitti = buYilBitti();
     document.getElementById("govde").innerHTML = liste.map(function (k) {
-      return "<tr><td class='sezon'>" + k.sezon + "</td><td>" + k.pilot + "</td><td>" +
+      const pilot = bitti && k.sezon === String(BU_YIL) ? String(k.pilot).replace(/ \(lider\)$/, "") : k.pilot;
+      return "<tr><td class='sezon'>" + k.sezon + "</td><td>" + pilot + "</td><td>" +
              k.takim + "</td><td>" + k.puan + "</td><td>" + k.galibiyet + "</td></tr>";
     }).join("");
   }
 
+  document.addEventListener("f1-sezon-durumu", function () { const a = document.getElementById("ara"); if (sampiyonlar.length && (!a || !a.value)) { tabloyuCiz(sampiyonlar); } });   // takvim geldi: sezon bittiyse "(lider)" kalkar
   document.getElementById("ara").addEventListener("input", function (e) {
     const aranan = e.target.value.toLowerCase();
     tabloyuCiz(sampiyonlar.filter(function (k) {
@@ -524,12 +532,17 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
       sezonYarislar = takvim.RaceTable.Races;
       takvimiCiz(sezonYarislar);
       await bekle2(400);
+      // Sezon arası: yeni sezonda henüz yarış yokken Jolpica puan listesi BOŞ döner → hata değil, "henüz başlamadı" durumu (veri uydurulmaz; geçen yılın puanı bu yılınki gibi gösterilmez)
       const pilotlar = await jsonAl(SEZON + "/driverstandings/");
-      sezonPilotlar = pilotlar.StandingsTable.StandingsLists[0].DriverStandings;
-      pilotlariCiz(sezonPilotlar);
+      const pListe = pilotlar && pilotlar.StandingsTable && pilotlar.StandingsTable.StandingsLists && pilotlar.StandingsTable.StandingsLists[0];
+      sezonPilotlar = pListe ? pListe.DriverStandings : [];
+      if (pListe) { pilotlariCiz(sezonPilotlar); } else { puanBos("pilot-govde", 5); }
       await bekle2(400);
       const takimlar = await jsonAl(SEZON + "/constructorstandings/");
-      takimlariCiz(takimlar.StandingsTable.StandingsLists[0].ConstructorStandings);
+      const tListe = takimlar && takimlar.StandingsTable && takimlar.StandingsTable.StandingsLists && takimlar.StandingsTable.StandingsLists[0];
+      if (tListe) { takimlariCiz(tListe.ConstructorStandings); } else { puanBos("takim-govde", 4); }
+      window.SezonDurumu = { sezon: SEZON, takvimYok: !sezonYarislar.length, puanYok: !pListe };
+      document.dispatchEvent(new CustomEvent("f1-sezon-durumu", { detail: window.SezonDurumu }));
       profilHazirla();
       if (grafikIstendi) { grafikHazirla(); }
       if (gunIstendi) { gunBaslat(); }
@@ -560,6 +573,7 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
     }).join("");
 
     const kutu = document.getElementById("sonraki");
+    if (!yarislar.length) { kutu.textContent = ""; document.getElementById("takvim-govde").innerHTML = "<tr class='sezon-bos'><td colspan='3'>" + SEZON + " takvimi henüz yayınlanmadı.</td></tr>"; return; }
     if (!siradaki) { kutu.textContent = "Bu sezonun yarışları tamamlandı."; return; }
     const yer = sehirG(siradaki.Circuit.Location.locality) + ", " + siradaki.Circuit.Location.country;
     kutu.innerHTML = "Sıradaki yarış<br><b>" + siradaki.raceName + "</b><br>" + yer +
@@ -578,6 +592,10 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
     sayacZamanlayici = setInterval(guncelle, 1000);
   }
 
+  function puanBos(id, sutun) {        // sezon arası: puan tablosu boş durumu (hata değil)
+    const g = document.getElementById(id); if (!g) { return; }
+    g.innerHTML = "<tr class='sezon-bos'><td colspan='" + sutun + "'>" + SEZON + " sezonunda henüz yarış yapılmadı. Puan durumu ilk yarıştan sonra oluşur.</td></tr>";
+  }
   function pilotlariCiz(liste) {
     document.getElementById("pilot-govde").innerHTML = liste.map(function (k) {
       return "<tr><td class='sezon'>" + F1UI.pozRozet(k.position) + "</td><td>" + F1UI.pilotHucresi(k.Driver.code, k.Driver.givenName + " " + k.Driver.familyName) +
@@ -616,6 +634,7 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
   function kiyasla() {
     const a = sezonPilotlar[document.getElementById("pilot-a").value];
     const b = sezonPilotlar[document.getElementById("pilot-b").value];
+    if (!a || !b) { document.getElementById("kiyas-govde").innerHTML = "<tr class='sezon-bos'><td colspan='3'>Karşılaştırma için " + SEZON + " puan durumu gerekiyor (ilk yarıştan sonra).</td></tr>"; return; }
     document.getElementById("baslik-a").textContent = a.Driver.familyName;
     document.getElementById("baslik-b").textContent = b.Driver.familyName;
     function takimAdi(k) { return k.Constructors.length ? k.Constructors[k.Constructors.length - 1].name : "-"; }
@@ -634,6 +653,7 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
   }
 
   function pistleriCiz() {
+    if (!sezonYarislar.length) { document.getElementById("pist-govde").innerHTML = "<tr class='sezon-bos'><td colspan='4'>" + SEZON + " takvimi yayınlanınca sezonun pistleri burada görünür.</td></tr>"; return; }
     document.getElementById("pist-govde").innerHTML = sezonYarislar.map(function (y) {
       const p = y.Circuit;
       const harita = "https://www.google.com/maps?q=" + p.Location.lat + "," + p.Location.long;
@@ -664,8 +684,9 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
     const lider = sezonPilotlar[0];
     const ikinci = sezonPilotlar[1];
     const p = sezonPilotlar[document.getElementById("hesap-pilot").value];
-    const ad = p.Driver.givenName + " " + p.Driver.familyName;
     const kutu = document.getElementById("hesap-sonuc");
+    if (!lider || !ikinci || !p) { kutu.textContent = SEZON + " sezonunda henüz yarış yapılmadı. Hesaplayıcı ilk yarıştan sonra çalışır."; return; }
+    const ad = p.Driver.givenName + " " + p.Driver.familyName;
     let metin = "Kalan: " + kalan.length + " yarış (" + sprintSayisi + " sprint), en fazla " + enCok + " puan.<br>";
     if (lider.points - ikinci.points > enCok) {
       metin += "Şampiyonluk matematiksel olarak belli: " + lider.Driver.familyName + ".";
@@ -687,7 +708,9 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
     const anahtar = "f1-" + SEZON + "-tur-" + tur;
     try { const k = JSON.parse(localStorage.getItem(anahtar)); if (k) { return { veri: k, hafizadan: true }; } } catch (e) {}
     const m = await jsonAl(SEZON + "/" + tur + "/driverstandings/");
-    const liste = m.StandingsTable.StandingsLists[0].DriverStandings;
+    const lst0 = m && m.StandingsTable && m.StandingsTable.StandingsLists && m.StandingsTable.StandingsLists[0];
+    if (!lst0) { return { veri: {}, hafizadan: false }; }       // o tur için puan listesi yok (henüz yayımlanmadı): boş, önbelleğe yazılmaz
+    const liste = lst0.DriverStandings;
     const harita = {};
     liste.forEach(function (k) { harita[k.Driver.driverId] = Number(k.points); });
     try { localStorage.setItem(anahtar, JSON.stringify(harita)); } catch (e) {}

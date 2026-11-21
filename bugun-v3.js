@@ -234,6 +234,11 @@
 
   // ---------- çizim ----------
   function bosHtml() {
+    var sd = window.SezonDurumu;
+    if (sd && sd.takvimYok) {                                   // sezon arası: yeni sezonun takvimi henüz yayınlanmadı (hata değil)
+      return "<section class='bg-hero bg-ton-b-bitti' data-mod='ara' data-ton='bitti'><div class='bg-sol'><p class='bg-ust'>" + kod("bitti", "SEZON ARASI") + "</p><h2 class='bg-ad'>" + esc(sd.sezon) + " takvimi henüz yayınlanmadı</h2>" +
+        "<p class='bg-tarih'>Takvim yayınlanınca sıradaki yarış ve geri sayım burada görünür.</p></div></section><div class='bg-cta'>" + cta("sampiyonlar", "GEÇMİŞ ŞAMPİYONLAR", false) + cta("sezon", "SEZONA GİT", true) + "</div>";
+    }
     var hata = ($("sonraki") && /Veri alınamadı/.test($("sonraki").textContent || ""));
     return "<section class='bg-hero bg-ton-b-bekle' data-mod='bos' data-ton='bekle'><div class='bg-sol'><p class='bg-ust'>" + kod("bekle", hata ? "VERİ YOK" : "YÜKLENİYOR") + "</p><h2 class='bg-ad'>" + (hata ? "Takvim bilgisi şu an alınamadı" : "Bugünün özeti hazırlanıyor") + "</h2></div></section><div class='bg-cta'>" + cta("sezon", "SEZONA GİT", true) + "</div>";
   }
@@ -286,6 +291,7 @@
   });
   document.addEventListener("f1-sekme", function (e) { if (e.detail === "bugun") { S.tick = 0; saatGozle(); ciz(); } });
   document.addEventListener("f1-feed-guncel", function () { ciz(); });
+  document.addEventListener("f1-sezon-durumu", function () { S.html = null; ciz(); });
   document.addEventListener("f1-yaris-sonuc", function (e) { try { if (e.detail && e.detail.liste) { S.liste[Number(e.detail.tur)] = e.detail.liste; } } catch (x) { /* önemsiz */ } ciz(); });
   function hazir() { saatGozle(); ciz(); }
   if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", hazir); } else { hazir(); }

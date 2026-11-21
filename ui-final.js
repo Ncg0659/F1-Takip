@@ -57,7 +57,7 @@
       var td = tr.querySelector("td.sezon"); if (!td) { return; }
       var y = parseInt(td.textContent, 10); if (!isFinite(y)) { return; }
       if (y < ILK_YIL) { tr.classList.add("ui-eski"); eski++; }
-      if (y === yil && !tr.classList.contains("ui-canli")) {          // tamamlanmamış sezon: şampiyon değil, "lider"
+      if (y === yil && !tr.classList.contains("ui-canli") && tr.children[1] && /\(lider\)\s*$/i.test(tr.children[1].textContent)) {   // tamamlanmamış sezon: şampiyon değil, "lider" (sezon bitince index.html "(lider)" yazmaz → normal şampiyon satırı)
         tr.classList.add("ui-canli");
         var h = tr.children[1];
         if (h) {
