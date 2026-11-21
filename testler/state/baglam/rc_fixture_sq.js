@@ -1,0 +1,35 @@
+// Singapur 2026 Sprint Qualifying (session_key 11379, meeting 1296) — WebFetch aktarımından alınan GERÇEK kayıtların esas olduğu fixture.
+// Not: aktarım özetleyicidir (bayt-bayt doğrulanmadı); yalnızca olay ZAMAN/METİN yapısını test etmek için kullanılır. Sektör bayrakları kısaltıldı.
+const d = (t, o) => Object.assign({ date: "2026-10-09T" + t + "Z", session_key: 11379, meeting_key: 1296, category: "Other", flag: null, scope: null, sector: null, driver_number: null, lap_number: null }, o);
+const T = "Track";
+module.exports = [
+  d("12:30:00", { category: "Flag", flag: "GREEN", scope: T, message: "GREEN LIGHT - PIT EXIT OPEN" }),
+  d("12:30:02", { category: "SessionStatus", message: "SESSION STARTED", qualifying_phase: 1 }),
+  d("12:35:51", { category: "SessionStatus", message: "SESSION ABORTED", qualifying_phase: 1 }),
+  d("12:35:52", { category: "Flag", flag: "RED", scope: T, message: "RED FLAG", qualifying_phase: 1 }),
+  d("12:38:22", { category: "Flag", flag: "GREEN", scope: T, message: "TRACK CLEAR" }),
+  d("12:38:30", { category: "Flag", flag: "YELLOW", scope: "Sector", sector: 7, message: "YELLOW IN TRACK SECTOR 7" }),
+  d("12:42:13", { message: "SQ1 WILL RESUME AT 20:46" }),
+  d("12:46:00", { category: "SessionStatus", message: "SESSION STARTED", qualifying_phase: 1 }),
+  d("12:50:00", { message: "TRACK SURFACE SLIPPERY IN TRACK SECTOR 7" }),
+  d("12:52:09", { category: "SessionStatus", message: "SESSION FINISHED", qualifying_phase: 1 }),
+  d("12:52:09", { category: "Flag", flag: "CHEQUERED", scope: T, message: "CHEQUERED FLAG", qualifying_phase: 1 }),
+  d("12:55:03", { message: "START OF SQ2 WILL BE DELAYED" }),
+  d("13:05:26", { message: "SQ2 WILL START AT 21:11" }),
+  d("13:11:00", { category: "SessionStatus", message: "SESSION STARTED", qualifying_phase: 2 }),
+  d("13:21:00", { category: "SessionStatus", message: "SESSION FINISHED", qualifying_phase: 2 }),
+  d("13:21:00", { category: "Flag", flag: "CHEQUERED", scope: T, message: "CHEQUERED FLAG", qualifying_phase: 2 }),
+  d("13:25:01", { message: "SQ3 WILL START AT 21:28" }),
+  d("13:28:00", { category: "SessionStatus", message: "SESSION STARTED", qualifying_phase: 3 }),
+  d("13:36:00", { category: "SessionStatus", message: "SESSION FINISHED", qualifying_phase: 3 }),
+  d("13:36:00", { category: "Flag", flag: "CHEQUERED", scope: T, message: "CHEQUERED FLAG", qualifying_phase: 3 }),
+  d("12:40:00", { message: "FIA STEWARDS: INCIDENT INVOLVING CAR 1 (VER) NOTED - YELLOW FLAG INFRINGEMENT" }),
+  d("12:41:00", { message: "FIA STEWARDS: INCIDENT INVOLVING CARS 11 (PER), 77 (BOT) AND 55 (SAI) NOTED - FAILING TO FOLLOW RACE DIRECTORS INSTRUCTIONS - MAXIMUM DELTA TIME" }),
+  d("13:40:00", { message: "FIA STEWARDS: INCIDENT INVOLVING CARS 11 (PER), 77 (BOT) AND 55 (SAI) WILL BE INVESTIGATED AFTER THE SESSION - FAILING TO FOLLOW RACE DIRECTORS INSTRUCTIONS" }),
+  d("13:55:00", { message: "FIA STEWARDS: INCIDENT INVOLVING CARS 11 (PER), 77 (BOT) AND 55 (SAI) NO FURTHER INVESTIGATION - FAILING TO FOLLOW RACE DIRECTORS INSTRUCTIONS" }),
+  d("12:47:00", { message: "CAR 81 (PIA) TIME 1:30.500 DELETED - DOUBLE YELLOW FLAG", driver_number: 81 }),
+  d("12:48:00", { message: "CAR 44 (HAM) TIME 1:30.100 DELETED - TRACK LIMITS AT TURN 10", driver_number: 44 }),
+  d("12:51:00", { message: "OVERTAKE ENABLED" }), d("13:22:00", { message: "OVERTAKE DISABLED" }),
+  d("12:30:05", { category: "Flag", flag: "CLEAR", scope: "Sector", sector: 3, message: "CLEAR IN TRACK SECTOR 3" }),
+  d("12:51:30", { message: "FIRST CAR TO TAKE THE FLAG: CAR 18 (STR)" }),
+];

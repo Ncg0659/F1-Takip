@@ -1,0 +1,15 @@
+# ogren_v2_test (minimum): İzlerken Öğren marker'ı geçmiş yarış analizinde çalışıyor mu. Jolpica taklidi gecmis_yaris_v1_test.py'den.
+exec(open(__import__("os").path.join(__import__("os").path.dirname(__import__("os").path.abspath(__file__)),"gecmis_yaris_v1_test.py")).read().split("with sync_playwright() as p:")[0])
+with sync_playwright() as p:
+    br=p.chromium.launch(); ctx=br.new_context(viewport={"width":390,"height":900}); pg=ctx.new_page(); errs=[]; pg.on("pageerror",lambda e:errs.append(str(e)))
+    pg.route("**/*",mock); pg.clock.install(time=NOW); pg.goto("file:///home/claude/f1-takip/index.html?season=2026&round=7")
+    ilerle(pg,25000); pg.evaluate("sekmeAc('yaris')"); ilerle(pg,8000)
+    n=lambda: pg.evaluate("document.querySelectorAll('#sonuc-govde [data-b2=\"dnf\"]').length")
+    k("round 7 (DNF var): DNF öğren işareti",n()==1,n())
+    pg.evaluate("document.querySelector('#sonuc-govde [data-b2=dnf]').click()"); ilerle(pg,1000)
+    k("işarete tıklayınca terim paneli açılır",pg.evaluate("!!document.querySelector('dialog[open]')"))
+    pg.keyboard.press("Escape"); ilerle(pg,500)
+    pg.select_option("#yaris-sec","9"); ilerle(pg,8000)
+    k("round 9 (DNF yok): işaret yok",n()==0,n())
+    k("hata yok",not errs,errs); br.close()
+print(sum(S),"/",len(S))

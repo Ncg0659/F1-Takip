@@ -699,6 +699,7 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
     if (grafikBasladi) { return; }
     grafikBasladi = true;
     const durum = document.getElementById("grafik-durum");
+    if (typeof Chart === "undefined") { if (durum) { durum.textContent = "Grafik kütüphanesi yüklenemedi (çevrimdışı olabilir). Bağlantı gelince sayfayı yenile."; } grafikBasladi = false; return; }   // CDN yoksa hata atma
     const biten = sezonYarislar.filter(function (y) { return yarisZamani(y) < new Date(Date.now() - 3 * 3600 * 1000); });
     const ilk6 = sezonPilotlar.slice(0, 6);
     const renkler = ["#d4161c", "#5b6f86", "#1f7ae0", "#e8a317", "#2e9d57", "#8e44ad"];
@@ -862,6 +863,7 @@ try { if (/[?&]dev=1\b/.test(location.search)) { document.documentElement.setAtt
         return { label: adlar[i], borderColor: renkler[i], backgroundColor: renkler[i], pointRadius: 1.5, tension: 0.1,
                  data: laps.map(function (l) { return saniyeye(l.Timings[0].time); }) };
       });
+      if (typeof Chart === "undefined") { const td = document.getElementById("tur-grafik"); if (td && td.parentNode) { td.parentNode.setAttribute("data-grafik-yok", "1"); } return; }   // CDN yoksa sessizce atla (çevrimdışı)
       if (turGrafigi) { turGrafigi.destroy(); }
       turGrafigi = new Chart(document.getElementById("tur-grafik"), {
         type: "line",

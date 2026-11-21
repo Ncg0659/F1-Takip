@@ -1,0 +1,13 @@
+"use strict";
+const fs=require("fs"),L=require("./backtest-lib.js"),TM=L.TM;
+const ds=JSON.parse(fs.readFileSync(__dirname+"/veri-f1db-2020-2026.json","utf8"));
+(async()=>{const {tv}=L.veriKatmani(ds);const T=await L.calistir(ds,{tv:tv,sezonlar:[2023,2024,2025,2026],modlar:["PRE_WEEKEND","POST_QUALIFYING"],ozellikleriTut:true});
+const rows=T.map(t=>{const p=TM.racePredict(t.ozellikler),s=p.suruculer,w=s.map(x=>x.winProbability),sorted=w.slice().sort((a,b)=>b-a);
+ const win=Object.keys(t.gercek.win).find(k=>t.gercek.win[k]===1),pod3=s.slice().sort((a,b)=>b.podiumProbability-a.podiumProbability||(a.driver<b.driver?-1:1)).slice(0,3).map(x=>x.driver);
+ const ent=-w.reduce((a,x)=>a+(x>0?x*Math.log(x):0),0)/Math.log(w.length);
+ const top5=s.slice(0,5),cov=top5.reduce((a,x)=>a+x.confidence,0)/5;
+ return {season:t.season,round:t.round,mod:t.mode,p1:sorted[0],gap:sorted[0]-sorted[1],ent:ent,cov:cov,hit1:s[0].driver===win?1:0,podMiss:1-pod3.filter(d=>t.gercek.pod[d]===1).length/3,winnerP:(s.find(x=>x.driver===win)||{winProbability:0}).winProbability};});
+fs.writeFileSync("/tmp/guven_rows.json",JSON.stringify(rows));
+for(const m of ["PRE_WEEKEND","POST_QUALIFYING"]){const r=rows.filter(x=>x.mod===m&&x.season>=2024);console.log("==",m,r.length);
+ for(const sig of ["gap","p1","cov"]){const so=r.slice().sort((a,b)=>a[sig]-b[sig]),n=so.length,g=[so.slice(0,Math.floor(n/3)),so.slice(Math.floor(n/3),Math.floor(2*n/3)),so.slice(Math.floor(2*n/3))];
+  console.log(sig.padEnd(4),g.map(x=>`n${x.length} [${x[0][sig].toFixed(2)}-${x[x.length-1][sig].toFixed(2)}] hit1 ${(x.reduce((a,b)=>a+b.hit1,0)/x.length).toFixed(2)} podMiss ${(x.reduce((a,b)=>a+b.podMiss,0)/x.length).toFixed(2)}`).join(" | "));}}})();

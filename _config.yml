@@ -1,0 +1,3 @@
+exclude:
+  - testler
+  - CLAUDE.md
