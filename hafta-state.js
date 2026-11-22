@@ -100,7 +100,7 @@
     var bas = seans.baslangic.getTime();
     var alt = Math.min(bas, seans.planliBaslangic ? seans.planliBaslangic.getTime() : bas) - 90 * DK;   // yeni saat kesinse planlı saatten beri gelen notlar da okunur
     var liste = olaylar.map(function (o) { return { o: o, t: zamanMs(o) }; })
-      .filter(function (x) { return x.t != null && x.t <= simdi && x.t >= alt; })
+      .filter(function (x) { return x.t != null && x.t <= simdi && x.t >= alt && !(x.o && x.o.status === "unconfirmed"); })   // doğrulanmamış not durumu değiştirmez (BUGÜN feed'inde de gösterilmez)
       .sort(function (a, b) { return a.t - b.t; });
     if (!liste.length) { return null; }
     var restartAck = false, restartTs = null;

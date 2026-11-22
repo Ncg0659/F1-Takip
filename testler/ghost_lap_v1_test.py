@@ -175,7 +175,7 @@ with sync_playwright() as p:
     page.fill("[data-gl-kaydir]","20000"); page.dispatch_event("[data-gl-kaydir]","input")
     k("O9 390 px: scrub ile işaretçiler güncellenir", page.evaluate("!document.querySelector(\"[data-gl-isaret='A']\").hasAttribute('hidden')"))
     k("O10 390 px: seçici düzeni — Pilot A/B yan yana (iki sütun), Oturum tam satır", page.evaluate("(()=>{const a=document.querySelector(\"[data-gl='A']\").getBoundingClientRect(),b=document.querySelector(\"[data-gl='B']\").getBoundingClientRect();return Math.abs(a.top-b.top)<4&&b.left>a.right-2})()"))
-    page.screenshot(path="/home/claude/f1-takip/testler/ghost/ekran390.png",full_page=False)
+    page.screenshot(path="/tmp/f1-ekran/ghost_ekran390.png",full_page=False)
     k("JS2 390 px'te JS hatası yok", not errs, errs)
     b.close()
 
@@ -201,6 +201,6 @@ with sync_playwright() as p:
         k(f"I{w}-4 yatay sayfa taşması 0 ({w}px)", page.evaluate("document.documentElement.scrollWidth-innerWidth")==0, page.evaluate("document.documentElement.scrollWidth-innerWidth"))
         k(f"I{w}-5 panel taşmaz (kart içinde)", page.evaluate("(()=>{const g=document.getElementById('gl-ghost');return g.scrollWidth<=g.clientWidth+1&&g.getBoundingClientRect().right<=innerWidth})()"))
         k(f"I{w}-6 JS hatası yok", not errs, errs)
-        if w==390: page.screenshot(path="/home/claude/f1-takip/testler/ghost/ekran_uygulama390.png")
+        if w==390: page.screenshot(path="/tmp/f1-ekran/ghost_ekran_uygulama390.png")
         b.close()
 print("SONUC %d/%d"%(sum(S),len(S))); sys.exit(0 if all(S) else 1)

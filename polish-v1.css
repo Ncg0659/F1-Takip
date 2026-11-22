@@ -143,3 +143,10 @@ div.pp-acc { margin: 6px 0 10px; }
 
 /* ---------- 9. Sezon arası boş durumları (hata değil, bilgi) ---------- */
 tr.sezon-bos td { white-space: normal; color: var(--soluk); font-size: .88rem; line-height: 1.45; padding: 14px 12px; text-align: left; }
+
+/* ---------- 10. BUGÜN podyumu, mobil: takım rozeti adın altına iner (dar hero sütununda pilot adı 2 harfe kesilmesin) ---------- */
+@media (max-width: 600px) {
+  .bg-pod-s { grid-template-columns: auto minmax(0, 1fr); row-gap: 3px; }
+  .bg-pod-s > .takim { grid-column: 2; justify-self: start; min-width: 0; max-width: 100%; font-size: .6rem; padding: 1px 8px; }
+  .bg-pod-s > :first-child { grid-row: span 2; align-self: center; }
+}
