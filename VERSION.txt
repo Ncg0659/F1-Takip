@@ -1,6 +1,12 @@
 F1 TAKİP
-Version: 3.0.7
-Release: Sezon arası modu + Race Feed (BUGÜN) + kararlılık
+Version: 3.0.8
+Release: F1 çekirdek tamamlama — tahmin arşivi, durum denetimi, vitrin
+
+3.0.8
+- Tahmin arşivi: PRE_WEEKEND / POST_QUALIFYING / RACE_START_FROZEN tahminleri cihazda saklanır (prediction-snapshot.js); yarış sonrası değerlendirme (geliştirici aracı). Model/ağırlık değişmedi.
+- Doğrulanmamış Race Feed notu artık yarış durumunu (ör. RED FLAG) değiştirmez.
+- BUGÜN podyumu (mobil): pilot adı kesilmez, takım rozeti adın altında.
+- README, ekran görüntüleri ve demo GIF (docs/, sitede yayınlanmaz).
 
 3.0.7
 - Sezon arası: yeni sezonun takvimi veya puan durumu henüz yokken hata yerine bilgi gösterilir
@@ -12,8 +18,8 @@ Release: Sezon arası modu + Race Feed (BUGÜN) + kararlılık
 3.0.6
 - Visual Polish + Motion Fixes (giriş animasyonu, pist çizimi/nokta, ticker, kart sistemi, Ghost Lap akıcılığı, tahmin renkleri, mobil pist profili).
 
-Service Worker cache: F1-TAKIP-v3.0.7-PWA1 (yalnız yerel statik dosyalar; API önbelleğe alınmaz)
-Önceki sürüme dönüş: GitHub'da main dalının geçmişi (3.0.6 = "Add files via upload", 13 Kasım 2026)
+Service Worker cache: F1-TAKIP-v3.0.8-PWA1 (yalnız yerel statik dosyalar; API önbelleğe alınmaz)
+Önceki sürüme dönüş: GitHub'da main dalının geçmişi 
 
 Repository:
 https://github.com/Ncg0659/F1-Takip

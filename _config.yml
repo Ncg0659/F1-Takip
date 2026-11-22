@@ -1,4 +1,6 @@
 exclude:
   - testler
+  - docs
   - CLAUDE.md
+  - README.md
   - README-YAYIN.txt
