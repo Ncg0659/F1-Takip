@@ -17,7 +17,7 @@ def ac(p,saat,w=1100,tema="koyu",feed=None,bekle=8,sonuc17=False):
     if feed: pg.evaluate("""(o)=>localStorage.setItem('f1-feed-v1-2026-17', JSON.stringify({olaylar:o,gorulen:{},enYeniPost:null,motorSurum:RaceFeed.MOTOR_SURUM}))""",feed)
     flag(pg); tikla(pg,"nav-bugun"); ilerle(pg,bekle)
     return pg,errs,c,b
-def ev(id,ts,cat,tr): return {"id":id,"timestamp":ts,"category":cat,"priority":"high","textTr":tr,"sourceUrl":"https://x","sourceName":"Test","drivers":[]}
+def ev(id,ts,cat,tr): return {"id":id,"timestamp":ts,"category":cat,"priority":"high","textTr":tr,"sourceUrl":"https://x","sourceName":"Chris Medland","sourceLevel":"B","status":"confirmed","drivers":[]}
 def nav(pg,mod=None):
     kontrol("  BUGÜN nav aktif, ctx gizli, yalnız sekme-bugun açık", aktif(pg)==["nav-bugun"] and not ctxg(pg) and sekme(pg)==["sekme-bugun"], (aktif(pg),sekme(pg)))
 with sync_playwright() as p:
