@@ -1,0 +1,1307 @@
+{
+ "yontem": "ileri-zincir: 2024<-2023 | 2025<-2023-24 | 2026<-2023-25",
+ "taban": {
+  "PRE_WEEKEND": {
+   "recentForm": 0.25,
+   "qualifyingForm": 0.2,
+   "grid": 0,
+   "teamForm": 0.22,
+   "reliability": 0.08,
+   "trackHistory": 0.1,
+   "teammateDelta": 0.05,
+   "telemetrySummary": 0.1
+  },
+  "POST_QUALIFYING": {
+   "recentForm": 0.15,
+   "qualifyingForm": 0.08,
+   "grid": 0.35,
+   "teamForm": 0.17,
+   "reliability": 0.06,
+   "trackHistory": 0.07,
+   "teammateDelta": 0.02,
+   "telemetrySummary": 0.1
+  }
+ },
+ "tabanT": {
+  "win": 0.12,
+  "podium": 0.25,
+  "points": 0.5
+ },
+ "mod": {
+  "PRE_WEEKEND": {
+   "adayN": 37,
+   "foldlar": [
+    {
+     "val": 2024,
+     "trainYaris": 22,
+     "valYaris": 24,
+     "secilen": {
+      "ad": "rf0.32_tf0.3_th0.15_qf0.12",
+      "agirlik": {
+       "recentForm": 0.286,
+       "qualifyingForm": 0.107,
+       "grid": 0,
+       "teamForm": 0.268,
+       "reliability": 0.071,
+       "trackHistory": 0.134,
+       "teammateDelta": 0.045,
+       "telemetrySummary": 0.089
+      },
+      "sicaklik": {
+       "win": 0.048,
+       "podium": 0.1625,
+       "points": 0.325
+      },
+      "egitimJ": 0.6632742015410534
+     },
+     "ilk3": [
+      [
+       "rf0.32_tf0.3_th0.15_qf0.12",
+       0.6633
+      ],
+      [
+       "rf0.32_tf0.22_th0.15_qf0.12",
+       0.6631
+      ],
+      [
+       "rf0.32_tf0.22_th0.1_qf0.12",
+       0.663
+      ]
+     ],
+     "egitimdeEski": 0.5894888553911524,
+     "validEski": {
+      "J": 0.3381136209761216,
+      "yaris": 24,
+      "satir": 476,
+      "brierWin": 0.03934958199579834,
+      "brierWinYarisBasina": 0.7804333762500004,
+      "brierPodium": 0.0924902691806723,
+      "brierPoints": 0.1602697641596638,
+      "logLossWin": 1.855638989429944,
+      "top1": 0.2916666666666667,
+      "top3": 0.5416666666666666,
+      "ortKazananOlasiligi": 0.207025,
+      "podiumKapsama": 0.49999999999999994,
+      "pointsKapsama": 0.7916666666666666,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.1781117330946933,
+       "ll": 0.3787997767650295,
+       "bp": 0.27951593930232843,
+       "bq": 0.35892094336134484
+      }
+     },
+     "validYeni": {
+      "J": 0.3174366449403361,
+      "yaris": 24,
+      "satir": 476,
+      "brierWin": 0.04218823025210086,
+      "brierWinYarisBasina": 0.8367332333333337,
+      "brierPodium": 0.09069337331932768,
+      "brierPoints": 0.15057639502100834,
+      "logLossWin": 2.33122589849529,
+      "top1": 0.2916666666666667,
+      "top3": 0.5833333333333334,
+      "ortKazananOlasiligi": 0.3121875,
+      "podiumKapsama": 0.49999999999999994,
+      "pointsKapsama": 0.7875000000000001,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.11882135242494773,
+       "ll": 0.21959063330454398,
+       "bp": 0.2935134639965581,
+       "bq": 0.39769441991596666
+      }
+     }
+    },
+    {
+     "val": 2025,
+     "trainYaris": 46,
+     "valYaris": 24,
+     "secilen": {
+      "ad": "rf0.32_tf0.22_th0.05_qf0.2",
+      "agirlik": {
+       "recentForm": 0.314,
+       "qualifyingForm": 0.196,
+       "grid": 0,
+       "teamForm": 0.216,
+       "reliability": 0.078,
+       "trackHistory": 0.049,
+       "teammateDelta": 0.049,
+       "telemetrySummary": 0.098
+      },
+      "sicaklik": {
+       "win": 0.078,
+       "podium": 0.1625,
+       "points": 0.25
+      },
+      "egitimJ": 0.49396406078749494
+     },
+     "ilk3": [
+      [
+       "rf0.32_tf0.22_th0.05_qf0.2",
+       0.494
+      ],
+      [
+       "rf0.25_tf0.22_th0.05_qf0.2",
+       0.4939
+      ],
+      [
+       "rf0.32_tf0.22_th0.15_qf0.12",
+       0.493
+      ]
+     ],
+     "egitimdeEski": 0.4583394711974174,
+     "validEski": {
+      "J": 0.3569321961093283,
+      "yaris": 24,
+      "satir": 477,
+      "brierWin": 0.04028841125786169,
+      "brierWinYarisBasina": 0.800732173750001,
+      "brierPodium": 0.08312112134171916,
+      "brierPoints": 0.1864326562473794,
+      "logLossWin": 1.730661222624031,
+      "top1": 0.16666666666666666,
+      "top3": 0.7916666666666666,
+      "ortKazananOlasiligi": 0.19831666666666667,
+      "podiumKapsama": 0.6249999999999999,
+      "pointsKapsama": 0.7032407407407407,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.1567977109562566,
+       "ll": 0.42098226627360347,
+       "bp": 0.35130246575237134,
+       "bq": 0.2541774003404048
+      }
+     },
+     "validYeni": {
+      "J": 0.355268414737915,
+      "yaris": 24,
+      "satir": 477,
+      "brierWin": 0.042831130691823975,
+      "brierWinYarisBasina": 0.8512687225000014,
+      "brierPodium": 0.07572348825995814,
+      "brierPoints": 0.18822945433962274,
+      "logLossWin": 1.7525122677004756,
+      "top1": 0.16666666666666666,
+      "top3": 0.7916666666666666,
+      "ortKazananOlasiligi": 0.22715416666666666,
+      "podiumKapsama": 0.6249999999999999,
+      "pointsKapsama": 0.6907407407407405,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.1035807490514945,
+       "ll": 0.41367168322342496,
+       "bp": 0.4090354012800167,
+       "bq": 0.24698932153922015
+      }
+     }
+    },
+    {
+     "val": 2026,
+     "trainYaris": 70,
+     "valYaris": 19,
+     "secilen": {
+      "ad": "rf0.32_tf0.22_th0.15_qf0.12",
+      "agirlik": {
+       "recentForm": 0.308,
+       "qualifyingForm": 0.115,
+       "grid": 0,
+       "teamForm": 0.212,
+       "reliability": 0.077,
+       "trackHistory": 0.144,
+       "teammateDelta": 0.048,
+       "telemetrySummary": 0.096
+      },
+      "sicaklik": {
+       "win": 0.078,
+       "podium": 0.1625,
+       "points": 0.325
+      },
+      "egitimJ": 0.4520779835058268
+     },
+     "ilk3": [
+      [
+       "rf0.32_tf0.22_th0.15_qf0.12",
+       0.4521
+      ],
+      [
+       "rf0.25_tf0.22_th0.15_qf0.12",
+       0.4497
+      ],
+      [
+       "rf0.32_tf0.22_th0.1_qf0.2",
+       0.449
+      ]
+     ],
+     "egitimdeEski": 0.4235664462441561,
+     "validEski": {
+      "J": 0.25935615790535543,
+      "yaris": 19,
+      "satir": 416,
+      "brierWin": 0.039742662644230764,
+      "brierWinYarisBasina": 0.8701551399999999,
+      "brierPodium": 0.08842179127403843,
+      "brierPoints": 0.17601178411057694,
+      "logLossWin": 2.015426632910876,
+      "top1": 0.05263157894736842,
+      "top3": 0.5263157894736842,
+      "ortKazananOlasiligi": 0.14462105263157896,
+      "podiumKapsama": 0.42105263157894735,
+      "pointsKapsama": 0.7473684210526317,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.08819125952966966,
+       "ll": 0.346943764857761,
+       "bp": 0.2521909391181518,
+       "bq": 0.28986361550549766
+      }
+     },
+     "validYeni": {
+      "J": 0.2424293596098268,
+      "yaris": 19,
+      "satir": 416,
+      "brierWin": 0.04283554031250004,
+      "brierWinYarisBasina": 0.9378728826315799,
+      "brierPodium": 0.08812447723557684,
+      "brierPoints": 0.17566134375000006,
+      "logLossWin": 2.12199066254954,
+      "top1": 0.05263157894736842,
+      "top3": 0.5263157894736842,
+      "ortKazananOlasiligi": 0.14547894736842104,
+      "podiumKapsama": 0.42105263157894735,
+      "pointsKapsama": 0.7473684210526317,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.017231925063869835,
+       "ll": 0.31241395223099233,
+       "bp": 0.25470541127128754,
+       "bq": 0.2912775006717584
+      }
+     }
+    }
+   ],
+   "yarisN": {
+    "2023": 22,
+    "2024": 24,
+    "2025": 24,
+    "2026": 19
+   },
+   "son": {
+    "ad": "rf0.32_tf0.22_th0.15_qf0.12",
+    "agirlik": {
+     "recentForm": 0.308,
+     "qualifyingForm": 0.115,
+     "grid": 0,
+     "teamForm": 0.212,
+     "reliability": 0.077,
+     "trackHistory": 0.144,
+     "teammateDelta": 0.048,
+     "telemetrySummary": 0.096
+    },
+    "sicaklik": {
+     "win": 0.078,
+     "podium": 0.1625,
+     "points": 0.325
+    },
+    "egitimJ": 0.4520779835058268
+   },
+   "sezon": {
+    "2024": {
+     "eski": {
+      "J": 0.3381136209761216,
+      "yaris": 24,
+      "satir": 476,
+      "brierWin": 0.03934958199579834,
+      "brierWinYarisBasina": 0.7804333762500004,
+      "brierPodium": 0.0924902691806723,
+      "brierPoints": 0.1602697641596638,
+      "logLossWin": 1.855638989429944,
+      "top1": 0.2916666666666667,
+      "top3": 0.5416666666666666,
+      "ortKazananOlasiligi": 0.207025,
+      "podiumKapsama": 0.49999999999999994,
+      "pointsKapsama": 0.7916666666666666,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.1781117330946933,
+       "ll": 0.3787997767650295,
+       "bp": 0.27951593930232843,
+       "bq": 0.35892094336134484
+      }
+     },
+     "yeni": {
+      "J": 0.3499325472405131,
+      "yaris": 24,
+      "satir": 476,
+      "brierWin": 0.0392356315546219,
+      "brierWinYarisBasina": 0.7781733591666676,
+      "brierPodium": 0.09095416915966378,
+      "brierPoints": 0.1511410807563025,
+      "logLossWin": 1.92020359680797,
+      "top1": 0.2916666666666667,
+      "top3": 0.5833333333333334,
+      "ortKazananOlasiligi": 0.2598375000000001,
+      "podiumKapsama": 0.49999999999999994,
+      "pointsKapsama": 0.7875000000000001,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.18049179727483133,
+       "ll": 0.3571859021133501,
+       "bp": 0.291481907080107,
+       "bq": 0.39543567697479
+      }
+     }
+    },
+    "2025": {
+     "eski": {
+      "J": 0.3569321961093283,
+      "yaris": 24,
+      "satir": 477,
+      "brierWin": 0.04028841125786169,
+      "brierWinYarisBasina": 0.800732173750001,
+      "brierPodium": 0.08312112134171916,
+      "brierPoints": 0.1864326562473794,
+      "logLossWin": 1.730661222624031,
+      "top1": 0.16666666666666666,
+      "top3": 0.7916666666666666,
+      "ortKazananOlasiligi": 0.19831666666666667,
+      "podiumKapsama": 0.6249999999999999,
+      "pointsKapsama": 0.7032407407407407,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.1567977109562566,
+       "ll": 0.42098226627360347,
+       "bp": 0.35130246575237134,
+       "bq": 0.2541774003404048
+      }
+     },
+     "yeni": {
+      "J": 0.37707181952883206,
+      "yaris": 24,
+      "satir": 477,
+      "brierWin": 0.041735613060796664,
+      "brierWinYarisBasina": 0.8294953095833337,
+      "brierPodium": 0.07548688750524112,
+      "brierPoints": 0.1840505691614255,
+      "logLossWin": 1.7345942023361272,
+      "top1": 0.25,
+      "top3": 0.7916666666666666,
+      "ortKazananOlasiligi": 0.22606666666666672,
+      "podiumKapsama": 0.6249999999999999,
+      "pointsKapsama": 0.7074074074074073,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.1265090042328093,
+       "ll": 0.419666431048361,
+       "bp": 0.4108818913623038,
+       "bq": 0.26370692386285177
+      }
+     }
+    },
+    "2026": {
+     "eski": {
+      "J": 0.25935615790535543,
+      "yaris": 19,
+      "satir": 416,
+      "brierWin": 0.039742662644230764,
+      "brierWinYarisBasina": 0.8701551399999999,
+      "brierPodium": 0.08842179127403843,
+      "brierPoints": 0.17601178411057694,
+      "logLossWin": 2.015426632910876,
+      "top1": 0.05263157894736842,
+      "top3": 0.5263157894736842,
+      "ortKazananOlasiligi": 0.14462105263157896,
+      "podiumKapsama": 0.42105263157894735,
+      "pointsKapsama": 0.7473684210526317,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.08819125952966966,
+       "ll": 0.346943764857761,
+       "bp": 0.2521909391181518,
+       "bq": 0.28986361550549766
+      }
+     },
+     "yeni": {
+      "J": 0.2424293596098268,
+      "yaris": 19,
+      "satir": 416,
+      "brierWin": 0.04283554031250004,
+      "brierWinYarisBasina": 0.9378728826315799,
+      "brierPodium": 0.08812447723557684,
+      "brierPoints": 0.17566134375000006,
+      "logLossWin": 2.12199066254954,
+      "top1": 0.05263157894736842,
+      "top3": 0.5263157894736842,
+      "ortKazananOlasiligi": 0.14547894736842104,
+      "podiumKapsama": 0.42105263157894735,
+      "pointsKapsama": 0.7473684210526317,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.017231925063869835,
+       "ll": 0.31241395223099233,
+       "bp": 0.25470541127128754,
+       "bq": 0.2912775006717584
+      }
+     }
+    }
+   },
+   "havuz": {
+    "eski": {
+     "J": 0.3223570350638802,
+     "yaris": 67,
+     "satir": 1369,
+     "brierWin": 0.039796143798392955,
+     "brierWinYarisBasina": 0.8131480725373128,
+     "brierPodium": 0.08798948734842947,
+     "brierPoints": 0.1741692381008033,
+     "logLossWin": 1.8561837479791352,
+     "top1": 0.1791044776119403,
+     "top3": 0.6268656716417911,
+     "ortKazananOlasiligi": 0.18620895522388065,
+     "podiumKapsama": 0.5223880597014925,
+     "pointsKapsama": 0.7474295190713104,
+     "kazananAlanDisi": 0,
+     "skill": {
+      "bw": 0.14489679657542942,
+      "ll": 0.3845307749428887,
+      "bp": 0.29727155554395,
+      "bq": 0.3014729340672817
+     }
+    },
+    "yeni": {
+     "J": 0.3288835782059913,
+     "yaris": 67,
+     "satir": 1369,
+     "brierWin": 0.041200608341855474,
+     "brierWinYarisBasina": 0.8418452659701514,
+     "brierPodium": 0.08470504922571219,
+     "brierPoints": 0.17005872529583627,
+     "logLossWin": 1.910939847282084,
+     "top1": 0.208955223880597,
+     "top3": 0.6417910447761194,
+     "ortKazananOlasiligi": 0.21531044776119398,
+     "podiumKapsama": 0.5223880597014925,
+     "pointsKapsama": 0.7474295190713102,
+     "kazananAlanDisi": 0,
+     "skill": {
+      "bw": 0.11471894476408073,
+      "ll": 0.3663748709049254,
+      "bp": 0.3235027356819766,
+      "bq": 0.3179586492282487
+     }
+    }
+   },
+   "baz": {
+    "puanOrantili": {
+     "yaris": 67,
+     "satir": 1369,
+     "brierWin": 0.04033022673323986,
+     "brierWinYarisBasina": 0.8240609014597816,
+     "brierPodium": 0.08479270405730119,
+     "brierPoints": 0.1835305871258855,
+     "logLossWin": 1.9893815491731366,
+     "top1": 0.29850746268656714,
+     "top3": 0.7313432835820896,
+     "ortKazananOlasiligi": 0.1448432025217571,
+     "podiumKapsama": 0.5820895522388061,
+     "pointsKapsama": 0.7457711442786069,
+     "kazananAlanDisi": 0
+    }
+   },
+   "guven": {
+    "UNRELIABLE": {
+     "n": 1369,
+     "ortConf": 0.8783593864134378,
+     "brierWin": 0.041200608341855474,
+     "brierPodium": 0.08470504922571219,
+     "brierPoints": 0.17005872529583627
+    }
+   },
+   "kalibrasyonYeni": {
+    "win": [
+     {
+      "aralik": [
+       0,
+       0.1
+      ],
+      "n": 1148,
+      "ortTahmin": 0.01033144599303136,
+      "gozlenen": 0.018292682926829267,
+      "yeterliOrnek": true
+     },
+     {
+      "aralik": [
+       0.1,
+       0.2
+      ],
+      "n": 101,
+      "ortTahmin": 0.14220891089108906,
+      "gozlenen": 0.1782178217821782,
+      "yeterliOrnek": true
+     },
+     {
+      "aralik": [
+       0.2,
+       0.3
+      ],
+      "n": 57,
+      "ortTahmin": 0.24948596491228076,
+      "gozlenen": 0.21052631578947367,
+      "yeterliOrnek": true
+     },
+     {
+      "aralik": [
+       0.3,
+       0.4
+      ],
+      "n": 32,
+      "ortTahmin": 0.3420125,
+      "gozlenen": 0.15625,
+      "yeterliOrnek": true
+     },
+     {
+      "aralik": [
+       0.4,
+       1.0001
+      ],
+      "n": 31,
+      "ortTahmin": 0.5036096774193548,
+      "gozlenen": 0.3548387096774194,
+      "yeterliOrnek": true
+     }
+    ],
+    "podium": [
+     {
+      "aralik": [
+       0,
+       0.2
+      ],
+      "n": 989,
+      "ortTahmin": 0.04396713852376138,
+      "gozlenen": 0.028311425682507583,
+      "yeterliOrnek": true
+     },
+     {
+      "aralik": [
+       0.2,
+       0.4
+      ],
+      "n": 210,
+      "ortTahmin": 0.2903800000000001,
+      "gozlenen": 0.3904761904761905,
+      "yeterliOrnek": true
+     },
+     {
+      "aralik": [
+       0.4,
+       0.6
+      ],
+      "n": 120,
+      "ortTahmin": 0.49337166666666676,
+      "gozlenen": 0.48333333333333334,
+      "yeterliOrnek": true
+     },
+     {
+      "aralik": [
+       0.6,
+       0.8
+      ],
+      "n": 37,
+      "ortTahmin": 0.6956081081081079,
+      "gozlenen": 0.6486486486486487,
+      "yeterliOrnek": true
+     },
+     {
+      "aralik": [
+       0.8,
+       1.0001
+      ],
+      "n": 13,
+      "ortTahmin": 0.8919615384615386,
+      "gozlenen": 0.6923076923076923,
+      "yeterliOrnek": false
+     }
+    ]
+   }
+  },
+  "POST_QUALIFYING": {
+   "adayN": 8,
+   "foldlar": [
+    {
+     "val": 2024,
+     "trainYaris": 22,
+     "valYaris": 24,
+     "secilen": {
+      "ad": "grid0.35_takim+",
+      "agirlik": {
+       "recentForm": 0.105,
+       "qualifyingForm": 0.08,
+       "grid": 0.35,
+       "teamForm": 0.215,
+       "reliability": 0.06,
+       "trackHistory": 0.07,
+       "teammateDelta": 0.02,
+       "telemetrySummary": 0.1
+      },
+      "sicaklik": {
+       "win": 0.036,
+       "podium": 0.125,
+       "points": 0.2
+      },
+      "egitimJ": 0.7265011353758114
+     },
+     "ilk3": [
+      [
+       "grid0.35_takim+",
+       0.7265
+      ],
+      [
+       "grid0.35",
+       0.7255
+      ],
+      [
+       "grid0.45_takim+",
+       0.6989
+      ]
+     ],
+     "egitimdeEski": 0.6344176070755048,
+     "validEski": {
+      "J": 0.4464267184882765,
+      "yaris": 24,
+      "satir": 478,
+      "brierWin": 0.035877712071129726,
+      "brierWinYarisBasina": 0.7145644320833338,
+      "brierPodium": 0.08303883280334737,
+      "brierPoints": 0.14595477627615058,
+      "logLossWin": 1.6285643309511304,
+      "top1": 0.5,
+      "top3": 0.7083333333333334,
+      "ortKazananOlasiligi": 0.24447916666666666,
+      "podiumKapsama": 0.6388888888888887,
+      "pointsKapsama": 0.8416666666666667,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.24765324167629232,
+       "ll": 0.45559509034795875,
+       "bp": 0.35092634519321975,
+       "bq": 0.4160523003788549
+      }
+     },
+     "validYeni": {
+      "J": 0.43742753752466856,
+      "yaris": 24,
+      "satir": 478,
+      "brierWin": 0.03794336717573223,
+      "brierWinYarisBasina": 0.7557053962500003,
+      "brierPodium": 0.07590230000000005,
+      "brierPoints": 0.12928230397489537,
+      "logLossWin": 2.1515693266266593,
+      "top1": 0.5,
+      "top3": 0.75,
+      "ortKazananOlasiligi": 0.43581666666666674,
+      "podiumKapsama": 0.6388888888888887,
+      "pointsKapsama": 0.8333333333333331,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.20433696446548688,
+       "ll": 0.2807622747157916,
+       "bp": 0.40670910697994855,
+       "bq": 0.4827568789867842
+      }
+     }
+    },
+    {
+     "val": 2025,
+     "trainYaris": 46,
+     "valYaris": 24,
+     "secilen": {
+      "ad": "grid0.45_takim+",
+      "agirlik": {
+       "recentForm": 0.089,
+       "qualifyingForm": 0.068,
+       "grid": 0.45,
+       "teamForm": 0.182,
+       "reliability": 0.051,
+       "trackHistory": 0.059,
+       "teammateDelta": 0.017,
+       "telemetrySummary": 0.085
+      },
+      "sicaklik": {
+       "win": 0.06,
+       "podium": 0.125,
+       "points": 0.25
+      },
+      "egitimJ": 0.5932306260730704
+     },
+     "ilk3": [
+      [
+       "grid0.45_takim+",
+       0.5932
+      ],
+      [
+       "grid0.45",
+       0.5927
+      ],
+      [
+       "grid0.35_takim+",
+       0.5909
+      ]
+     ],
+     "egitimdeEski": 0.5363351991570554,
+     "validEski": {
+      "J": 0.4691612997343606,
+      "yaris": 24,
+      "satir": 479,
+      "brierWin": 0.034690163716075126,
+      "brierWinYarisBasina": 0.6923578508333327,
+      "brierPodium": 0.07557281204592911,
+      "brierPoints": 0.1699595282254697,
+      "logLossWin": 1.4254963793332724,
+      "top1": 0.4166666666666667,
+      "top3": 0.875,
+      "ortKazananOlasiligi": 0.2528791666666667,
+      "podiumKapsama": 0.75,
+      "pointsKapsama": 0.7583333333333334,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.27111813464158396,
+       "ll": 0.5238178998437389,
+       "bp": 0.4082779176409874,
+       "bq": 0.3200871796131869
+      }
+     },
+     "validYeni": {
+      "J": 0.5420656958357369,
+      "yaris": 24,
+      "satir": 479,
+      "brierWin": 0.03138456398747391,
+      "brierWinYarisBasina": 0.6263835895833335,
+      "brierPodium": 0.05822674054279752,
+      "brierPoints": 0.16608739628392483,
+      "logLossWin": 1.1510891120573876,
+      "top1": 0.4166666666666667,
+      "top3": 1,
+      "ortKazananOlasiligi": 0.3712166666666667,
+      "podiumKapsama": 0.7916666666666666,
+      "pointsKapsama": 0.7500000000000001,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.34057274189080355,
+       "ll": 0.6154826916481816,
+       "bp": 0.5440946653933856,
+       "bq": 0.3355774094153846
+      }
+     }
+    },
+    {
+     "val": 2026,
+     "trainYaris": 70,
+     "valYaris": 19,
+     "secilen": {
+      "ad": "grid0.55_takim+",
+      "agirlik": {
+       "recentForm": 0.073,
+       "qualifyingForm": 0.055,
+       "grid": 0.55,
+       "teamForm": 0.149,
+       "reliability": 0.042,
+       "trackHistory": 0.048,
+       "teammateDelta": 0.014,
+       "telemetrySummary": 0.069
+      },
+      "sicaklik": {
+       "win": 0.06,
+       "podium": 0.1,
+       "points": 0.325
+      },
+      "egitimJ": 0.5812572995063335
+     },
+     "ilk3": [
+      [
+       "grid0.55_takim+",
+       0.5813
+      ],
+      [
+       "grid0.45",
+       0.5799
+      ],
+      [
+       "grid0.55",
+       0.5792
+      ]
+     ],
+     "egitimdeEski": 0.5133039259308515,
+     "validEski": {
+      "J": 0.4557576204410938,
+      "yaris": 19,
+      "satir": 413,
+      "brierWin": 0.034029782663438236,
+      "brierWinYarisBasina": 0.7397000126315785,
+      "brierPodium": 0.07908993058111378,
+      "brierPoints": 0.16690539673123475,
+      "logLossWin": 1.6040794634098303,
+      "top1": 0.47368421052631576,
+      "top3": 0.8947368421052632,
+      "ortKazananOlasiligi": 0.21114736842105258,
+      "podiumKapsama": 0.5964912280701754,
+      "pointsKapsama": 0.7684210526315791,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.22457497916870628,
+       "ll": 0.4789090825048443,
+       "bp": 0.3350373753371412,
+       "bq": 0.32760323300429206
+      }
+     },
+     "validYeni": {
+      "J": 0.5219846959471933,
+      "yaris": 19,
+      "satir": 413,
+      "brierWin": 0.027415132953995176,
+      "brierWinYarisBasina": 0.5959184163157899,
+      "brierPodium": 0.06711342305084746,
+      "brierPoints": 0.1639573272154964,
+      "logLossWin": 1.1913844046722522,
+      "top1": 0.5263157894736842,
+      "top3": 0.8421052631578947,
+      "ortKazananOlasiligi": 0.3665736842105264,
+      "podiumKapsama": 0.6140350877192983,
+      "pointsKapsama": 0.7736842105263159,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.37530074017238724,
+       "ll": 0.6129745398021663,
+       "bp": 0.43573198744648756,
+       "bq": 0.33947985563053995
+      }
+     }
+    }
+   ],
+   "yarisN": {
+    "2023": 22,
+    "2024": 24,
+    "2025": 24,
+    "2026": 19
+   },
+   "son": {
+    "ad": "grid0.55_takim+",
+    "agirlik": {
+     "recentForm": 0.073,
+     "qualifyingForm": 0.055,
+     "grid": 0.55,
+     "teamForm": 0.149,
+     "reliability": 0.042,
+     "trackHistory": 0.048,
+     "teammateDelta": 0.014,
+     "telemetrySummary": 0.069
+    },
+    "sicaklik": {
+     "win": 0.06,
+     "podium": 0.1,
+     "points": 0.325
+    },
+    "egitimJ": 0.5812572995063335
+   },
+   "sezon": {
+    "2024": {
+     "eski": {
+      "J": 0.4464267184882765,
+      "yaris": 24,
+      "satir": 478,
+      "brierWin": 0.035877712071129726,
+      "brierWinYarisBasina": 0.7145644320833338,
+      "brierPodium": 0.08303883280334737,
+      "brierPoints": 0.14595477627615058,
+      "logLossWin": 1.6285643309511304,
+      "top1": 0.5,
+      "top3": 0.7083333333333334,
+      "ortKazananOlasiligi": 0.24447916666666666,
+      "podiumKapsama": 0.6388888888888887,
+      "pointsKapsama": 0.8416666666666667,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.24765324167629232,
+       "ll": 0.45559509034795875,
+       "bp": 0.35092634519321975,
+       "bq": 0.4160523003788549
+      }
+     },
+     "yeni": {
+      "J": 0.5128290877379732,
+      "yaris": 24,
+      "satir": 478,
+      "brierWin": 0.03360437213389123,
+      "brierWinYarisBasina": 0.6692870783333337,
+      "brierPodium": 0.0729529025732218,
+      "brierPoints": 0.13213827297071126,
+      "logLossWin": 1.6037514738391074,
+      "top1": 0.5833333333333334,
+      "top3": 0.8333333333333334,
+      "ortKazananOlasiligi": 0.38100833333333334,
+      "podiumKapsama": 0.6666666666666666,
+      "pointsKapsama": 0.8416666666666665,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.2953246185176681,
+       "ll": 0.4638896605884789,
+       "bp": 0.42976309392374734,
+       "bq": 0.47133048673127764
+      }
+     }
+    },
+    "2025": {
+     "eski": {
+      "J": 0.4691612997343606,
+      "yaris": 24,
+      "satir": 479,
+      "brierWin": 0.034690163716075126,
+      "brierWinYarisBasina": 0.6923578508333327,
+      "brierPodium": 0.07557281204592911,
+      "brierPoints": 0.1699595282254697,
+      "logLossWin": 1.4254963793332724,
+      "top1": 0.4166666666666667,
+      "top3": 0.875,
+      "ortKazananOlasiligi": 0.2528791666666667,
+      "podiumKapsama": 0.75,
+      "pointsKapsama": 0.7583333333333334,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.27111813464158396,
+       "ll": 0.5238178998437389,
+       "bp": 0.4082779176409874,
+       "bq": 0.3200871796131869
+      }
+     },
+     "yeni": {
+      "J": 0.5732113186644936,
+      "yaris": 24,
+      "satir": 479,
+      "brierWin": 0.029355706263048047,
+      "brierWinYarisBasina": 0.585890970833334,
+      "brierPodium": 0.05529988192066807,
+      "brierPoints": 0.16306458093945733,
+      "logLossWin": 1.0735481568706446,
+      "top1": 0.5,
+      "top3": 1,
+      "ortKazananOlasiligi": 0.39157499999999995,
+      "podiumKapsama": 0.7916666666666666,
+      "pointsKapsama": 0.7666666666666667,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.3832014713147899,
+       "ll": 0.6413849776337943,
+       "bp": 0.5670114635350813,
+       "bq": 0.34766999950329613
+      }
+     }
+    },
+    "2026": {
+     "eski": {
+      "J": 0.4557576204410938,
+      "yaris": 19,
+      "satir": 413,
+      "brierWin": 0.034029782663438236,
+      "brierWinYarisBasina": 0.7397000126315785,
+      "brierPodium": 0.07908993058111378,
+      "brierPoints": 0.16690539673123475,
+      "logLossWin": 1.6040794634098303,
+      "top1": 0.47368421052631576,
+      "top3": 0.8947368421052632,
+      "ortKazananOlasiligi": 0.21114736842105258,
+      "podiumKapsama": 0.5964912280701754,
+      "pointsKapsama": 0.7684210526315791,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.22457497916870628,
+       "ll": 0.4789090825048443,
+       "bp": 0.3350373753371412,
+       "bq": 0.32760323300429206
+      }
+     },
+     "yeni": {
+      "J": 0.5219846959471933,
+      "yaris": 19,
+      "satir": 413,
+      "brierWin": 0.027415132953995176,
+      "brierWinYarisBasina": 0.5959184163157899,
+      "brierPodium": 0.06711342305084746,
+      "brierPoints": 0.1639573272154964,
+      "logLossWin": 1.1913844046722522,
+      "top1": 0.5263157894736842,
+      "top3": 0.8421052631578947,
+      "ortKazananOlasiligi": 0.3665736842105264,
+      "podiumKapsama": 0.6140350877192983,
+      "pointsKapsama": 0.7736842105263159,
+      "kazananAlanDisi": 0,
+      "skill": {
+       "bw": 0.37530074017238724,
+       "ll": 0.6129745398021663,
+       "bp": 0.43573198744648756,
+       "bq": 0.33947985563053995
+      }
+     }
+    }
+   },
+   "havuz": {
+    "eski": {
+     "J": 0.45706465911898864,
+     "yaris": 67,
+     "satir": 1370,
+     "brierWin": 0.03490542702919709,
+     "brierWinYarisBasina": 0.713737836268657,
+     "brierPodium": 0.07923801487591238,
+     "brierPoints": 0.16066344958394174,
+     "logLossWin": 1.5488801022628726,
+     "top1": 0.4626865671641791,
+     "top3": 0.8208955223880597,
+     "ortKazananOlasiligi": 0.23803582089552236,
+     "podiumKapsama": 0.6666666666666665,
+     "pointsKapsama": 0.7910447761194028,
+     "kazananAlanDisi": 0,
+     "skill": {
+      "bw": 0.24948404111571643,
+      "ll": 0.4865908228263809,
+      "bp": 0.36683799383198623,
+      "bq": 0.3558930073876092
+     }
+    },
+    "yeni": {
+     "J": 0.5368938670347186,
+     "yaris": 67,
+     "satir": 1370,
+     "brierWin": 0.030253082547445364,
+     "brierWinYarisBasina": 0.618607807313435,
+     "brierPodium": 0.06502041940875923,
+     "brierPoints": 0.15254336123357662,
+     "logLossWin": 1.2968879824747286,
+     "top1": 0.5373134328358209,
+     "top3": 0.8955223880597015,
+     "ortKazananOlasiligi": 0.3807000000000001,
+     "podiumKapsama": 0.6965174129353233,
+     "pointsKapsama": 0.7955223880597013,
+     "kazananAlanDisi": 0,
+     "skill": {
+      "bw": 0.3495160154233581,
+      "ll": 0.5701189582099097,
+      "bp": 0.48044560102614986,
+      "bq": 0.3884468066533717
+     }
+    }
+   },
+   "baz": {
+    "gridHarmonik": {
+     "yaris": 67,
+     "satir": 1370,
+     "brierWin": 0.03428837605775966,
+     "brierWinYarisBasina": 0.7011205253601602,
+     "brierPodium": 0.0763632412673163,
+     "brierPoints": 0.1583311924545686,
+     "logLossWin": 1.6893440159723219,
+     "top1": 0.6119402985074627,
+     "top3": 0.8805970149253731,
+     "ortKazananOlasiligi": 0.21052831760020352,
+     "podiumKapsama": 0.6616915422885572,
+     "pointsKapsama": 0.8,
+     "kazananAlanDisi": 0
+    },
+    "gridEmpirik": {
+     "yaris": 67,
+     "satir": 1370,
+     "brierWin": 0.02918403138076486,
+     "brierWinYarisBasina": 0.5967481043529531,
+     "brierPodium": 0.06606105271932874,
+     "brierPoints": 0.15267163155431565,
+     "logLossWin": 1.4063243349402181,
+     "top1": 0.6119402985074627,
+     "top3": 0.8805970149253731,
+     "ortKazananOlasiligi": 0.3417845963108029,
+     "podiumKapsama": 0.6616915422885572,
+     "pointsKapsama": 0.8,
+     "kazananAlanDisi": 0
+    }
+   },
+   "gridDuyarlilik": [
+    {
+     "ad": "grid0.35",
+     "grid": 0.35,
+     "egitimJ": 0.5608273064918358,
+     "s24": 0.47028111412785695,
+     "s25": 0.5096592040163285,
+     "s26": 0.48541247330407233
+    },
+    {
+     "ad": "grid0.35_takim+",
+     "grid": 0.35,
+     "egitimJ": 0.5600217083841309,
+     "s24": 0.47405262543983295,
+     "s25": 0.5013547869132926,
+     "s26": 0.4856655832277637
+    },
+    {
+     "ad": "grid0.45",
+     "grid": 0.45,
+     "egitimJ": 0.5798640514577645,
+     "s24": 0.5055368944938109,
+     "s25": 0.5562857641130478,
+     "s26": 0.49793490263471435
+    },
+    {
+     "ad": "grid0.45_takim+",
+     "grid": 0.45,
+     "egitimJ": 0.575918897055708,
+     "s24": 0.5032572224298969,
+     "s25": 0.5442385844493215,
+     "s26": 0.5070745383782554
+    },
+    {
+     "ad": "grid0.55",
+     "grid": 0.55,
+     "egitimJ": 0.5791598097234505,
+     "s24": 0.5135397526286581,
+     "s25": 0.5692137744158546,
+     "s26": 0.5128304818150898
+    },
+    {
+     "ad": "grid0.55_takim+",
+     "grid": 0.55,
+     "egitimJ": 0.5812572995063335,
+     "s24": 0.5128290877379732,
+     "s25": 0.5732113186644936,
+     "s26": 0.5219846959471933
+    },
+    {
+     "ad": "grid0.65",
+     "grid": 0.65,
+     "egitimJ": 0.5735126952117251,
+     "s24": 0.5046318046757383,
+     "s25": 0.59481272092469,
+     "s26": 0.5651892074487307
+    },
+    {
+     "ad": "grid0.65_takim+",
+     "grid": 0.65,
+     "egitimJ": 0.5740103077757813,
+     "s24": 0.5038836365771607,
+     "s25": 0.591829358798626,
+     "s26": 0.5575485972159389
+    }
+   ],
+   "guven": {
+    "UNRELIABLE": {
+     "n": 1370,
+     "ortConf": 0.8703291970802876,
+     "brierWin": 0.030253082547445364,
+     "brierPodium": 0.06502041940875923,
+     "brierPoints": 0.15254336123357662
+    }
+   },
+   "kalibrasyonYeni": {
+    "win": [
+     {
+      "aralik": [
+       0,
+       0.1
+      ],
+      "n": 1196,
+      "ortTahmin": 0.008234364548494987,
+      "gozlenen": 0.006688963210702341,
+      "yeterliOrnek": true
+     },
+     {
+      "aralik": [
+       0.1,
+       0.2
+      ],
+      "n": 61,
+      "ortTahmin": 0.1401262295081967,
+      "gozlenen": 0.11475409836065574,
+      "yeterliOrnek": true
+     },
+     {
+      "aralik": [
+       0.2,
+       0.3
+      ],
+      "n": 29,
+      "ortTahmin": 0.2528206896551724,
+      "gozlenen": 0.3793103448275862,
+      "yeterliOrnek": false
+     },
+     {
+      "aralik": [
+       0.3,
+       0.4
+      ],
+      "n": 27,
+      "ortTahmin": 0.3513037037037038,
+      "gozlenen": 0.3333333333333333,
+      "yeterliOrnek": false
+     },
+     {
+      "aralik": [
+       0.4,
+       1.0001
+      ],
+      "n": 57,
+      "ortTahmin": 0.5576052631578948,
+      "gozlenen": 0.5614035087719298,
+      "yeterliOrnek": true
+     }
+    ],
+    "podium": [
+     {
+      "aralik": [
+       0,
+       0.2
+      ],
+      "n": 1062,
+      "ortTahmin": 0.02458804143126173,
+      "gozlenen": 0.02448210922787194,
+      "yeterliOrnek": true
+     },
+     {
+      "aralik": [
+       0.2,
+       0.4
+      ],
+      "n": 115,
+      "ortTahmin": 0.2887773913043478,
+      "gozlenen": 0.3130434782608696,
+      "yeterliOrnek": true
+     },
+     {
+      "aralik": [
+       0.4,
+       0.6
+      ],
+      "n": 70,
+      "ortTahmin": 0.48890285714285703,
+      "gozlenen": 0.5714285714285714,
+      "yeterliOrnek": true
+     },
+     {
+      "aralik": [
+       0.6,
+       0.8
+      ],
+      "n": 37,
+      "ortTahmin": 0.696389189189189,
+      "gozlenen": 0.7837837837837838,
+      "yeterliOrnek": true
+     },
+     {
+      "aralik": [
+       0.8,
+       1.0001
+      ],
+      "n": 86,
+      "ortTahmin": 0.9498674418604652,
+      "gozlenen": 0.813953488372093,
+      "yeterliOrnek": true
+     }
+    ]
+   }
+  }
+ }
+}

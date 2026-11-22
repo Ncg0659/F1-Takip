@@ -6,6 +6,7 @@
    • İstek azaltma: tek ortak sezon havuzu (sezon başına bir kez), qualifying eski sezonlarda tembel, pit/takvim/telemetri istenmez, tamamlanmış sezonlar yerel arşivden.
    • Yeni polling / zamanlayıcı YOK: yeniden değerlendirme f1-sekme olayı + mevcut saat çubuğu (#rc-saat) gözlemcisiyle yapılır; ağ yalnız gerektiğinde ve kısıtlı.
    • Jolpica istekleri paylaşılan JolpicaIstemci kuyruğunu BLOKLAMASIN diye kendi sıralı kuyruğundan geçer (429'da kısa yeniden deneme).
+   • Snapshot: hesaplanan tahmin TahminArsiv'e (prediction-snapshot.js) aşamasıyla bir kez yazılır; yarış başlayınca RACE_START_FROZEN sabitlenir.
    • Veri yoksa kart/panel çizilmez. Telemetri OpenF1 yükünü artırmasın diye kullanıcı arayüzü örneğinde bağlı değildir (güven buna göre hesaplanır). */
 (function () {
   "use strict";
@@ -96,7 +97,7 @@
     var h = (m.mod === "A" || m.mod === "B") && m.h && m.y === y ? m.h : bul(function () { return HaftaVeri.haftaKur(y, "f1"); }, null); if (!h) { return null; }
     var race = h.seanslar.filter(function (s) { return s.anahtar === "Race"; })[0], q = h.seanslar.filter(function (s) { return s.anahtar === "Qualifying"; })[0];
     return { K: K, y: y, season: Number(K.sezon), round: Number(y.round), toplam: K.yarislar.length, ad: y.raceName || "",
-             basladi: !!(race && now >= race.baslangic.getTime()), kualiBitti: !!(q && now >= q.bitis.getTime()) };
+             basladi: !!(race && now >= race.baslangic.getTime()), kualiBitti: !!(q && now >= q.bitis.getTime()), raceBas: race ? race.baslangic.getTime() : null };
   }
   function anahtar(t) { return t.season + "-" + t.round; }
 
@@ -116,6 +117,7 @@
   }
   async function yukle(t, acil) {
     var key = anahtar(t), st = S.sonuc[key], now = Date.now(), ist = t.kualiBitti ? POST : PRE;
+    if (t.basladi) { bul(function () { return window.TahminArsiv.dondur(t, now); }, false); }   // snapshot: başlangıçta geçerli tahmin bir kez sabitlenir
     if (S.devam[key]) { return; }
     if (st) {
       if (t.basladi || st.mod === POST || ist === PRE || st.mod === ist) { return; }           // sabit (pre-race) veya zaten en iyi mod
@@ -126,7 +128,10 @@
     try {
       var r = await hesapla(t, ist);
       if (r.durum !== "ok" && ist === POST && !st) { r = await hesapla(t, PRE); }              // qualifying verisi henüz yok → yarış öncesi
-      if (r.durum === "ok" && !(S.sonuc[key] && t.basladi)) { r.ts = now; S.sonuc[key] = r; }
+      if (r.durum === "ok" && !(S.sonuc[key] && t.basladi)) {
+        r.ts = now; S.sonuc[key] = r;
+        bul(function () { return window.TahminArsiv.kaydet(t, r.mod, r.pred, now); }, false);    // snapshot (yalnız yarış başlamadan hesaplandıysa; aynı aşama tekrar yazılmaz)
+      }
     } catch (e) { /* başarısız sonuç saklanmaz */ }
     finally { delete S.devam[key]; ciz(); }
   }

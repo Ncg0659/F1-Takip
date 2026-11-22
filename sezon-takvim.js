@@ -258,6 +258,10 @@
     var kap = document.getElementById("a2-takvim");
     var m = S.model;
     if (!kap || !m) { return; }
+    if (!m.yarislar || !m.yarislar.length) {                 // sezon arası: kart alanında tek mesaj, eski tablo gizli (mesaj iki kez görünmez)
+      kap.innerHTML = "<p class='st-not'>" + sezonYili() + " takvimi henüz yayınlanmadı. Takvim yayınlanınca yarış kartları burada görünür.</p>";
+      document.getElementById("sekme-sezon").setAttribute("data-a2", "1"); return;
+    }
     var simdi = Date.now();
     var sir = HV.varsayilanTur(m.yarislar, simdi);
     var siradakiTur = sir && zaman(sir.date, sir.time).getTime() + 6 * 3600 * 1000 > simdi ? Number(sir.round) : -1;
@@ -345,7 +349,7 @@
     return new Promise(function (coz) {
       var n = 0;
       (function dene() {
-        var t = document.querySelector("#takim-govde td.sezon");
+        var t = document.querySelector("#takim-govde td.sezon, #takim-govde tr.sezon-bos");   // sezon arası: boş puan durumu da "yüklendi" sayılır
         if (t || n++ > 26) { coz(); } else { setTimeout(dene, 300); }
       })();
     });

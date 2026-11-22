@@ -1,0 +1,98 @@
+{
+ "PRE_WEEKEND": {
+  "mod": "PRE_WEEKEND",
+  "kesim": {
+   "MEDIUM": 0.5412888888888889,
+   "HIGH": 0.7851222222222222
+  },
+  "grup": {
+   "HIGH": {
+    "n": 13,
+    "hata1": 0.46153846153846156,
+    "hataPod": 0.38461538461538464
+   },
+   "MEDIUM": {
+    "n": 26,
+    "hata1": 0.8461538461538461,
+    "hataPod": 0.4743589743589744
+   },
+   "LOW": {
+    "n": 28,
+    "hata1": 0.9642857142857143,
+    "hataPod": 0.5238095238095237
+   }
+  },
+  "sezon": {
+   "2024": {
+    "nHigh": 10,
+    "nLow": 12,
+    "highDahaIyi": true
+   },
+   "2025": {
+    "nHigh": 1,
+    "nLow": 8,
+    "highDahaIyi": false
+   },
+   "2026": {
+    "nHigh": 2,
+    "nLow": 8,
+    "highDahaIyi": true
+   }
+  },
+  "monoton": {
+   "ok": false,
+   "neden": "hataPod:MEDIUM→LOW"
+  },
+  "sezonTutarli": true,
+  "durum": "UNRELIABLE",
+  "n": 67
+ },
+ "POST_QUALIFYING": {
+  "mod": "POST_QUALIFYING",
+  "kesim": {
+   "MEDIUM": 0.9016000000000001,
+   "HIGH": 0.9678999999999999
+  },
+  "grup": {
+   "HIGH": {
+    "n": 33,
+    "hata1": 0.3939393939393939,
+    "hataPod": 0.35353535353535354
+   },
+   "MEDIUM": {
+    "n": 9,
+    "hata1": 0.3333333333333333,
+    "hataPod": 0.18518518518518523
+   },
+   "LOW": {
+    "n": 25,
+    "hata1": 0.48,
+    "hataPod": 0.26666666666666666
+   }
+  },
+  "sezon": {
+   "2024": {
+    "nHigh": 17,
+    "nLow": 5,
+    "highDahaIyi": true
+   },
+   "2025": {
+    "nHigh": 8,
+    "nLow": 11,
+    "highDahaIyi": true
+   },
+   "2026": {
+    "nHigh": 8,
+    "nLow": 9,
+    "highDahaIyi": false
+   }
+  },
+  "monoton": {
+   "ok": false,
+   "neden": "grup-az-ornek"
+  },
+  "sezonTutarli": true,
+  "durum": "UNRELIABLE",
+  "n": 67
+ }
+}

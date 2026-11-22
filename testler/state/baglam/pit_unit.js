@@ -1,0 +1,34 @@
+// OPENF1 A7.4 — saf katman birim testleri. Fixture SENTETİK (gerçek Singapur pit verisine erişilemedi). Alanlar OpenF1 belgesine göre: lane_duration, stop_duration (pit_duration deprecated).
+const P = require("/home/claude/f1-takip/pit-veri.js");
+let ok = 0, bad = 0;
+function t(ad, c, ek) { if (c) { ok++; console.log("PASS " + ad); } else { bad++; console.log("FAIL " + ad + " | " + (ek || "")); } }
+const pit = (min, dn, lap, lane, stop, o) => Object.assign({ session_key: 1, meeting_key: 9, date: "2026-10-11T12:" + String(min).padStart(2, "0") + ":00+00:00", driver_number: dn, lap_number: lap, lane_duration: lane, stop_duration: stop }, o || {});
+const rows = [pit(10, 63, 12, 21.4, 2.31), pit(20, 4, 14, 22.0, 2.44), pit(30, 44, 20, 21.9, 2.51), pit(40, 1, 38, 21.4, 2.72), pit(45, 63, 40, 22.5, 2.9), pit(50, 16, 41, null, null)];
+const N = P.normalize(rows, { sessionKey: 1, meetingKey: 9 });
+t("P1 normalize: alanlar eşlendi, kronolojik", N.kayitlar.length === 6 && N.kayitlar[0].driverNumber === 63 && N.kayitlar[0].lapNumber === 12 && N.kayitlar[0].laneDuration === 21.4 && N.kayitlar[0].stopDuration === 2.31 && N.kayitlar[0].meetingKey === 9 && N.kayitlar[0].sessionKey === 1);
+const D = P.normalize([pit(10, 63, 12, 21.4, 2.31), pit(10, 63, 12, 21.4, 2.31), pit(10, 63, 12, 21.4, 2.31, { date: "2026-10-11T12:10:00.000Z" })], { sessionKey: 1 });
+t("P2 duplicate pit tek (session+pilot+tur+date)", D.kayitlar.length === 1 && D.tekrar === 2);
+t("P3 aynı pilot+tur, farklı date → ayrı kayıt", P.normalize([pit(10, 63, 12, 21, 2.3), pit(11, 63, 12, 21, 2.3)], { sessionKey: 1 }).kayitlar.length === 2);
+t("P4 stopDuration mevcut / null", N.kayitlar[0].stopDuration === 2.31 && N.kayitlar[5].stopDuration === null);
+t("P5 laneDuration mevcut / null", N.kayitlar[0].laneDuration === 21.4 && N.kayitlar[5].laneDuration === null);
+t("P6 stop ≠ lane (karışmaz): yalnız lane varsa stop null, yalnız stop varsa lane null", (() => { const a = P.normalize([pit(10, 1, 5, 21.0, undefined)], {}).kayitlar[0], b = P.normalize([pit(11, 2, 6, undefined, 2.5)], {}).kayitlar[0]; return a.laneDuration === 21 && a.stopDuration === null && b.stopDuration === 2.5 && b.laneDuration === null; })());
+t("P7 deprecated pit_duration OKUNMAZ (lane_duration yoksa laneDuration null)", (() => { const e = P.normalize([{ session_key: 1, date: "2026-10-11T12:00:00Z", driver_number: 7, lap_number: 3, pit_duration: 23.5 }], {}).kayitlar[0]; return e.laneDuration === null && e.stopDuration === null && !("pit_duration" in e) && !("pitDuration" in e); })());
+t("P8 lapNumber null korunur", P.normalize([pit(10, 7, undefined, 21, 2.4, { lap_number: null })], {}).kayitlar[0].lapNumber === null);
+t("P9 yanlış session_key izolasyonu", P.normalize([pit(10, 63, 12, 21, 2.3, { session_key: 2 }), pit(11, 4, 5, 21, 2.3)], { sessionKey: 1 }).kayitlar.length === 1);
+t("P10 başka round (meeting_key) karışmaz", P.normalize([pit(10, 63, 12, 21, 2.3, { meeting_key: 10 })], { sessionKey: 1, meetingKey: 9 }).kayitlar.length === 0);
+t("P11 pilot yok / tarih bozuk → atılır; bozuk girdi güvenli", P.normalize([pit(10, null, 5, 21, 2.3), { date: "bad", driver_number: 1 }, null, "x"], {}).atilan === 4 && P.normalize(null).kayitlar.length === 0);
+const pl = P.pilotOzetleri(N.kayitlar), p63 = pl.find((x) => x.driverNumber === 63), p16 = pl.find((x) => x.driverNumber === 16);
+t("P12 pilot toplam pit sayısı", p63.toplamPit === 2 && pl[0].driverNumber === 63 && pl.length === 5, JSON.stringify(pl));
+t("P13 pilot en kısa stop / toplam pit lane / eksik sayısı", p63.enKisaStop === 2.31 && Math.abs(p63.laneToplam - 43.9) < 1e-9 && p63.laneEksik === 0 && p16.enKisaStop === null && p16.laneEksik === 1 && p16.laneToplam === 0);
+const ek = P.enKisaStoplar(N.kayitlar, 3);
+t("P14 en kısa stop: RUS(63) 2.31, NOR(4) 2.44, HAM(44) 2.51; stop süresiz pilot girmez", ek.length === 3 && ek[0].driverNumber === 63 && ek[0].stopDuration === 2.31 && ek[1].driverNumber === 4 && ek[2].driverNumber === 44 && !ek.some((x) => x.driverNumber === 16));
+const oz = P.ozet(N.kayitlar);
+t("P15 özet: toplam 6, stop süreli 5, son 3 kronolojik", oz.toplam === 6 && oz.stopSureli === 5 && oz.sonPitler.length === 3 && oz.sonPitler[2].driverNumber === 16 && oz.sonPitler[0].ms < oz.sonPitler[1].ms);
+t("P16 biçim: stop 2 hane, lane 1 hane, null → null", P.stopYaz(2.7) === "2.70 sn" && P.laneYaz(21.4) === "21.4 sn" && P.stopYaz(null) === null && P.laneYaz(null) === null);
+t("P17 mesajlar ayrı", P.durumMesaji("bos") === "Pit verisi henüz yayımlanmadı." && P.durumMesaji("hata") === "OpenF1 pit verisine şu anda ulaşılamıyor.");
+t("P18 yalnız Sprint/Race", P.SEANSLAR.Race && P.SEANSLAR.Sprint && !P.SEANSLAR.Qualifying && !P.SEANSLAR.SprintQualifying && !P.SEANSLAR.FirstPractice);
+const big = []; for (let i = 0; i < 60; i++) big.push(pit(i % 60, 1 + (i % 20), 5 + i, 21 + (i % 5) * 0.1, 2.3 + (i % 7) * 0.1, { date: "2026-10-11T" + String(12 + Math.floor(i / 60)).padStart(2, "0") + ":" + String(i % 60).padStart(2, "0") + ":00+00:00" }));
+const bn = P.normalize(big, { sessionKey: 1 }).kayitlar, sk = JSON.stringify(P.sikistir(bn)).length, ham = JSON.stringify(big).length;
+t("P19 sıkıştır/aç korur; 60 pit ≪ 60 KB", (() => { const a = P.ac(P.sikistir(bn), 1); return a.length === bn.length && a[5].stopDuration === bn[5].stopDuration && a[5].laneDuration === bn[5].laneDuration && a[5].date === bn[5].date; })() && sk < 60000, sk);
+console.log("boyut: 60 pit ham " + ham + " B → sıkıştırılmış " + sk + " B");
+console.log(ok + "/" + (ok + bad)); process.exit(bad ? 1 : 0);

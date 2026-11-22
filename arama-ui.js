@@ -285,6 +285,7 @@
     var s = C.sonuc[i]; if (!s || !s.aksiyon) { return; }
     C.gidiyor = true;
     var a = s.aksiyon;
+    C.atla = !!(C.dlg && C.dlg.open);       // dialog "close" olayı ASENKRON gelir: hedefe verilen odağı sonradan geri almasın
     kapat();
     // odak açan düğmeye döner; panel/pencere açılışları buradan geri dönüş noktası alır
     focus(C.opener);
@@ -298,6 +299,7 @@
   function ac() {
     kur();
     if (C.dlg.open) { C.input.focus(); return; }
+    C.atla = false;
     var a = document.activeElement;
     C.opener = a && a !== document.body && a.closest && a.closest("dialog[open]") ? a : (C.btn || a);
     C.indeks = indeksOlustur();
@@ -308,7 +310,7 @@
     C.input.focus();
   }
   function kapat() { if (C.dlg && C.dlg.open) { try { C.dlg.close(); } catch (e) { C.dlg.removeAttribute("open"); kapandi(); } } }
-  function kapandi() { if (!C.gidiyor) { focus(C.opener); } }
+  function kapandi() { if (C.atla) { C.atla = false; return; } if (!C.gidiyor) { focus(C.opener); } }
 
   function btnKur() {
     if (document.getElementById("btn-ara")) { return true; }

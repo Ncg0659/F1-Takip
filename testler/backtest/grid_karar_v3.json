@@ -1,0 +1,531 @@
+{
+ "adaylar": [
+  {
+   "ad": "A_0.55",
+   "agirlik": {
+    "recentForm": 0.073,
+    "qualifyingForm": 0.055,
+    "grid": 0.55,
+    "teamForm": 0.149,
+    "reliability": 0.042,
+    "trackHistory": 0.048,
+    "teammateDelta": 0.014,
+    "telemetrySummary": 0.069
+   }
+  },
+  {
+   "ad": "B_0.65",
+   "agirlik": {
+    "recentForm": 0.057,
+    "qualifyingForm": 0.043,
+    "grid": 0.65,
+    "teamForm": 0.116,
+    "reliability": 0.033,
+    "trackHistory": 0.037,
+    "teammateDelta": 0.011,
+    "telemetrySummary": 0.054
+   }
+  }
+ ],
+ "foldlar": [
+  {
+   "val": 2024,
+   "A_0.55": {
+    "sicaklik": {
+     "win": 0.036,
+     "podium": 0.125,
+     "points": 0.325
+    },
+    "valid": {
+     "J": 0.4748067253858513,
+     "yaris": 24,
+     "satir": 478,
+     "brierWin": 0.035761563619246865,
+     "brierWinYarisBasina": 0.7122511420833334,
+     "brierPodium": 0.07342856211297066,
+     "brierPoints": 0.1321382729707113,
+     "logLossWin": 2.139762100614215,
+     "top1": 0.5833333333333334,
+     "top3": 0.8333333333333334,
+     "ortKazananOlasiligi": 0.4627041666666665,
+     "podiumKapsama": 0.6666666666666666,
+     "pointsKapsama": 0.8416666666666665,
+     "kazananAlanDisi": 0
+    }
+   },
+   "B_0.65": {
+    "sicaklik": {
+     "win": 0.048,
+     "podium": 0.1625,
+     "points": 0.4
+    },
+    "valid": {
+     "J": 0.4923433134123574,
+     "yaris": 24,
+     "satir": 478,
+     "brierWin": 0.03406907845188287,
+     "brierWinYarisBasina": 0.6785424791666671,
+     "brierPodium": 0.07429113719665273,
+     "brierPoints": 0.13753338619246858,
+     "logLossWin": 1.7217874460199571,
+     "top1": 0.5416666666666666,
+     "top3": 0.8333333333333334,
+     "ortKazananOlasiligi": 0.41979999999999995,
+     "podiumKapsama": 0.6805555555555554,
+     "pointsKapsama": 0.8416666666666665,
+     "kazananAlanDisi": 0
+    }
+   }
+  },
+  {
+   "val": 2025,
+   "A_0.55": {
+    "sicaklik": {
+     "win": 0.06,
+     "podium": 0.125,
+     "points": 0.25
+    },
+    "valid": {
+     "J": 0.5690720273420715,
+     "yaris": 24,
+     "satir": 479,
+     "brierWin": 0.029355706263048047,
+     "brierWinYarisBasina": 0.585890970833334,
+     "brierPodium": 0.05688638672233825,
+     "brierPoints": 0.16616766219206675,
+     "logLossWin": 1.0735481568706446,
+     "top1": 0.5,
+     "top3": 1,
+     "ortKazananOlasiligi": 0.39157499999999995,
+     "podiumKapsama": 0.7916666666666666,
+     "pointsKapsama": 0.7666666666666667,
+     "kazananAlanDisi": 0
+    }
+   },
+   "B_0.65": {
+    "sicaklik": {
+     "win": 0.06,
+     "podium": 0.125,
+     "points": 0.325
+    },
+    "valid": {
+     "J": 0.5987741551249461,
+     "yaris": 24,
+     "satir": 479,
+     "brierWin": 0.027931771941544906,
+     "brierWinYarisBasina": 0.5574716150000004,
+     "brierPodium": 0.05702962663883088,
+     "brierPoints": 0.16362703087682673,
+     "logLossWin": 1.0308831291262017,
+     "top1": 0.625,
+     "top3": 1,
+     "ortKazananOlasiligi": 0.40467916666666653,
+     "podiumKapsama": 0.7916666666666666,
+     "pointsKapsama": 0.7666666666666666,
+     "kazananAlanDisi": 0
+    }
+   }
+  },
+  {
+   "val": 2026,
+   "A_0.55": {
+    "sicaklik": {
+     "win": 0.06,
+     "podium": 0.1,
+     "points": 0.325
+    },
+    "valid": {
+     "J": 0.5219846959471933,
+     "yaris": 19,
+     "satir": 413,
+     "brierWin": 0.027415132953995176,
+     "brierWinYarisBasina": 0.5959184163157899,
+     "brierPodium": 0.06711342305084746,
+     "brierPoints": 0.1639573272154964,
+     "logLossWin": 1.1913844046722522,
+     "top1": 0.5263157894736842,
+     "top3": 0.8421052631578947,
+     "ortKazananOlasiligi": 0.3665736842105264,
+     "podiumKapsama": 0.6140350877192983,
+     "pointsKapsama": 0.7736842105263159,
+     "kazananAlanDisi": 0
+    }
+   },
+   "B_0.65": {
+    "sicaklik": {
+     "win": 0.06,
+     "podium": 0.125,
+     "points": 0.325
+    },
+    "valid": {
+     "J": 0.5575973758320467,
+     "yaris": 19,
+     "satir": 413,
+     "brierWin": 0.026103395835351113,
+     "brierWinYarisBasina": 0.5674053936842111,
+     "brierPodium": 0.06611692937046006,
+     "brierPoints": 0.16277953135593232,
+     "logLossWin": 1.1520800493782577,
+     "top1": 0.631578947368421,
+     "top3": 0.8947368421052632,
+     "ortKazananOlasiligi": 0.3881157894736842,
+     "podiumKapsama": 0.6140350877192983,
+     "pointsKapsama": 0.7789473684210527,
+     "kazananAlanDisi": 0
+    }
+   }
+  }
+ ],
+ "sezon": {
+  "2024": {
+   "A_0.55": {
+    "J": 0.5128290877379732,
+    "yaris": 24,
+    "satir": 478,
+    "brierWin": 0.03360437213389123,
+    "brierWinYarisBasina": 0.6692870783333337,
+    "brierPodium": 0.0729529025732218,
+    "brierPoints": 0.13213827297071126,
+    "logLossWin": 1.6037514738391074,
+    "top1": 0.5833333333333334,
+    "top3": 0.8333333333333334,
+    "ortKazananOlasiligi": 0.38100833333333334,
+    "podiumKapsama": 0.6666666666666666,
+    "pointsKapsama": 0.8416666666666665,
+    "kazananAlanDisi": 0
+   },
+   "B_0.65": {
+    "J": 0.5038811562602586,
+    "yaris": 24,
+    "satir": 478,
+    "brierWin": 0.03341252918410044,
+    "brierWinYarisBasina": 0.6654662062500004,
+    "brierPodium": 0.07369380874476993,
+    "brierPoints": 0.13448773050209192,
+    "logLossWin": 1.6063020587614834,
+    "top1": 0.5416666666666666,
+    "top3": 0.8333333333333334,
+    "ortKazananOlasiligi": 0.37964583333333346,
+    "podiumKapsama": 0.6805555555555554,
+    "pointsKapsama": 0.8416666666666665,
+    "kazananAlanDisi": 0
+   }
+  },
+  "2025": {
+   "A_0.55": {
+    "J": 0.5732113186644936,
+    "yaris": 24,
+    "satir": 479,
+    "brierWin": 0.029355706263048047,
+    "brierWinYarisBasina": 0.585890970833334,
+    "brierPodium": 0.05529988192066807,
+    "brierPoints": 0.16306458093945733,
+    "logLossWin": 1.0735481568706446,
+    "top1": 0.5,
+    "top3": 1,
+    "ortKazananOlasiligi": 0.39157499999999995,
+    "podiumKapsama": 0.7916666666666666,
+    "pointsKapsama": 0.7666666666666667,
+    "kazananAlanDisi": 0
+   },
+   "B_0.65": {
+    "J": 0.5987741551249461,
+    "yaris": 24,
+    "satir": 479,
+    "brierWin": 0.027931771941544906,
+    "brierWinYarisBasina": 0.5574716150000004,
+    "brierPodium": 0.05702962663883088,
+    "brierPoints": 0.16362703087682673,
+    "logLossWin": 1.0308831291262017,
+    "top1": 0.625,
+    "top3": 1,
+    "ortKazananOlasiligi": 0.40467916666666653,
+    "podiumKapsama": 0.7916666666666666,
+    "pointsKapsama": 0.7666666666666666,
+    "kazananAlanDisi": 0
+   }
+  },
+  "2026": {
+   "A_0.55": {
+    "J": 0.5219846959471933,
+    "yaris": 19,
+    "satir": 413,
+    "brierWin": 0.027415132953995176,
+    "brierWinYarisBasina": 0.5959184163157899,
+    "brierPodium": 0.06711342305084746,
+    "brierPoints": 0.1639573272154964,
+    "logLossWin": 1.1913844046722522,
+    "top1": 0.5263157894736842,
+    "top3": 0.8421052631578947,
+    "ortKazananOlasiligi": 0.3665736842105264,
+    "podiumKapsama": 0.6140350877192983,
+    "pointsKapsama": 0.7736842105263159,
+    "kazananAlanDisi": 0
+   },
+   "B_0.65": {
+    "J": 0.5575973758320467,
+    "yaris": 19,
+    "satir": 413,
+    "brierWin": 0.026103395835351113,
+    "brierWinYarisBasina": 0.5674053936842111,
+    "brierPodium": 0.06611692937046006,
+    "brierPoints": 0.16277953135593232,
+    "logLossWin": 1.1520800493782577,
+    "top1": 0.631578947368421,
+    "top3": 0.8947368421052632,
+    "ortKazananOlasiligi": 0.3881157894736842,
+    "podiumKapsama": 0.6140350877192983,
+    "pointsKapsama": 0.7789473684210527,
+    "kazananAlanDisi": 0
+   }
+  }
+ },
+ "havuz": {
+  "A_0.55": {
+   "J": 0.5368938670347186,
+   "yaris": 67,
+   "satir": 1370,
+   "brierWin": 0.030253082547445364,
+   "brierWinYarisBasina": 0.618607807313435,
+   "brierPodium": 0.06502041940875923,
+   "brierPoints": 0.15254336123357662,
+   "logLossWin": 1.2968879824747286,
+   "top1": 0.5373134328358209,
+   "top3": 0.8955223880597015,
+   "ortKazananOlasiligi": 0.3807000000000001,
+   "podiumKapsama": 0.6965174129353233,
+   "pointsKapsama": 0.7955223880597013,
+   "kazananAlanDisi": 0
+  },
+  "B_0.65": {
+   "J": 0.5529908076557412,
+   "yaris": 67,
+   "satir": 1370,
+   "brierWin": 0.029292854153284732,
+   "brierWinYarisBasina": 0.5989732864179117,
+   "brierPodium": 0.06558330187591228,
+   "brierPoints": 0.15320469300729925,
+   "logLossWin": 1.271372618619274,
+   "top1": 0.5970149253731343,
+   "top3": 0.9104477611940298,
+   "ortKazananOlasiligi": 0.39101492537313426,
+   "podiumKapsama": 0.7014925373134328,
+   "pointsKapsama": 0.7970149253731342,
+   "kazananAlanDisi": 0
+  },
+  "A_0.55_kal": [
+   [
+    1196,
+    0.008,
+    0.007
+   ],
+   [
+    61,
+    0.14,
+    0.115
+   ],
+   [
+    29,
+    0.253,
+    0.379
+   ],
+   [
+    27,
+    0.351,
+    0.333
+   ],
+   [
+    36,
+    0.485,
+    0.528
+   ],
+   [
+    21,
+    0.682,
+    0.619
+   ]
+  ],
+  "B_0.65_kal": [
+   [
+    1200,
+    0.008,
+    0.007
+   ],
+   [
+    53,
+    0.141,
+    0.094
+   ],
+   [
+    32,
+    0.241,
+    0.25
+   ],
+   [
+    29,
+    0.36,
+    0.345
+   ],
+   [
+    34,
+    0.494,
+    0.618
+   ],
+   [
+    22,
+    0.667,
+    0.636
+   ]
+  ]
+ },
+ "sicaklik": {
+  "A": {
+   "win": 0.06,
+   "podium": 0.1,
+   "points": 0.325
+  },
+  "B": {
+   "win": 0.06,
+   "podium": 0.125,
+   "points": 0.325
+  }
+ },
+ "baz": {
+  "harmonik": {
+   "yaris": 67,
+   "satir": 1370,
+   "brierWin": 0.03428837605775966,
+   "brierWinYarisBasina": 0.7011205253601602,
+   "brierPodium": 0.0763632412673163,
+   "brierPoints": 0.1583311924545686,
+   "logLossWin": 1.6893440159723219,
+   "top1": 0.6119402985074627,
+   "top3": 0.8805970149253731,
+   "ortKazananOlasiligi": 0.21052831760020352,
+   "podiumKapsama": 0.6616915422885572,
+   "pointsKapsama": 0.8,
+   "kazananAlanDisi": 0
+  },
+  "ogrenilmis": {
+   "yaris": 67,
+   "satir": 1370,
+   "brierWin": 0.02918403138076486,
+   "brierWinYarisBasina": 0.5967481043529531,
+   "brierPodium": 0.06606105271932874,
+   "brierPoints": 0.15267163155431565,
+   "logLossWin": 1.4063243349402181,
+   "top1": 0.6119402985074627,
+   "top3": 0.8805970149253731,
+   "ortKazananOlasiligi": 0.3417845963108029,
+   "podiumKapsama": 0.6616915422885572,
+   "pointsKapsama": 0.8,
+   "kazananAlanDisi": 0
+  },
+  "s2024": {
+   "harmonik": {
+    "yaris": 24,
+    "satir": 478,
+    "brierWin": 0.037344738488066465,
+    "brierWinYarisBasina": 0.7437827082206571,
+    "brierPodium": 0.08321966409489222,
+    "brierPoints": 0.14149990115841318,
+    "logLossWin": 1.8413268368015654,
+    "top1": 0.5,
+    "top3": 0.7916666666666666,
+    "ortKazananOlasiligi": 0.18998883657615717,
+    "podiumKapsama": 0.6249999999999998,
+    "pointsKapsama": 0.8500000000000001,
+    "kazananAlanDisi": 0
+   },
+   "ogrenilmis": {
+    "yaris": 24,
+    "satir": 478,
+    "brierWin": 0.03469681723475781,
+    "brierWinYarisBasina": 0.6910449432589263,
+    "brierPodium": 0.07311009701018617,
+    "brierPoints": 0.13485316336625242,
+    "logLossWin": 1.708138015191106,
+    "top1": 0.5,
+    "top3": 0.7916666666666666,
+    "ortKazananOlasiligi": 0.29564368454116413,
+    "podiumKapsama": 0.6249999999999998,
+    "pointsKapsama": 0.8500000000000001,
+    "kazananAlanDisi": 0
+   }
+  },
+  "s2025": {
+   "harmonik": {
+    "yaris": 24,
+    "satir": 479,
+    "brierWin": 0.03392042136006694,
+    "brierWinYarisBasina": 0.676995076311336,
+    "brierPodium": 0.07266433155253813,
+    "brierPoints": 0.16431820778024323,
+    "logLossWin": 1.5894931721496268,
+    "top1": 0.6666666666666666,
+    "top3": 0.9583333333333334,
+    "ortKazananOlasiligi": 0.22332270113254024,
+    "podiumKapsama": 0.7499999999999999,
+    "pointsKapsama": 0.7791666666666668,
+    "kazananAlanDisi": 0
+   },
+   "ogrenilmis": {
+    "yaris": 24,
+    "satir": 479,
+    "brierWin": 0.0274640762132304,
+    "brierWinYarisBasina": 0.5481371877557234,
+    "brierPodium": 0.05851595613486692,
+    "brierPoints": 0.16903278543890876,
+    "logLossWin": 1.2129427102663846,
+    "top1": 0.6666666666666666,
+    "top3": 0.9583333333333334,
+    "ortKazananOlasiligi": 0.36702976276146626,
+    "podiumKapsama": 0.7499999999999999,
+    "pointsKapsama": 0.7791666666666668,
+    "kazananAlanDisi": 0
+   }
+  },
+  "s2026": {
+   "harmonik": {
+    "yaris": 19,
+    "satir": 413,
+    "brierWin": 0.031177744238166584,
+    "brierWinYarisBasina": 0.6777057037033053,
+    "brierPodium": 0.07271773918934339,
+    "brierPoints": 0.17086769826222953,
+    "logLossWin": 1.6234930976482633,
+    "top1": 0.6842105263157895,
+    "top3": 0.8947368421052632,
+    "ortKazananOlasiligi": 0.22031159864236363,
+    "podiumKapsama": 0.5964912280701754,
+    "pointsKapsama": 0.7631578947368421,
+    "kazananAlanDisi": 0
+   },
+   "ogrenilmis": {
+    "yaris": 19,
+    "satir": 413,
+    "brierWin": 0.02479843062299282,
+    "brierWinYarisBasina": 0.5390395709103176,
+    "brierPodium": 0.06665344519615203,
+    "brierPoints": 0.15431868986708588,
+    "logLossWin": 1.269357527895513,
+    "top1": 0.6842105263157895,
+    "top3": 0.8947368421052632,
+    "ortKazananOlasiligi": 0.36817922197687675,
+    "podiumKapsama": 0.5964912280701754,
+    "pointsKapsama": 0.7631578947368421,
+    "kazananAlanDisi": 0
+   }
+  }
+ },
+ "karar": {
+  "kabul": true,
+  "iyiSezonlar": [
+   "2025",
+   "2026"
+  ],
+  "kotuSezonlar": [],
+  "sadece2026": false,
+  "havuzOk": true
+ }
+}

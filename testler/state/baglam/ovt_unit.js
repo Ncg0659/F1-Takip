@@ -1,0 +1,31 @@
+// OPENF1 A7.3 — saf katman birim testleri. Fixture SENTETİK (gerçek Singapur overtakes verisine erişilemedi).
+const O = require("/home/claude/f1-takip/overtakes-veri.js");
+let ok = 0, bad = 0;
+function t(ad, c, ek) { if (c) { ok++; console.log("PASS " + ad); } else { bad++; console.log("FAIL " + ad + " | " + (ek || "")); } }
+const ov = (min, a, b, pos, o) => Object.assign({ session_key: 1, meeting_key: 9, date: "2026-10-11T12:" + String(min).padStart(2, "0") + ":00+00:00", overtaking_driver_number: a, overtaken_driver_number: b, position: pos }, o || {});
+const rows = [ov(10, 44, 63, 5), ov(12, 44, 1, 4), ov(13, 1, 4, 3), ov(15, 44, 16, 3), ov(16, 4, 44, 4), ov(18, 63, 44, 5)];
+const N = O.normalize(rows, { sessionKey: 1, meetingKey: 9 });
+t("O1 normalize: alanlar eşlendi, kronolojik; lapNumber null (endpoint'te yok)", N.gecisler.length === 6 && N.gecisler[0].overtakingDriverNumber === 44 && N.gecisler[0].overtakenDriverNumber === 63 && N.gecisler[0].position === 5 && N.gecisler[0].lapNumber === null && N.gecisler[0].date.startsWith("2026-10-11T12:10:00"));
+const D = O.normalize([ov(10, 44, 63, 5), ov(10, 44, 63, 5), ov(10, 44, 63, 5, { date: "2026-10-11T12:10:00.000Z" })], { sessionKey: 1 });
+t("O2 duplicate overtake tek (aynı anın farklı biçimi dahil)", D.gecisler.length === 1 && D.tekrar === 2, JSON.stringify(D.tekrar));
+t("O3 toplam geçiş (dedupe sonrası)", O.ozet(N.gecisler).toplam === 6);
+const P = O.pilotSayilari(N.gecisler), p44 = P.find((x) => x.driverNumber === 44);
+t("O4 overtaking sayımı: 44 → 3 geçiş", p44.yapilan === 3, JSON.stringify(P));
+t("O5 overtaken sayımı: 44 → 2 kez geçildi", p44.yapilanGecis === 2);
+t("O6 sıra: en çok geçiş yapan önce; eşitlikte numara", P[0].driverNumber === 44 && O.ozet(N.gecisler).enCokGecis.length === 3 && O.ozet(N.gecisler).enCokGecis[1].yapilan === 1 && O.ozet(N.gecisler).enCokGecis[1].driverNumber === 1);
+t("O7 yanlış session_key izolasyonu", O.normalize([ov(10, 44, 63, 5, { session_key: 2 }), ov(11, 1, 4, 3)], { sessionKey: 1 }).gecisler.length === 1);
+t("O8 başka round (meeting_key) karışmaz", O.normalize([ov(10, 44, 63, 5, { meeting_key: 10 })], { sessionKey: 1, meetingKey: 9 }).gecisler.length === 0);
+t("O9 lapNumber eksik → null (tahmin yok)", N.gecisler.every((e) => e.lapNumber === null));
+const E = O.normalize([ov(10, 44, 63, null), ov(11, 1, 4, undefined, { position: "" })], { sessionKey: 1 });
+t("O10 position eksik → null, kayıt korunur", E.gecisler.length === 2 && E.gecisler.every((e) => e.position === null));
+const U = O.normalize([ov(10, 99, 63, 5), ov(11, 44, null, 5, { overtaken_driver_number: undefined }), ov(12, null, undefined, 5, { overtaking_driver_number: null, overtaken_driver_number: null })], { sessionKey: 1 });
+t("O11 bilinmeyen/eksik pilot: biri varsa korunur (tek taraflı sayım), ikisi de yoksa atılır", U.gecisler.length === 2 && U.atilan === 1 && O.pilotSayilari(U.gecisler).find((x) => x.driverNumber === 99).yapilan === 1);
+t("O12 son 3 geçiş kronolojik", (() => { const s = O.ozet(N.gecisler).sonGecisler; return s.length === 3 && s[2].ms === N.gecisler[5].ms && s[0].ms < s[1].ms; })());
+t("O13 bozuk girdi güvenli", O.normalize(null).gecisler.length === 0 && O.normalize([null, "x", { date: "bad" }]).atilan === 3 && O.ozet([]).toplam === 0);
+t("O14 mesajlar ayrı", O.durumMesaji("bos") === "Geçiş verisi henüz yayımlanmadı." && O.durumMesaji("hata") === "OpenF1 geçiş verisine şu anda ulaşılamıyor.");
+t("O15 yalnız Sprint/Race (FP/SQ/Q desteklenmez)", O.SEANSLAR.Race && O.SEANSLAR.Sprint && !O.SEANSLAR.Qualifying && !O.SEANSLAR.SprintQualifying && !O.SEANSLAR.FirstPractice);
+const big = []; for (let i = 0; i < 120; i++) big.push(ov(i % 60, 1 + (i % 20), 1 + ((i + 7) % 20), 1 + (i % 20), { date: "2026-10-11T" + String(12 + Math.floor(i / 60)).padStart(2, "0") + ":" + String(i % 60).padStart(2, "0") + ":00+00:00" }));
+const bn = O.normalize(big, { sessionKey: 1 }).gecisler, sk = JSON.stringify(O.sikistir(bn)).length, ham = JSON.stringify(big).length;
+t("O16 sıkıştır/aç korur; 120 geçiş ≪ 100 KB", (() => { const a = O.ac(O.sikistir(bn), 1); return a.length === bn.length && a[5].position === bn[5].position && a[5].date === bn[5].date; })() && sk < 100000, sk);
+console.log("boyut: 120 geçiş ham " + ham + " B → sıkıştırılmış " + sk + " B");
+console.log(ok + "/" + (ok + bad)); process.exit(bad ? 1 : 0);

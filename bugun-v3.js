@@ -10,7 +10,7 @@
   var KRITIK = { RED_FLAG: 1, STOPPED: 1, SAFETY_CAR: 1, VSC: 1, DELAYED: 1, POSTPONED: 1, CANCELLED: 1, RESCHEDULED: 1 };
   var CANLI_K = { LIVE: 1, RESUMED: 1, SAFETY_CAR: 1, VSC: 1, RED_FLAG: 1, STOPPED: 1 };
   var UZATMA = 3 * SA, FEED_AKTIF = { LIVE: 1, RESUMED: 1, RED_FLAG: 1, SESSION_STOPPED: 1 }, FEED_K = { RED_FLAG: 1, STOPPED: 1, SAFETY_CAR: 1, VSC: 1, RESUMED: 1 };
-  var S = { html: null, tick: 0, istendi: false, liste: {}, gozlendi: false, model: null };
+  var S = { html: null, tick: 0, istendi: false, liste: {}, gozlendi: false, model: null, feedHepsi: false };
 
   function $(id) { return document.getElementById(id); }
   function bul(f, d) { try { var v = f(); return v === undefined ? d : v; } catch (e) { return d; } }
@@ -35,18 +35,29 @@
   }
 
   // ---------- MOD HESABI ----------
-  function feedNotlari(K, y, hBas) {
+  // Race Feed (BUGÜN): kapalıyken son 5 ÖNEMLİ not (TickerHesap.uygun: kritik kategori, Türkçe; ham İngilizce gösterilmez).
+  // "TÜMÜNÜ GÖSTER" ile bu hafta sonunun tüm notları (en çok 40): çevirisi bulunamayan not özgün İngilizce metniyle ve EN etiketiyle gösterilir.
+  // Tekrar yok: aynı kimlik bir kez; aynı metin 5 dk içinde bir kez. Yalnız mevcut depodan okur (yeni fetch/timer yok).
+  var FEED_KISA = 5, FEED_UZUN = 40;
+  function feedNotlari(K, y, hBas, hepsi) {
     var out = [];
     ["", "-sprint"].forEach(function (ek) {
       var o = bul(function () { return RaceFeed.yukle(K.sezon + "-" + y.round + ek).olaylar; }, []) || [];
       o.forEach(function (e) {
         var ts = Date.parse(e && e.timestamp); if (isNaN(ts) || ts < hBas) { return; }
-        var u = bul(function () { return TickerHesap.uygun(e, { maxMetin: 110 }); }, null); if (!u) { return; }
-        out.push({ ts: ts, metin: u.metin, id: e.id || (e.category + "|" + ts) });
+        var id = e.id || (e.category + "|" + ts), metin, en = false;
+        var u = bul(function () { return TickerHesap.uygun(e, { maxMetin: 110 }); }, null);
+        if (u) { metin = u.metin; }
+        else if (hepsi && e.status !== "unconfirmed" && (e.textTr || e.originalText)) { metin = String(e.textTr || e.originalText); en = !!e.translationFallback; }
+        if (!metin) { return; }
+        out.push({ ts: ts, metin: metin, id: id, en: en, kat: e.category || "", onemli: !!u });
       });
     });
     out.sort(function (a, b) { return b.ts - a.ts; });
-    return out.filter(function (e, i, a) { return a.findIndex(function (x) { return x.id === e.id; }) === i; }).slice(0, 3);
+    out = out.filter(function (e, i, a) {
+      return a.findIndex(function (x) { return x.id === e.id || (x.metin === e.metin && Math.abs(x.ts - e.ts) < 5 * 60000); }) === i;
+    });
+    return { liste: out.slice(0, hepsi ? FEED_UZUN : FEED_KISA), onemli: out.filter(function (e) { return e.onemli; }).length, toplam: out.length };
   }
 
   // Race Feed'in DOĞRULADIĞI seans durumu (HaftaState.feedDurumu, yalnız okur). null = feed yok → saat tabanlı tahmin
@@ -136,7 +147,12 @@
       "<p class='bg-ust'>" + kod(ton, etiket) + "<span class='bg-meta'>" + turYazi(y, K) + "</span>" + (sprintMi(h) ? "<span class='bg-sprint'>SPRINT</span>" : "") + "</p>" +
       "<h2 class='bg-ad' lang='en'>" + esc(y.raceName) + "</h2>" + yerHtml(y) + ses + kritik + "</div><div class='bg-sag'>" + pistSvg(y) + "</div></div>" + zaman + "</section>";
     // race feed (yalnız mevcut depoda varsa)
-    var fd = feedNotlari(m.K, y, m.hBas), feed = fd.length ? "<section class='bg-blok bg-feed' aria-label='Race Feed'><h3 class='bg-h'>RACE FEED</h3><ul>" + fd.map(function (e) { return "<li><time>" + esc(saat(new Date(e.ts))) + "</time><span>" + esc(e.metin) + "</span></li>"; }).join("") + "</ul></section>" : "";
+    var fk = feedNotlari(m.K, y, m.hBas, false), fh = S.feedHepsi ? feedNotlari(m.K, y, m.hBas, true) : null, fd = (fh || fk).liste;
+    var fDug = "";
+    if (S.feedHepsi) { fDug = "<button type='button' class='bg-feed-dug' data-feed-hepsi aria-expanded='true'>DARALT</button>"; }
+    else if (fk.toplam > fd.length || feedNotlari(m.K, y, m.hBas, true).toplam > fd.length) { fDug = "<button type='button' class='bg-feed-dug' data-feed-hepsi aria-expanded='false'>TÜMÜNÜ GÖSTER</button>"; }
+    var feed = fd.length ? "<section class='bg-blok bg-feed' aria-label='Race Feed'><div class='bg-feed-ust'><h3 class='bg-h'>RACE FEED</h3>" + fDug + "</div><ul>" + fd.map(function (e) {
+      return "<li><time>" + esc(saat(new Date(e.ts))) + "</time><span>" + (e.en ? "<b class='bg-feed-en' title='Çeviri bulunamadı: özgün İngilizce not'>EN</b> " : "") + esc(e.metin) + "</span></li>"; }).join("") + "</ul></section>" : "";
     // CTA doğru alt moda
     var a = m.aktif || m.sonraki || m.race, hedef = a.anahtar === "Race" ? "gun" : (a.anahtar === "Sprint" && sprintMi(h) ? "sprint" : "hafta");
     if (m.tk && m.tk.oturum === "Race") { hedef = "gun"; } else if (m.tk && m.tk.oturum === "Sprint") { hedef = "sprint"; }
@@ -218,6 +234,11 @@
 
   // ---------- çizim ----------
   function bosHtml() {
+    var sd = window.SezonDurumu;
+    if (sd && sd.takvimYok) {                                   // sezon arası: yeni sezonun takvimi henüz yayınlanmadı (hata değil)
+      return "<section class='bg-hero bg-ton-b-bitti' data-mod='ara' data-ton='bitti'><div class='bg-sol'><p class='bg-ust'>" + kod("bitti", "SEZON ARASI") + "</p><h2 class='bg-ad'>" + esc(sd.sezon) + " takvimi henüz yayınlanmadı</h2>" +
+        "<p class='bg-tarih'>Takvim yayınlanınca sıradaki yarış ve geri sayım burada görünür.</p></div></section><div class='bg-cta'>" + cta("sampiyonlar", "GEÇMİŞ ŞAMPİYONLAR", false) + cta("sezon", "SEZONA GİT", true) + "</div>";
+    }
     var hata = ($("sonraki") && /Veri alınamadı/.test($("sonraki").textContent || ""));
     return "<section class='bg-hero bg-ton-b-bekle' data-mod='bos' data-ton='bekle'><div class='bg-sol'><p class='bg-ust'>" + kod("bekle", hata ? "VERİ YOK" : "YÜKLENİYOR") + "</p><h2 class='bg-ad'>" + (hata ? "Takvim bilgisi şu an alınamadı" : "Bugünün özeti hazırlanıyor") + "</h2></div></section><div class='bg-cta'>" + cta("sezon", "SEZONA GİT", true) + "</div>";
   }
@@ -263,11 +284,14 @@
   }
 
   document.addEventListener("click", function (e) {
+    var fb = e.target.closest && e.target.closest("#bg-kok [data-feed-hepsi]");
+    if (fb) { S.feedHepsi = !S.feedHepsi; S.html = null; ciz(); var yb = document.querySelector("#bg-kok [data-feed-hepsi]"); if (yb) { try { yb.focus(); } catch (x) { /* önemsiz */ } } return; }
     var b = e.target.closest && e.target.closest("#bg-kok [data-git]"); if (!b) { return; }
     var h = b.getAttribute("data-git"); if (typeof window.sekmeAc === "function") { window.sekmeAc(h); }
   });
   document.addEventListener("f1-sekme", function (e) { if (e.detail === "bugun") { S.tick = 0; saatGozle(); ciz(); } });
   document.addEventListener("f1-feed-guncel", function () { ciz(); });
+  document.addEventListener("f1-sezon-durumu", function () { ciz(); });   // yalnız içerik değiştiyse DOM yenilenir (odak korunur)
   document.addEventListener("f1-yaris-sonuc", function (e) { try { if (e.detail && e.detail.liste) { S.liste[Number(e.detail.tur)] = e.detail.liste; } } catch (x) { /* önemsiz */ } ciz(); });
   function hazir() { saatGozle(); ciz(); }
   if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", hazir); } else { hazir(); }

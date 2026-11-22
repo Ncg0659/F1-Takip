@@ -1,0 +1,338 @@
+{
+ "taban": {
+  "YAYILIM": 4,
+  "FORM_PILOT": 0.6,
+  "FORM_TAKIM": 0.4,
+  "DNF_ETKI": 0.5
+ },
+ "adayN": 36,
+ "foldlar": [
+  {
+   "secilenJ": 0.07529457346324533,
+   "varsayilanJ": 0.05596893492770952,
+   "secilenM": null,
+   "val": 2023,
+   "secilen": {
+    "YAYILIM": 6,
+    "FORM_PILOT": 0.8,
+    "FORM_TAKIM": 0.2,
+    "DNF_ETKI": 0.5
+   },
+   "egitimJ": 0.5309926647148014,
+   "varsayilanEgitimJ": 0.5980591638905025,
+   "validSecilen": {
+    "n": 4,
+    "pSampiyon": 0.9041250000000001,
+    "brier": 0.04829849000000002,
+    "logLoss": 0.114970106551778,
+    "birinci": 1,
+    "ilk3": 1,
+    "toplamMin": 0.9999999999999999,
+    "toplamMax": 1
+   },
+   "validVarsayilan": {
+    "n": 4,
+    "pSampiyon": 0.92255,
+    "brier": 0.034322670000000007,
+    "logLoss": 0.08896779622418333,
+    "birinci": 1,
+    "ilk3": 1,
+    "toplamMin": 1,
+    "toplamMax": 1
+   },
+   "validBazA": {
+    "n": 4,
+    "pSampiyon": 0.22871227736172703,
+    "brier": 0.6645433233522223,
+    "logLoss": 1.47567980364923,
+    "birinci": 1,
+    "ilk3": 1,
+    "toplamMin": 0.9999999999999999,
+    "toplamMax": 1
+   },
+   "ilk3": [
+    [
+     "{\"YAYILIM\":6,\"FORM_PILOT\":0.8,\"FORM_TAKIM\":0.2,\"DNF_ETKI\":0.5}",
+     0.531
+    ],
+    [
+     "{\"YAYILIM\":6,\"FORM_PILOT\":0.8,\"FORM_TAKIM\":0.2,\"DNF_ETKI\":0.25}",
+     0.4829
+    ],
+    [
+     "{\"YAYILIM\":6,\"FORM_PILOT\":0.8,\"FORM_TAKIM\":0.2,\"DNF_ETKI\":0}",
+     0.4372
+    ]
+   ]
+  },
+  {
+   "secilenJ": 0.29125794343112194,
+   "varsayilanJ": 0.18702542710270254,
+   "secilenM": null,
+   "val": 2024,
+   "secilen": {
+    "YAYILIM": 6,
+    "FORM_PILOT": 0.8,
+    "FORM_TAKIM": 0.2,
+    "DNF_ETKI": 0.5
+   },
+   "egitimJ": 0.3928452880747799,
+   "varsayilanEgitimJ": 0.4336690386355878,
+   "validSecilen": {
+    "n": 4,
+    "pSampiyon": 0.6146,
+    "brier": 0.21656447,
+    "logLoss": 0.49882598621981733,
+    "birinci": 1,
+    "ilk3": 1,
+    "toplamMin": 0.9999999999999999,
+    "toplamMax": 1.0001
+   },
+   "validVarsayilan": {
+    "n": 4,
+    "pSampiyon": 0.726575,
+    "brier": 0.13419274499999995,
+    "logLoss": 0.3313758723403414,
+    "birinci": 1,
+    "ilk3": 1,
+    "toplamMin": 0.9999,
+    "toplamMax": 1.0001
+   },
+   "validBazA": {
+    "n": 4,
+    "pSampiyon": 0.1829344029874968,
+    "brier": 0.7486570098585468,
+    "logLoss": 1.7010537790523643,
+    "birinci": 1,
+    "ilk3": 1,
+    "toplamMin": 0.9999999999999998,
+    "toplamMax": 1
+   },
+   "ilk3": [
+    [
+     "{\"YAYILIM\":6,\"FORM_PILOT\":0.8,\"FORM_TAKIM\":0.2,\"DNF_ETKI\":0.5}",
+     0.3928
+    ],
+    [
+     "{\"YAYILIM\":6,\"FORM_PILOT\":0.8,\"FORM_TAKIM\":0.2,\"DNF_ETKI\":0.25}",
+     0.3586
+    ],
+    [
+     "{\"YAYILIM\":6,\"FORM_PILOT\":0.8,\"FORM_TAKIM\":0.2,\"DNF_ETKI\":0}",
+     0.3262
+    ]
+   ]
+  },
+  {
+   "secilenJ": 0.9796301566313625,
+   "varsayilanJ": 1.005885445839672,
+   "secilenM": null,
+   "val": 2025,
+   "secilen": {
+    "YAYILIM": 6,
+    "FORM_PILOT": 0.8,
+    "FORM_TAKIM": 0.2,
+    "DNF_ETKI": 0.5
+   },
+   "egitimJ": 0.36680808299285644,
+   "varsayilanEgitimJ": 0.370457366534389,
+   "validSecilen": {
+    "n": 4,
+    "pSampiyon": 0.26885,
+    "brier": 0.9116346524999999,
+    "logLoss": 1.4137551871672398,
+    "birinci": 0,
+    "ilk3": 1,
+    "toplamMin": 0.9999999999999999,
+    "toplamMax": 1.0001
+   },
+   "validVarsayilan": {
+    "n": 4,
+    "pSampiyon": 0.270625,
+    "brier": 0.9669678874999998,
+    "logLoss": 1.380824154227808,
+    "birinci": 0,
+    "ilk3": 1,
+    "toplamMin": 0.9999,
+    "toplamMax": 1
+   },
+   "validBazA": {
+    "n": 4,
+    "pSampiyon": 0.16739796369336982,
+    "brier": 0.7801283917014472,
+    "logLoss": 1.7880011987898368,
+    "birinci": 0,
+    "ilk3": 1,
+    "toplamMin": 0.9999999999999998,
+    "toplamMax": 1
+   },
+   "ilk3": [
+    [
+     "{\"YAYILIM\":6,\"FORM_PILOT\":0.8,\"FORM_TAKIM\":0.2,\"DNF_ETKI\":0.5}",
+     0.3668
+    ],
+    [
+     "{\"YAYILIM\":6,\"FORM_PILOT\":0.8,\"FORM_TAKIM\":0.2,\"DNF_ETKI\":0.25}",
+     0.3418
+    ],
+    [
+     "{\"YAYILIM\":6,\"FORM_PILOT\":0.8,\"FORM_TAKIM\":0.2,\"DNF_ETKI\":0}",
+     0.3181
+    ]
+   ]
+  }
+ ],
+ "tumSezonIlk5": [
+  [
+   "{\"YAYILIM\":4,\"FORM_PILOT\":0.8,\"FORM_TAKIM\":0.2,\"DNF_ETKI\":0}",
+   0.441
+  ],
+  [
+   "{\"YAYILIM\":3,\"FORM_PILOT\":0.8,\"FORM_TAKIM\":0.2,\"DNF_ETKI\":0}",
+   0.4415
+  ],
+  [
+   "{\"YAYILIM\":4,\"FORM_PILOT\":0.7,\"FORM_TAKIM\":0.3,\"DNF_ETKI\":0}",
+   0.4452
+  ],
+  [
+   "{\"YAYILIM\":3,\"FORM_PILOT\":0.7,\"FORM_TAKIM\":0.3,\"DNF_ETKI\":0}",
+   0.4457
+  ],
+  [
+   "{\"YAYILIM\":5,\"FORM_PILOT\":0.8,\"FORM_TAKIM\":0.2,\"DNF_ETKI\":0}",
+   0.4463
+  ]
+ ],
+ "varsayilanTumJ": 0.5047204763600033,
+ "tekParam": {
+  "YAYILIM": [
+   {
+    "v": 3,
+    "J": 0.5159,
+    "sezon": {
+     "2021": 0.8657,
+     "2022": 0.3825,
+     "2023": 0.0395,
+     "2024": 0.1279,
+     "2025": 1.0777
+    }
+   },
+   {
+    "v": 4,
+    "J": 0.5047,
+    "sezon": {
+     "2021": 0.7883,
+     "2022": 0.407,
+     "2023": 0.056,
+     "2024": 0.187,
+     "2025": 1.0059
+    }
+   },
+   {
+    "v": 5,
+    "J": 0.4991,
+    "sezon": {
+     "2021": 0.7405,
+     "2022": 0.3763,
+     "2023": 0.0718,
+     "2024": 0.2601,
+     "2025": 0.9721
+    }
+   },
+   {
+    "v": 6,
+    "J": 0.4974,
+    "sezon": {
+     "2021": 0.7127,
+     "2022": 0.37,
+     "2023": 0.0879,
+     "2024": 0.3322,
+     "2025": 0.9145
+    }
+   }
+  ],
+  "FORM_PILOT": [
+   {
+    "v": 0.6,
+    "J": 0.5047,
+    "sezon": {
+     "2021": 0.7883,
+     "2022": 0.407,
+     "2023": 0.056,
+     "2024": 0.187,
+     "2025": 1.0059
+    }
+   },
+   {
+    "v": 0.7,
+    "J": 0.4991,
+    "sezon": {
+     "2021": 0.7664,
+     "2022": 0.4086,
+     "2023": 0.0493,
+     "2024": 0.1688,
+     "2025": 1.022
+    }
+   },
+   {
+    "v": 0.8,
+    "J": 0.4934,
+    "sezon": {
+     "2021": 0.7455,
+     "2022": 0.4018,
+     "2023": 0.0435,
+     "2024": 0.1528,
+     "2025": 1.0422
+    }
+   }
+  ],
+  "DNF_ETKI": [
+   {
+    "v": 0,
+    "J": 0.4485,
+    "sezon": {
+     "2021": 0.5673,
+     "2022": 0.3665,
+     "2023": 0.0525,
+     "2024": 0.1925,
+     "2025": 0.991
+    }
+   },
+   {
+    "v": 0.25,
+    "J": 0.4757,
+    "sezon": {
+     "2021": 0.6734,
+     "2022": 0.3869,
+     "2023": 0.0542,
+     "2024": 0.1897,
+     "2025": 0.9983
+    }
+   },
+   {
+    "v": 0.5,
+    "J": 0.5047,
+    "sezon": {
+     "2021": 0.7883,
+     "2022": 0.407,
+     "2023": 0.056,
+     "2024": 0.187,
+     "2025": 1.0059
+    }
+   }
+  ]
+ },
+ "karar": {
+  "kabul": false,
+  "brierKazanc": -0.03612057518564901,
+  "logLossKazanc": -0.1256870427518199,
+  "iyiSezonlar": [
+   2025
+  ],
+  "kotuSezonlar": [
+   2023,
+   2024
+  ]
+ }
+}

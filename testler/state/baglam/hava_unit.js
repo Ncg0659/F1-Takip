@@ -1,0 +1,36 @@
+// OPENF1 A7.5 — saf katman birim testleri. Fixture SENTETİK (gerçek Singapur weather verisine erişilemedi). Alanlar OpenF1 belgesine göre.
+const H = require("/home/claude/f1-takip/seans-hava-veri.js");
+let ok = 0, bad = 0;
+function t(ad, c, ek) { if (c) { ok++; console.log("PASS " + ad); } else { bad++; console.log("FAIL " + ad + " | " + (ek || "")); } }
+const w = (min, o) => Object.assign({ session_key: 1, meeting_key: 9, date: "2026-10-11T12:" + String(min).padStart(2, "0") + ":00+00:00", air_temperature: 29.8, track_temperature: 41.2, humidity: 74, pressure: 1010.5, rainfall: 0, wind_direction: 136, wind_speed: 3.2 }, o || {});
+const rows = [w(0), w(1, { air_temperature: 30.1, track_temperature: 43.0, wind_speed: 5.4, rainfall: 1 }), w(2, { air_temperature: 28.7, track_temperature: 34.5, humidity: 82, wind_speed: 2.6, wind_direction: 200, rainfall: 1 }), w(3, { air_temperature: 28.7, track_temperature: 34.5, humidity: 82, wind_speed: 2.6, rainfall: 0 })];
+const N = H.normalize(rows, { sessionKey: 1, meetingKey: 9 }), O = H.ozet(N.olcumler);
+t("W1 weather olan seans: normalize alanları", N.olcumler.length === 4 && N.olcumler[0].airTemperature === 29.8 && N.olcumler[0].trackTemperature === 41.2 && N.olcumler[0].humidity === 74 && N.olcumler[0].pressure === 1010.5 && N.olcumler[0].windDirection === 136 && N.olcumler[0].windSpeed === 3.2 && N.olcumler[0].sessionKey === 1 && N.olcumler[0].meetingKey === 9);
+t("W2 yanlış session_key izolasyonu", H.normalize([w(0, { session_key: 2 }), w(1)], { sessionKey: 1 }).olcumler.length === 1);
+t("W3 başka round (meeting_key) karışmaz", H.normalize([w(0, { meeting_key: 10 })], { sessionKey: 1, meetingKey: 9 }).olcumler.length === 0);
+const nl = H.normalize([w(0, { air_temperature: null }), w(1, { track_temperature: undefined }), w(2, { humidity: null })], { sessionKey: 1 }).olcumler;
+t("W4 air null", nl[0].airTemperature === null && nl[0].trackTemperature === 41.2);
+t("W5 track null", nl[1].trackTemperature === null && nl[1].airTemperature === 29.8);
+t("W6 humidity null", nl[2].humidity === null && nl[2].airTemperature === 29.8);
+t("W7 rainfall boolean true/false korunur", H.normalize([w(0, { rainfall: true }), w(1, { rainfall: false })], {}).olcumler.map((x) => x.rainfall).join() === "true,false");
+t("W8 rainfall 0/1 → boolean ('0','1','true' dahil)", H.normalize([w(0, { rainfall: 1 }), w(1, { rainfall: 0 }), w(2, { rainfall: "1" }), w(3, { rainfall: "0" }), w(4, { rainfall: "true" })], {}).olcumler.map((x) => x.rainfall).join() === "true,false,true,false,true");
+t("W9 beklenmeyen rainfall → null (uydurma yok)", H.normalize([w(0, { rainfall: 5 }), w(1, { rainfall: "belki" }), w(2, { rainfall: null }), w(3, { rainfall: undefined }), w(4, { rainfall: 0.5 })], {}).olcumler.every((x) => x.rainfall === null));
+t("W10 wind speed m/s korunur, negatif → null; yön 0–360 dışı → null", (() => { const a = H.normalize([w(0, { wind_speed: -1, wind_direction: 400 }), w(1)], {}).olcumler; return a[0].windSpeed === null && a[0].windDirection === null && a[1].windSpeed === 3.2 && a[1].windDirection === 136; })());
+t("W11 wind direction derece olarak kalır", N.olcumler[2].windDirection === 200 && H.yonYaz(200) === "200°");
+t("W12 başlangıç ölçümü = ilk (kronolojik)", O.baslangic.airTemperature === 29.8 && O.baslangic.date.startsWith("2026-10-11T12:00"));
+t("W13 bitiş ölçümü = son", O.bitis.humidity === 82 && O.bitis.date.startsWith("2026-10-11T12:03") && O.bitis.rainfall === false);
+t("W14 min/max hava ve pist", O.hava.min === 28.7 && O.hava.max === 30.1 && O.pist.min === 34.5 && O.pist.max === 43 && O.maxRuzgar === 5.4);
+t("W15 rainfall görüldü mü + yağışlı kayıt sayısı", O.yagis.goruldu === true && O.yagis.yagisliKayit === 2 && O.yagis.kayit === 4);
+t("W16 hiç yağış yok → goruldu=false", H.ozet(H.normalize([w(0), w(1)], {}).olcumler).yagis.goruldu === false);
+t("W17 rainfall hiç yoksa olcumVar=false (Var/Yok uydurulmaz)", (() => { const y = H.ozet(H.normalize([w(0, { rainfall: null })], {}).olcumler).yagis; return y.olcumVar === false && y.goruldu === false; })());
+t("W18 duplicate (aynı date) tek", H.normalize([w(0), w(0)], { sessionKey: 1 }).olcumler.length === 1 && H.normalize([w(0), w(0)], { sessionKey: 1 }).tekrar === 1);
+t("W19 tüm alanlar null → veriVar=false (boş kart yok)", H.ozet(H.normalize([w(0, { air_temperature: null, track_temperature: null, humidity: null, pressure: null, rainfall: null, wind_direction: null, wind_speed: null })], {}).olcumler).veriVar === false);
+t("W20 bozuk girdi güvenli", H.normalize(null).olcumler.length === 0 && H.normalize([null, "x", { date: "bad" }]).atilan === 3 && H.ozet([]).veriVar === false && H.ozet(null).olcumSayisi === 0);
+t("W21 biçim: tek rüzgâr birimi m/s; dönüşüm yok", H.ruzgar(3.2) === "3.2 m/s" && H.derece(29.8) === "29.8°C" && H.yuzde(74) === "%74" && H.ruzgar(null) === null && H.yagisYaz(true) === "Var" && H.yagisYaz(false) === "Yok" && H.yagisYaz(null) === null);
+t("W22 mesajlar ayrı", H.durumMesaji("bos") === "Seans hava verisi henüz yayımlanmadı." && H.durumMesaji("hata") === "OpenF1 hava verisine şu anda ulaşılamıyor.");
+t("W23 tüm seans türleri destekli", ["FirstPractice", "SecondPractice", "ThirdPractice", "SprintQualifying", "Sprint", "Qualifying", "Race"].every((k) => H.SEANSLAR[k]));
+const big = []; for (let i = 0; i < 180; i++) big.push(w(i % 60, { date: new Date(Date.UTC(2026, 9, 11, 12, i)).toISOString(), air_temperature: 28 + (i % 9) * 0.1, rainfall: i % 40 === 0 ? 1 : 0 }));
+const bo = H.ozet(H.normalize(big, { sessionKey: 1 }).olcumler), ozB = JSON.stringify({ durum: "ok", ozet: bo, oturum: { anahtar: 1, ad: "Race" }, alinma: 1, bitis: 1 }).length, ham = JSON.stringify(big).length;
+t("W24 cache boyutu: 180 dakikalık kayıt → yalnız özet, < 8 KB ve ham JSON'dan çok küçük", ozB < 8000 && ozB < ham / 10, ham + " -> " + ozB);
+console.log("boyut: 180 dk ham " + ham + " B → önbelleğe yazılan özet " + ozB + " B");
+console.log(ok + "/" + (ok + bad)); process.exit(bad ? 1 : 0);
