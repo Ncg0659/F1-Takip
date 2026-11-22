@@ -137,6 +137,7 @@ var PRECACHE = [
   "./telemetry-data.js?v=3.0.7",
   "./prediction-data.js?v=3.0.7",
   "./prediction-engine.js?v=3.0.7",
+  "./prediction-snapshot.js?v=3.0.7",
   "./prediction-ui.js?v=3.0.7",
   "./prediction-ui.css?v=3.0.7",
   "./favori-v1.css?v=3.0.7",
