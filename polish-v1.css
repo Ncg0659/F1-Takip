@@ -244,3 +244,41 @@ tr.sezon-bos td { white-space: normal; color: var(--soluk); font-size: .88rem; l
 .bg-kaynak { margin: 0 0 12px; }
 .kaynak-satir td { white-space: normal; }
 .h-eski { border-left-color: #b45309; }
+
+/* 13) YARIŞIN HİKÂYESİ v1 (3.1.0) — tek dikey akış. Kart sistemi ANALİZ → GRAFİK ile aynı; renk yalnız küçük semantik vurgu:
+   SC/VSC amber · KIRMIZI BAYRAK kırmızı · şampiyonluk premium (nötr güçlü) · diğerleri nötr. Neon/glow yok. 1100 px'te okunur genişlik. */
+#sekme-yaris > #yh-hikaye { order: 5; }
+.yh { margin: 14px 0 6px; max-width: 720px; min-width: 0; }
+.yh[hidden] { display: none; }
+.yh-baslik { margin: 0; font-family: var(--f-sayi); font-size: .86rem; font-weight: 800; letter-spacing: .14em; color: var(--yazi); }
+.yh-alt { margin: 4px 0 10px; font-size: .8rem; line-height: 1.4; color: var(--pl-etiket); }
+.yh-not { margin: 0 0 10px; font-size: .84rem; color: var(--pl-etiket); }
+.yh-akis { list-style: none; margin: 0; padding: 0 0 0 14px; position: relative; display: flex; flex-direction: column; gap: 8px; }
+.yh-akis::before { content: ""; position: absolute; left: 4px; top: 6px; bottom: 6px; width: 2px; background: var(--cizgi); }
+.yh-o { position: relative; margin: 0; padding: 10px 12px; border: 1px solid var(--cizgi); border-radius: 4px; background: var(--kart); min-width: 0; }
+.yh-o::before { content: ""; position: absolute; left: -14px; top: 15px; width: 8px; height: 8px; border-radius: 50%; background: var(--kart); border: 2px solid var(--pl-etiket); box-sizing: border-box; }
+.yh-ust { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 0 0 3px; }
+.yh-tur { font-family: var(--f-sayi); font-size: .7rem; font-weight: 700; letter-spacing: .08em; color: var(--yazi); font-variant-numeric: tabular-nums; }
+.yh-tip { font-family: var(--f-sayi); font-size: .62rem; font-weight: 700; letter-spacing: .12em; color: var(--pl-etiket); }
+.yh-b { margin: 0; font-size: .98rem; font-weight: 700; line-height: 1.3; color: var(--yazi); overflow-wrap: anywhere; }
+.yh-a { margin: 3px 0 0; font-size: .86rem; line-height: 1.4; color: var(--pl-etiket); overflow-wrap: anywhere; }
+.yh-s { margin: 5px 0 0; padding: 0 0 0 16px; font-size: .84rem; line-height: 1.45; color: var(--yazi); }
+.yh-s li { overflow-wrap: anywhere; }
+.yh-terim { font-size: .76rem; margin-left: 2px; }
+.yh-o[data-tip="SC"], .yh-o[data-tip="VSC"] { border-left: 3px solid #b45309; }
+.yh-o[data-tip="SC"] .yh-tip, .yh-o[data-tip="VSC"] .yh-tip { color: #b45309; }
+.yh-o[data-tip="SC"]::before, .yh-o[data-tip="VSC"]::before { border-color: #b45309; }
+:root[data-tema="koyu"] .yh-o[data-tip="SC"], :root[data-tema="koyu"] .yh-o[data-tip="VSC"] { border-left-color: #f59e0b; }
+:root[data-tema="koyu"] .yh-o[data-tip="SC"] .yh-tip, :root[data-tema="koyu"] .yh-o[data-tip="VSC"] .yh-tip { color: #f59e0b; }
+:root[data-tema="koyu"] .yh-o[data-tip="SC"]::before, :root[data-tema="koyu"] .yh-o[data-tip="VSC"]::before { border-color: #f59e0b; }
+.yh-o[data-tip="RED"] { border-left: 3px solid var(--pl-kazan, #d4161c); }
+.yh-o[data-tip="RED"] .yh-tip { color: var(--pl-kazan, #d4161c); }
+.yh-o[data-tip="RED"]::before { border-color: var(--pl-kazan, #d4161c); }
+.yh-o[data-tip="START"]::before, .yh-o[data-tip="FINISH"]::before { background: var(--yazi); border-color: var(--yazi); }
+.yh-o[data-tip="FINISH"] { border-color: var(--yazi); }
+.yh-o[data-tip="FINISH"] .yh-b { font-size: 1.06rem; }
+.yh-o[data-tip="SAMPIYONLUK"] { border-left: 3px solid var(--yazi); }
+.yh-o[data-tip="SAMPIYONLUK"][data-ton="sampiyon"] .yh-b { font-size: 1.1rem; letter-spacing: .01em; }
+.yh-o[data-yh-fav] { box-shadow: inset 0 0 0 1px var(--yazi); }
+.yh-o[data-yh-fav] .yh-tur::after { content: " ★"; color: var(--yazi); }
+@media (max-width: 560px) { .yh-o { padding: 9px 10px; } .yh-b { font-size: .94rem; } }

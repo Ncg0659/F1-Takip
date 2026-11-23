@@ -1,6 +1,13 @@
 F1 TAKİP
-Version: 3.0.10
-Release: Veri kaynağı zaman aşımı düzeltmesi
+Version: 3.1.0
+Release: Yarışın Hikâyesi v1
+
+3.1.0
+- YARIŞIN HİKÂYESİ (ANALİZ → Yarış Analizi): tamamlanmış yarış için tek dikey olay akışı — START, SC / VSC / kırmızı bayrak,
+  önemli pit stoplar, liderlik / podyum / ilk 10 değişimleri, ≥3 sıralık değişim, DNF, BİTİŞ ve şampiyonluğa etkisi.
+- Kaynaklar: Jolpica sonuç + OpenF1 historical (race_control, pit, stints, position, kazananın tur zamanları); şampiyonluk sampiyonluk-durum.js.
+  Bölüm görünür olunca bir kez yüklenir; bitmiş yarış önbellekte tutulur. Veri yoksa "ayrıntılı olay verisi sınırlı" bilgisi.
+- Strateji / sebep yorumu üretilmez; eksik veri = olay yok.
 
 3.0.10
 - Jolpica (takvim/sonuç/puan) cevap vermezse ~10 sn sonra istek sonlanır; uygulama sonsuz "YÜKLENİYOR"da kalmaz (kaynak-durum.js).
@@ -36,7 +43,7 @@ Release: Veri kaynağı zaman aşımı düzeltmesi
 3.0.6
 - Visual Polish + Motion Fixes (giriş animasyonu, pist çizimi/nokta, ticker, kart sistemi, Ghost Lap akıcılığı, tahmin renkleri, mobil pist profili).
 
-Service Worker cache: F1-TAKIP-v3.0.10-PWA1 (yalnız yerel statik dosyalar; API önbelleğe alınmaz)
+Service Worker cache: F1-TAKIP-v3.1.0-PWA1 (yalnız yerel statik dosyalar; API önbelleğe alınmaz)
 Önceki sürüme dönüş: GitHub'da main dalının geçmişi 
 
 Repository:
