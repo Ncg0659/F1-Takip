@@ -34,7 +34,8 @@ with sync_playwright() as p:
     yaz("A7 SONUÇ ilk görünüm: yalnız P1–P3 görünür", page.evaluate("[...document.querySelectorAll('#sonuc-govde tr')].filter(r=>r.checkVisibility()).length")==3)
     chips=page.locator("#yv-cipler .v3-cip").all_inner_texts()
     yaz("A8 özet çipleri: P1/P2/P3 (A7 yüklenmeden başka çip yok)", [c.replace("\n"," ") for c in chips][:3]==["P1 FANT","P2 FRUS","P3 FHAM"] or len(chips)>=3, chips)
-    yaz("A9 yükleme öncesi 5 A7 uç noktasında session_key=5 çağrısı YOK (lazy)", all(len(cg(d,e))==0 for e in EP.values()), {k:cg(d,e) for k,e in EP.items()})
+    # 3.1.0: Yarışın Hikâyesi görünür olunca race_control + pit'i (aynı modüller, aynı önbellek) bir kez yükler → sekmeler açıldığında tekrar istek olmaz.
+    yaz("A9 yükleme öncesi tur/geçiş/hava uç noktalarında çağrı YOK (lazy); race_control/pit yalnız Yarışın Hikâyesi için en çok 1 kez", all(len(cg(d,EP[k]))==0 for k in ("tur","gecis","hava")) and all(len(cg(d,EP[k]))<=1 for k in ("olay","pit")), {k:cg(d,e) for k,e in EP.items()})
     btn="#ui-d-sonuc-govde-btn"
     yaz("A10 [Tüm sonuçları göster (N)] düğmesi", "Tüm sonuçları göster" in page.inner_text(btn), page.inner_text(btn))
     page.click(btn); page.wait_for_timeout(100)
