@@ -260,7 +260,7 @@
       onbellek: "takvim-" + sezon, omurMs: TAKVIM_OMUR_MS,
       kaydetKosul: function (v) { return v && v.RaceTable && v.RaceTable.Races && v.RaceTable.Races.length > 0; }
     });
-    return { yarislar: cevap.veri.RaceTable.Races || [], eski: cevap.eski };
+    return { yarislar: cevap.veri.RaceTable.Races || [], eski: cevap.eski, t: cevap.t || null };
   }
 
   window.HaftaVeri = {

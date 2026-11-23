@@ -1,6 +1,12 @@
 F1 TAKİP
-Version: 3.0.9
-Release: Ürün denetimi düzeltmeleri v1 — sadeleştirme, öncelik, okunabilirlik
+Version: 3.0.10
+Release: Veri kaynağı zaman aşımı düzeltmesi
+
+3.0.10
+- Jolpica (takvim/sonuç/puan) cevap vermezse ~10 sn sonra istek sonlanır; uygulama sonsuz "YÜKLENİYOR"da kalmaz (kaynak-durum.js).
+- BUGÜN, HAFTA SONU, SEZON, puan tabloları, geçmiş şampiyonlar, geçmiş yarış ve Sezon Analiz Merkezi: "VERİ KAYNAĞINA ULAŞILAMIYOR" kartı + YENİDEN DENE (sayfa yenilenmez, art arda tıklama tek istek). Teknik hata metni gösterilmez.
+- Takvim için son kaydedilen veri gösterilirse "GÜNCEL OLMAYABİLİR · son güncelleme …" etiketi.
+- OpenF1 / hava / Race Feed istekleri etkilenmez. Yeni veri kaynağı yok.
 
 3.0.9
 - Şampiyonluk manşeti tek mantıktan (sampiyonluk-durum.js): BUGÜN, SEZON, hesaplayıcı, ANALİZ ve tahmin aynı sonucu söyler.
@@ -30,7 +36,7 @@ Release: Ürün denetimi düzeltmeleri v1 — sadeleştirme, öncelik, okunabili
 3.0.6
 - Visual Polish + Motion Fixes (giriş animasyonu, pist çizimi/nokta, ticker, kart sistemi, Ghost Lap akıcılığı, tahmin renkleri, mobil pist profili).
 
-Service Worker cache: F1-TAKIP-v3.0.9-PWA1 (yalnız yerel statik dosyalar; API önbelleğe alınmaz)
+Service Worker cache: F1-TAKIP-v3.0.10-PWA1 (yalnız yerel statik dosyalar; API önbelleğe alınmaz)
 Önceki sürüme dönüş: GitHub'da main dalının geçmişi 
 
 Repository:
