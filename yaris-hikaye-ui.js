@@ -109,7 +109,7 @@
     catch (e) { r = { olaylar: [], sinirli: true }; }
     var not = S.durum === "yukleniyor" ? "<p class='yh-not' aria-live='polite'>Olay verisi yükleniyor…</p>" :
               (S.durum === "hazir" || S.durum === "sinirli") && r.sinirli ? "<p class='yh-not' data-yh-sinirli>Bu yarış için ayrıntılı olay verisi sınırlı.</p>" : "";
-    var h = "<h2 class='yh-baslik' id='yh-b'>YARIŞIN HİKÂYESİ</h2><p class='yh-alt'>Doğrulanmış olaylar, yarış sırasına göre. Pozisyonlar tur sonu kayıtlarıdır.</p>" + not +
+    var h = "<h2 class='yh-baslik' id='yh-b'>YARIŞIN HİKÂYESİ</h2><p class='yh-alt'>Doğrulanmış olaylar, yarış sırasına göre. Tur numarası yarışın (liderin) turudur; pozisyonlar o turun sonundaki kayıttır.</p>" + not +
       "<ol class='yh-akis' data-durum='" + esc(S.durum) + "' data-n='" + r.olaylar.length + "'>" + r.olaylar.map(kartHtml).join("") + "</ol>";
     if (k.innerHTML !== h) { k.innerHTML = h; }
   }

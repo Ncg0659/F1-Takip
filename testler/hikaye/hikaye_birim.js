@@ -88,4 +88,16 @@ const c3 = H.kur({ sonuc: son, samp: { once: SH(100, 70, 1), sonra: SH(110, 95, 
 k("C3 fark kapandı (30 → 15)", c3 && c3.baslik === "Şampiyonada fark kapandı" && /30 → 15 puan/.test(c3.satirlar[0]), c3);
 k("C4 puan durumu yoksa şampiyonluk kartı yok (uydurma yok)", !H.kur({ sonuc: son }).olaylar.some(o => o.tip === "SAMPIYONLUK"));
 k("C5 Türkçe ek: P1'den · P3'ten · P6'dan · P10'dan · P20'den", ["P1'den", "P3'ten", "P6'dan", "P10'dan", "P20'den"].join() === [1, 3, 6, 10, 20].map(H._pdan).join());
+// ---- 4) 2026 Las Vegas smoke testinde bulunan iki gerçek veri durumu (yapısı OpenF1 kayıtlarıyla birebir; sentetik zaman) ----
+const rcLV = RC.normalize([
+  { date: "2026-01-01T12:30:00Z", lap_number: 19, category: "SafetyCar", message: "SAFETY CAR DEPLOYED" },
+  { date: "2026-01-01T12:40:00Z", lap_number: 24, category: "SafetyCar", message: "LAPPED CARS MAY NOW OVERTAKE THE SAFETY CAR: 30" },
+  { date: "2026-01-01T12:44:00Z", lap_number: 25, category: "SafetyCar", message: "SAFETY CAR IN THIS LAP" },
+  { date: "2026-01-01T12:44:30Z", lap_number: 25, category: "SafetyCar", message: "SAFETY CAR LIGHTS OFF" }], {}).olaylar;
+const scLV = H.kur({ sonuc: son, rc: rcLV }).olaylar.filter(o => o.tip === "SC");
+k("L1 SC bilgi mesajları (LAPPED CARS…, LIGHTS OFF) yeni SC kartı açmaz: tek kart 19–25", scLV.length === 1 && scLV[0].tur === 19 && scLV[0].turBit === 25, scLV.map(o => o.tur + "-" + o.turBit));
+// P1/P2 kısa süreli ters kayıt (≤ 60 sn içinde geri dönüş) tur sınırına denk gelse bile liderlik kartı üretmez; kalıcı geçiş üretir
+const posF = pos.slice(0, 6).concat([P(95, 2, 1), P(95, 1, 2), P(120, 1, 1), P(120, 2, 2)]);
+k("L2 geçici P1 titremesi (25 sn) liderlik değişimi sayılmaz", !H.kur({ sonuc: son, pozisyon: posF, turBas: tb }).olaylar.some(o => o.tip === "LIDER"));
+k("L3 kalıcı geçiş yine sayılır (titreme filtresi gerçek olayı silmez)", H.kur({ sonuc: son, pozisyon: posF.concat([P(150, 2, 1), P(150, 1, 2)]), turBas: tb }).olaylar.some(o => o.tip === "LIDER" && o.tur === 2));
 console.log(JSON.stringify(S));
