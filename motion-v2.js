@@ -184,12 +184,17 @@
   // ---------- 6) GİRİŞ: START IŞIKLARI + KİNETİK YAZI ----------
   // Oturumda bir kez, toplam ~5.8 sn: 5 kırmızı ışık SIRAYLA yanar (hepsi yanmadan ekran açılmaz) → ışıklar söner → renkli çizgiler + "F1 TAKİP" + kısa kelimeler → ekran açılır.
   // Tamamı CSS animasyonu (gecikmeli, tek seferlik); rAF/loop yok. Dokununca atlanır. prefers-reduced-motion → hiç gösterilmez.
-  var INTRO_MS = 5800;
+  // İlk anlamlı açılış: tam giriş (~5.8 sn). Sonraki açılışlar (yeni oturum / PWA yeniden başlatma): kısa sürüm (~1.8 sn, aynı ışıklar + marka).
+  // Aynı oturumda (sekme geri gelince, sayfa içi gezinme) hiç oynamaz. localStorage yoksa (gizli mod) yalnız kısa sürüm.
+  var INTRO_MS = 5800, KISA_MS = 1800, TAM_ANAHTAR = "f1-intro-tam-v1";
   function isiklar() {
     if (reduced() || !D.body) { return; }
     try { if (sessionStorage.getItem("f1-mo2-isik")) { return; } sessionStorage.setItem("f1-mo2-isik", "1"); } catch (e) { return; }
-    var o = D.createElement("div"), kapandi = false;
-    o.className = "mo2-isik"; o.setAttribute("aria-hidden", "true");
+    var kisa = true;
+    try { kisa = !!localStorage.getItem(TAM_ANAHTAR); if (!kisa) { localStorage.setItem(TAM_ANAHTAR, String(Date.now())); } } catch (e) { kisa = true; }
+    S.intro = kisa ? "kisa" : "tam";
+    var o = D.createElement("div"), kapandi = false, sure = kisa ? KISA_MS : INTRO_MS;
+    o.className = "mo2-isik" + (kisa ? " mo2-kisa" : ""); o.setAttribute("aria-hidden", "true"); o.setAttribute("data-intro", S.intro);
     o.innerHTML = "<div class='mo2-cizgiler'><i></i><i></i><i></i><i></i></div>" +
       "<div class='mo2-isik-sira'><i></i><i></i><i></i><i></i><i></i></div>" +
       "<div class='mo2-yazi'><div class='mo2-marka'><b>F1</b><span>TAKİP</span></div>" +
@@ -203,7 +208,7 @@
     o.addEventListener("click", kapat);
     o.addEventListener("animationend", function (e) { if (e.target === o && /^mo2-cik/.test(e.animationName)) { kaldir(); } });
     D.body.appendChild(o);
-    setTimeout(kaldir, INTRO_MS + 900);                               // güvenlik: animasyon olayı gelmezse ekran kapalı kalmaz
+    setTimeout(kaldir, sure + 900);                               // güvenlik: animasyon olayı gelmezse ekran kapalı kalmaz
   }
 
   // ---------- olaylar ----------

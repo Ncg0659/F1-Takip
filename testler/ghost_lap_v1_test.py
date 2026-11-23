@@ -44,7 +44,7 @@ def tasma(page): return page.evaluate("document.documentElement.scrollWidth-inne
 def txt(page): return page.inner_text("#gl-ghost")
 with sync_playwright() as p:
     page,log,errs,b=ac(p)
-    k("U1 panel Yarış analizi içinde, 'Tur süreleri' bölümünün altında, kapalı oluşur", page.evaluate("(()=>{const g=document.getElementById('gl-ghost'),t=document.getElementById('yv-tur-ek');return !!g&&!g.open&&g.parentNode===t.parentNode&&!!(t.compareDocumentPosition(g)&4)})()"))
+    k("U1 panel 'ÖNE ÇIKAN ANALİZ' olarak YARIŞ ANALİZİ'nin ÜSTÜNDE, kapalı oluşur (audit v1)", page.evaluate("(()=>{const g=document.getElementById('gl-ghost'),t=document.getElementById('yv-detay');return !!g&&!g.open&&g.nextElementSibling===t&&/ÖNE ÇIKAN ANALİZ/.test(g.querySelector('summary').textContent)&&/GHOST LAP/.test(g.querySelector('summary').textContent)})()"))
     k("U2 yeni ana sekme/menü eklenmedi (panel tek <details>)", page.locator("#gl-ghost").count()==1 and page.locator("nav,[data-nav]").count()==0)
     k("L1 panel kapalıyken OpenF1 isteği 0", len(log)==0, log)
     page.click("#gl-ghost > summary"); page.wait_for_timeout(150)
@@ -192,7 +192,7 @@ TEL=re.compile(r"^(car_data|location)\?|^laps\?")
 with sync_playwright() as p:
     for w in (1100,390):
         d,page,errs,b=hazir(p,w); tel=lambda: [u for u in d.of_cagri[d.ofbase:] if TEL.match(u.split("/v1/")[-1])]
-        k(f"I{w}-1 gerçek uygulamada GHOST LAP paneli Yarış analizi içinde, kapalı", page.evaluate("(()=>{const g=document.getElementById('gl-ghost');return !!g&&!g.open&&!!g.closest('#sekme-yaris')&&g.closest('#yv-detay')!==null})()"))
+        k(f"I{w}-1 gerçek uygulamada GHOST LAP paneli yarış sekmesinde, YARIŞ ANALİZİ'nin hemen üstünde (öne çıkan analiz), kapalı", page.evaluate("(()=>{const g=document.getElementById('gl-ghost');return !!g&&!g.open&&!!g.closest('#sekme-yaris')&&g.nextElementSibling===document.getElementById('yv-detay')})()"))
         k(f"I{w}-2 gerçek uygulamada panel kapalıyken car_data/location/laps isteği 0 (tur-analizi laps hariç değil: bu panel çağırmaz)", not [u for u in tel() if "car_data" in u or "location" in u], tel()[:3])
         page.evaluate("document.dispatchEvent(new CustomEvent('f1-yaris-sonuc',{detail:{tur:'17',liste:[['1','VER','Verstappen','max_verstappen'],['44','HAM','Hamilton','hamilton'],['16','LEC','Leclerc','leclerc']].map(x=>({number:x[0],Driver:{code:x[1],familyName:x[2],driverId:x[3]}}))}}))")
         n0=len(d.of_cagri)

@@ -60,15 +60,25 @@
   }
 
   // ---- seriler ----
+  // Varsayılan vurgu: en anlamlı 3 çizgi (pilot: lider + ikinci + favori — favori yoksa üçüncü; takım: ilk 3). Diğerleri geri planda.
+  // Kullanıcı bir çipe dokunup vurgu seçince o kural geçerli (mevcut davranış).
+  function oncelikli(grup) {
+    var sira = grup === "pilot" ? S.sira : S.siraT, ids = S.sec[grup], on = [];
+    var fav = ""; if (grup === "pilot") { try { fav = localStorage.getItem("f1-favori") || ""; } catch (e) { fav = ""; } }
+    [sira[0], sira[1]].forEach(function (id) { if (id && ids.indexOf(id) >= 0) { on.push(id); } });
+    if (fav && ids.indexOf(fav) >= 0 && on.indexOf(fav) < 0) { on.push(fav); }
+    for (var i = 0; on.length < 3 && i < sira.length; i++) { if (ids.indexOf(sira[i]) >= 0 && on.indexOf(sira[i]) < 0) { on.push(sira[i]); } }
+    return on;
+  }
   function seriler(grup) {
-    var g = grup === "pilot" ? S.g : S.gt, ids = S.sec[grup], gorulen = {}, n = g.turlar.length;
+    var g = grup === "pilot" ? S.g : S.gt, ids = S.sec[grup], gorulen = {}, n = g.turlar.length, on = oncelikli(grup);
     return ids.map(function (id) {
       var s = g.seri[id]; if (!s) { return null; }
       var tid = grup === "pilot" ? sonTakim(id) : id, kesik = false;
       if (grup === "pilot") { if (gorulen[tid]) { kesik = true; } gorulen[tid] = true; }
       var deger = S.gorunum === "fark" ? s.toplam.map(function (v, i) { return v - g.lider[i]; }) : s.toplam.slice();
       return { id: id, kod: grup === "pilot" ? kod(id) : takimKisa(id), ad: grup === "pilot" ? soyad(id) : takimAd(id), renk: renkTakim(tid), kesik: kesik, deger: deger, toplam: s.toplam, yaris: s.yaris, sprint: s.sprint,
-               soluk: !!(S.vurgu[grup] && S.vurgu[grup] !== id), n: n };
+               soluk: !!(S.vurgu[grup] && S.vurgu[grup] !== id), arka: !S.vurgu[grup] && ids.length > 3 && on.indexOf(id) < 0, n: n };
     }).filter(Boolean);
   }
   function takimKisa(tid) { var ad = takimAd(tid), t = F && F.takimTemasi ? F.takimTemasi(ad) : null; return t ? t.displayName.slice(0, 3) : String(ad).slice(0, 3).toUpperCase(); }
@@ -128,8 +138,25 @@
       "<button type='button' data-a3-gorunum='puan' aria-pressed='" + (S.gorunum === "puan") + "'>Puan</button>" +
       "<button type='button' data-a3-gorunum='fark' aria-pressed='" + (S.gorunum === "fark") + "'>Liderle fark</button></div>";
   }
+  // Grafiğin tek cümlelik özeti: yalnız hesaplanmış puanlardan (tüm pilotlar/takımlar, seçimden bağımsız). Sebep/yorum yok. Veri yetersizse boş.
+  function ozetCumlesi(grup) {
+    var g = grup === "pilot" ? S.g : S.gt; if (!g || !g.turlar || g.turlar.length < 2) { return ""; }
+    var n = g.turlar.length, son = n - 1, ids = Object.keys(g.seri || {});
+    var sirali = ids.map(function (id) { return { id: id, v: g.seri[id].toplam[son] }; }).filter(function (x) { return isFinite(x.v); }).sort(function (a, b) { return b.v - a.v; });
+    if (sirali.length < 2 || sirali[0].v <= 0) { return ""; }
+    var ad = function (id) { return grup === "pilot" ? soyad(id) : takimAd(id); }, a = sirali[0], b = sirali[1], fark = sayiYaz(a.v - b.v), tur = g.turlar[son];
+    if (a.v === b.v) { return ad(a.id) + " ve " + ad(b.id) + " " + tur + ". tur sonunda " + sayiYaz(a.v) + " puanla eşit."; }
+    if (grup === "pilot" && S.gorunum === "fark") {
+      var k = Math.max(0, son - 5), once = g.seri[b.id].toplam[k] - g.seri[a.id].toplam[k];   // 5 tur önce aynı iki pilot arasındaki fark
+      var simdi = b.v - a.v, deg = sayiYaz(simdi - once);
+      return ad(b.id) + " " + tur + ". tur sonunda lider " + ad(a.id) + " ile " + fark + " puan farkla ikinci" +
+        (son - k >= 2 && deg !== 0 ? "; fark son " + (son - k) + " turda " + Math.abs(deg) + " puan " + (deg < 0 ? "açıldı" : "kapandı") + "." : ".");
+    }
+    return ad(a.id) + " " + tur + ". tur sonunda " + sayiYaz(a.v) + " puanla önde; " + ad(b.id) + " " + fark + " puan geride.";
+  }
   function cizgiKart(grup, baslik, id, not) {
     return "<section class='a3-kart' id='" + id + "'><h2>" + isle(baslik) + "</h2>" +
+      "<p class='a3-cumle' data-a3-cumle='" + grup + "'></p>" +
       (not ? "<p class='a3-not'>" + isle(not) + "</p>" : "") +
       "<div class='a3-kontrol'>" + (grup === "pilot" ? kontrolGorunum() : "") + "</div>" +
       "<div class='a3-secici' data-a3-secici='" + grup + "'></div>" +
@@ -154,7 +181,9 @@
     var oz = H.ozet(S.model, S.g, S.sira, S.wpp, !!S.poleKod);
     var lider = oz.lider;
     var h = "";
-    h += ozetKart("LİDER", lider ? esc(soyad(lider.id)) : "—", lider ? lider.puan + " puan" + (lider.fark != null ? " · 2. ile fark " + lider.fark : "") : "", lider ? takimRozetleri([lider.id]) : "");
+    var SD = null; try { SD = window.SampiyonlukDurumu ? SampiyonlukDurumu.mevcut() : null; } catch (e) { SD = null; }
+    var sampiyon = !!(SD && SD.durum === "belli" && lider && String(SD.sezon) === String(sezonYili()) && SD.sampiyon && SD.sampiyon.id === lider.id);   // ortak mantık: belliyse "ŞAMPİYON"
+    h += ozetKart(sampiyon ? "ŞAMPİYON" : "LİDER", lider ? esc(soyad(lider.id)) : "—", lider ? lider.puan + " puan" + (lider.fark != null ? " · 2. ile fark " + lider.fark : "") : "", lider ? takimRozetleri([lider.id]) : "");
     h += ozetKart("EN ÇOK GALİBİYET", oz.galibiyet.kimlikler.length ? adlar(oz.galibiyet.kimlikler) : "—", oz.galibiyet.deger ? oz.galibiyet.deger + " galibiyet" + (oz.galibiyet.kimlikler.length > 1 ? " (eşit)" : "") : "", takimRozetleri(oz.galibiyet.kimlikler));
     h += ozetKart("EN ÇOK [[podyum]]", oz.podyum.kimlikler.length ? adlar(oz.podyum.kimlikler) : "—", oz.podyum.deger ? oz.podyum.deger + " podyum" + (oz.podyum.kimlikler.length > 1 ? " (eşit)" : "") : "", takimRozetleri(oz.podyum.kimlikler));
     var poleAna = S.pole === null ? "…" : (oz.pole && oz.pole.kimlikler.length ? adlar(oz.pole.kimlikler) : "—");
@@ -235,6 +264,7 @@
     var sec = k.querySelector("[data-a3-secici='" + grup + "']"), kap = k.querySelector("[data-a3-grafik='" + grup + "']");
     if (!sec || !kap) { return; }
     sec.innerHTML = chipler(grup);
+    var cm = k.querySelector("[data-a3-cumle='" + grup + "']"); if (cm) { var ct = ozetCumlesi(grup); cm.textContent = ct; cm.hidden = !ct; }
     var ss = seriler(grup);
     if (!ss.length) { kap.innerHTML = "<p class='a3-bos'>Grafik için en az bir seçim yapın.</p>"; return; }
     var o = { x: g.turlar.map(String), seriler: ss, sifirCizgisi: S.gorunum === "fark" && grup === "pilot", ipucu: ipucu(grup), ozet: ozetMetni(grup),

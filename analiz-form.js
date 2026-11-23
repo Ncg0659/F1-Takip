@@ -1,5 +1,5 @@
 /* A3.2 — Form ve pozisyon analizi (Grafik sekmesi, Sezon Analiz Merkezi'nin devamı).
-   Bölümler: Son 5 yarış formu · Start → Bitiş (+ Net pozisyon sıralaması) · Pole → Galibiyet · DNF/DNS/DSQ · özet kartı "En çok pozisyon kazanan".
+   Bölümler: Son 5 yarış formu · Start → Bitiş (tek kompakt tablo) · Pole → Galibiyet · DNF/DNS/DSQ.
    VERİ: yalnızca A3.1'in zaten yüklediği model (AnalizMerkezi._durum) ve A2 SezonVeri'den gelen pole haritası. YENİ AĞ ÇAĞRISI YOKTUR.
    HESAP: sezon-hesap-a32.js (saf). GÖRSEL: HTML/CSS çubuk ve kutular (Chart.js yok, CDN yok).
    ENTEGRASYON: A3.1'in olay kancasına (AnalizMerkezi.dinle) abone olur; A3.1 bölümlerini yeniden yazmaz, yalnızca yanlarına yeni bölümler ekler.
@@ -97,55 +97,40 @@
       : "<p class='a3-bos'>Henüz ana yarış yok.</p>";
     return "<article class='a32-kart' style='--c:" + renk(id) + "' data-a32-pilot='" + esc(id) + "'>" + pilotBas(id) + gövde + "</article>";
   }
+  // Tek cümle özet: son N Grand Prix'de en çok puanı toplayan (tüm pilotlar; seçimden bağımsız). Veri yoksa gösterilmez.
+  function formCumlesi() {
+    var h = C.h, n = h && h.formTurlari ? h.formTurlari.length : 0; if (!h || !h.pilot || n < 2) { return ""; }
+    var l = Object.keys(h.pilot).map(function (id) { return { id: id, p: Number(h.pilot[id].form5Puan) || 0 }; }).sort(function (x, y) { return y.p - x.p; });
+    if (!l.length || l[0].p <= 0) { return ""; }
+    var en = l.filter(function (x) { return x.p === l[0].p; }).map(function (x) { return soyad(x.id); });
+    var ikinci = l.filter(function (x) { return x.p < l[0].p; })[0];
+    return "Son " + n + " Grand Prix'de en çok puanı " + (en.length === 1 ? en[0] + " topladı" : en.join(" ve ") + " topladı (eşit)") + ": " + l[0].p + " puan (sprint hariç)" +
+      (ikinci && en.length === 1 ? "; ardından " + soyad(ikinci.id) + " " + ikinci.p + " puan." : ".");
+  }
   function formBolum() {
-    var sec = AM.secim();
-    return "<h2>Son 5 yarış formu " + bilgi("form") + "</h2>" +
+    var sec = AM.secim(), fc = formCumlesi();
+    return "<h2>Son 5 yarış formu " + bilgi("form") + "</h2>" + (fc ? "<p class='a3-cumle'>" + esc(fc) + "</p>" : "") +
       "<p class='a3-not'>Her pilotun son 5 ana yarıştaki bitiş sırası (soldan sağa: eskiden yeniye). Sonuçlar olduğu gibi gösterilir, sebep yorumu yapılmaz. Yüksek çubuk = öndeki sıra. Pilot seçimi puan grafiğiyle ortaktır.</p>" +
       secici() + (sec.length ? "<div class='a32-liste'>" + sec.map(formKart).join("") + "</div>" : "<p class='a3-bos'>Kart görmek için en az bir pilot seçin.</p>");
   }
 
-  // ---- 2) START → BİTİŞ + NET POZİSYON ----
-  function sfKart(id) {
-    var a = bilgiPilot(id), o = a.ornek, n = o.n;
-    var sayilar = n
-      ? "<dl class='a32-sayilar'><div><dt>Ort. Start " + bilgi("ortalama-start") + "</dt><dd>" + o1(o.ortStart) + "</dd></div>" +
-        "<div><dt>Ort. Bitiş " + bilgi("ortalama-bitis") + "</dt><dd>" + o1(o.ortBitis) + "</dd></div>" +
-        "<div><dt>Net Pozisyon " + bilgi("net-pozisyon") + "</dt><dd class='a32-net-d " + (o.net > 0 ? "a32-up" : (o.net < 0 ? "a32-down" : "")) + "'>" + net(o.net) + "</dd></div></dl>"
-      : "<p class='a3-bos'>Ortalama için örnekleme giren yarış yok.</p>";
-    return "<article class='a32-kart' style='--c:" + renk(id) + "' data-a32-pilot='" + esc(id) + "'>" + pilotBas(id) + sayilar +
-      "<p class='a32-ornek' title='" + esc(haricMetni(a)) + "'><b>" + esc(ornekMetni(a)) + "</b> yarış üzerinden <span class='a3-soluk'>(sınıflandırılmış, pit çıkışı hariç)</span></p></article>";
+  // ---- 2) START → BİTİŞ — tek kompakt karşılaştırma (seçili pilotlar). Sezon net pozisyon sıralaması kaldırıldı (performans ölçüsü değildi). ----
+  function sfSatir(id, secili) {
+    var a = bilgiPilot(id), o = a.ornek;
+    var cls = o.n ? (o.net > 0 ? "a32-up" : (o.net < 0 ? "a32-down" : "")) : "";
+    return "<tr" + (secili ? " class='a32-sf-sec' style='--c:" + renk(id) + "'" : "") + " data-a32-pilot='" + esc(id) + "'><th scope='row'><span class='a32-sf-k'>" + esc(kod(id)) + "</span> <span class='a3-soluk a32-sf-a'>" + esc(soyad(id)) + "</span></th>" +
+      "<td>" + o1(o.ortStart) + "</td><td>" + o1(o.ortBitis) + "</td><td class='a32-net-d " + cls + "'>" + (o.n ? net(o.net) : "—") + "</td><td title='" + esc(haricMetni(a)) + "'>" + esc(ornekMetni(a)) + "</td></tr>";
   }
-  function netSatirlari() {
-    var sira = HA.siraNet(C.h, S.sira), goster = AC.net ? sira : sira.slice(0, ILK.net), min = 0, max = 0;
-    sira.forEach(function (id) { var v = C.h.pilot[id].ornek.net; if (v < min) { min = v; } if (v > max) { max = v; } });
-    var aralik = (max - min) || 1, z = (-min / aralik) * 100;
-    var h = goster.map(function (id) {
-      var a = C.h.pilot[id], v = a.ornek.net, w = Math.abs(v) / aralik * 100, sol = v >= 0 ? z : z - w;
-      return "<li class='a32-nr' style='--c:" + renk(id) + "' aria-label='" + esc(soyad(id) + ": " + net(v) + " pozisyon, " + ornekMetni(a) + " yarış üzerinden") + "'>" +
-        "<span class='a32-nk'>" + esc(kod(id)) + "</span><span class='a32-na'>" + esc(soyad(id)) + "</span>" +
-        "<span class='a32-nb' style='--z:" + z.toFixed(2) + "%' aria-hidden='true'><i class='a32-nbar " + (v < 0 ? "a32-down" : "a32-up") + "' style='left:" + sol.toFixed(2) + "%;width:" + w.toFixed(2) + "%'></i></span>" +
-        "<span class='a32-nd'><b>" + net(v) + "</b><small>" + esc(ornekMetni(a)) + " yarış</small></span></li>";
-    }).join("");
-    return { html: h, toplam: sira.length };
-  }
-  function tabloSf() {
-    var t = "<div class='a3-tablo-kap'><table class='a3-tablo'><thead><tr><th scope='col'>Pilot</th><th scope='col'>Ort. Start " + bilgi("ortalama-start") + "</th><th scope='col'>Ort. Bitiş " + bilgi("ortalama-bitis") + "</th><th scope='col'>Net " + bilgi("net-pozisyon") + "</th><th scope='col'>Yarış</th></tr></thead><tbody>";
-    S.sira.forEach(function (id) {
-      var a = bilgiPilot(id), o = a.ornek;
-      t += "<tr><th scope='row'>" + esc(kod(id)) + " <span class='a3-soluk'>" + esc(soyad(id)) + "</span></th><td>" + o1(o.ortStart) + "</td><td>" + o1(o.ortBitis) + "</td><td>" + (o.n ? net(o.net) : "—") + "</td><td>" + esc(ornekMetni(a)) + "</td></tr>";
-    });
-    return t + "</tbody></table></div>";
+  function sfTablo(ids, secili) {
+    return "<div class='a3-tablo-kap'><table class='a3-tablo a32-sf'><thead><tr><th scope='col'>Pilot</th><th scope='col'>Ort. start " + bilgi("ortalama-start") + "</th><th scope='col'>Ort. bitiş " + bilgi("ortalama-bitis") + "</th><th scope='col'>Fark " + bilgi("net-pozisyon") + "</th><th scope='col'>Yarış</th></tr></thead><tbody>" +
+      ids.map(function (id) { return sfSatir(id, secili); }).join("") + "</tbody></table></div>";
   }
   function sfBolum() {
-    var sec = AM.secim(), ns = netSatirlari();
+    var sec = AM.secim();
     return "<h2>Start → Bitiş</h2>" +
-      "<p class='a3-not'>Ana yarışta başlangıç sırası ile bitiş sırasının karşılaştırması. Yalnızca grid sırası olan ve sınıflandırılmış bitirilen yarışlar sayılır; sprint, DNF, DNS, DSQ ve pit çıkışı (grid 0) hariçtir. Her kartta kaç yarışın sayıldığı yazar. Seçili pilotlar form kartlarıyla ortaktır.</p>" +
-      (sec.length ? "<div class='a32-liste'>" + sec.map(sfKart).join("") + "</div>" : "<p class='a3-bos'>Kart görmek için yukarıdan pilot seçin.</p>") +
-      "<h3 class='a32-alth'>Sezon net pozisyonu sıralaması " + bilgi("net-pozisyon") + "</h3>" +
-      "<p class='a3-not'>Sezon toplamı = Σ (start − bitiş). Tek yarıştaki en büyük kazanç değildir. Arkadan başlayan pilotlar için sayı doğal olarak yüksek çıkar; sayı tek başına performans ölçüsü değildir.</p>" +
-      (ns.toplam ? "<ol class='a32-net'>" + ns.html + "</ol>" : "<p class='a3-bos'>Henüz örnekleme giren yarış yok.</p>") +
-      (ns.toplam > ILK.net ? "<button type='button' class='a3-link' data-a32-tum='net' aria-expanded='" + AC.net + "'>" + (AC.net ? "İlk " + ILK.net + " pilotu göster" : "Tümünü göster (" + ns.toplam + ")") + "</button>" : "") +
-      "<details class='a3-detay'><summary>Tüm pilotlar (tablo)</summary>" + tabloSf() + "</details>";
+      "<p class='a3-not'>Ana yarışta ortalama başlangıç ve bitiş sırası; fark = start − bitiş (sezon toplamı). Yalnızca sınıflandırılmış bitirilen yarışlar sayılır (sprint, DNF, DNS, DSQ, pit çıkışı hariç). Sayılar sonucu gösterir, sebebini söylemez.</p>" +
+      (sec.length ? sfTablo(sec, true) : "<p class='a3-bos'>Karşılaştırma için yukarıdan pilot seçin.</p>") +
+      "<details class='a3-detay'><summary>Tüm pilotlar (tablo)</summary>" + sfTablo(S.sira, false) + "</details>";
   }
 
   // ---- 3) POLE → GALİBİYET (ve ayrı ölçü: P1 start → galibiyet) ----
@@ -216,16 +201,10 @@
     (ids || []).slice(0, 3).forEach(function (id) { var t = C.sonTakim[id]; if (t && !gor[t]) { gor[t] = 1; h.push(rozet(id)); } });
     return h.length ? "<span class='a3-oz-takim'>" + h.join(" ") + "</span>" : "";
   }
-  function ozetKarti(k) {
+  function ozetKarti(k) {   // "EN ÇOK POZİSYON KAZANAN" kaldırıldı (net pozisyon performans ölçüsü değil); eski kalıntıyı temizle
     var kap = k.querySelector("[data-a3-ozet]"); if (!kap) { return; }
-    var en = HA.enCokNet(C.h, S.sira);
-    var ana = en.kimlikler.length ? adlar(en.kimlikler) : "—";
-    var alt = en.kimlikler.length ? net(en.deger) + " pozisyon" + (en.kimlikler.length > 1 ? " (eşit)" : "") : "";
-    var ornek = en.kimlikler.length ? en.n + " / " + en.yarisSayisi + " yarış üzerinden" : "Örnekleme giren yarış yok";
-    var html = "<div class='a3-oz' data-a32-oz><span class='a3-oz-et'>EN ÇOK POZİSYON KAZANAN " + bilgi("net-pozisyon") + "</span><b class='a3-oz-ana'>" + ana + "</b>" + takimR(en.kimlikler) + "<span class='a3-oz-alt'>" + esc(alt) + "</span><span class='a3-oz-alt a32-oz-ornek'>" + esc(ornek) + "</span></div>";
-    var eski = kap.querySelector("[data-a32-oz]");
-    if (eski) { eski.outerHTML = html; } else { kap.insertAdjacentHTML("beforeend", html); }
-    kap.classList.add("a32-5");
+    var eski = kap.querySelector("[data-a32-oz]"); if (eski && eski.parentNode) { eski.parentNode.removeChild(eski); }
+    kap.classList.remove("a32-5");
   }
 
   // ---- yerleştirme ----

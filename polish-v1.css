@@ -150,3 +150,86 @@ tr.sezon-bos td { white-space: normal; color: var(--soluk); font-size: .88rem; l
   .bg-pod-s > .takim { grid-column: 2; justify-self: start; min-width: 0; max-width: 100%; font-size: .6rem; padding: 1px 8px; }
   .bg-pod-s > :first-child { grid-row: span 2; align-self: center; }
 }
+
+/* 11) PRODUCT AUDIT FIXES v1 — şampiyonluk manşeti, durum renkleri, kompakt tahmin, mobil sütunlar, hafta sonu hiyerarşisi */
+/* 11a) Şampiyonluk manşeti (BUGÜN / SEZON / ANALİZ tahmin): tek satır başlık + kısa senaryo. Altın/neon yok; nötr. */
+.bg-samp-m, .samp-manset { display: flex; flex-direction: column; gap: 3px; margin: 0 0 10px; min-width: 0; }
+.bg-samp-m b, .samp-manset b, .tp-ch-m { font-family: var(--f-baslik, inherit); font-size: 1.02rem; font-weight: 800; letter-spacing: .02em; line-height: 1.25; color: var(--yazi); overflow-wrap: anywhere; }
+.bg-samp-m small, .samp-manset small { font-size: .78rem; line-height: 1.35; color: var(--pl-etiket); overflow-wrap: anywhere; }
+.samp-manset { padding: 10px 12px; border: 1px solid var(--cizgi); border-left: 3px solid var(--yazi); border-radius: 4px; background: var(--kart); }
+.samp-manset[data-samp="acik"] { border-left-color: var(--pl-etiket); }
+.tp-ch-m { margin: 4px 0 2px; }
+/* 11b) Tahmini canlı durum = amber (kırmızı yalnız doğrulanmış LIVE / kritik) */
+.dr.tahmin { color: #b45309; background: transparent; border-color: currentColor; box-shadow: none; }
+:root[data-tema="koyu"] .dr.tahmin { color: #f59e0b; }
+.h-cz.hz-tahmin, .h-cz.h-canli.hz-tahmin { border-color: #b45309; }
+.h-cz.hz-tahmin .h-cz-s, .h-cz.hz-tahmin .h-cz-d { color: #b45309; }
+:root[data-tema="koyu"] .h-cz.hz-tahmin, :root[data-tema="koyu"] .h-cz.h-canli.hz-tahmin { border-color: #e0a800; }
+:root[data-tema="koyu"] .h-cz.hz-tahmin .h-cz-s, :root[data-tema="koyu"] .h-cz.hz-tahmin .h-cz-d { color: #f59e0b; }
+.h-seans.h-canli.hz-tahmin { border-color: #e0a800; }
+.h-seans.h-canli.hz-tahmin .h-zaman b { color: inherit; }
+.st-p-canli { color: #b45309; }
+:root[data-tema="koyu"] .st-p-canli { color: #f59e0b; }
+/* 11c) Durum rozeti altı tek satır terim açıklaması (SC / VSC / RED FLAG) */
+.bg-terim { margin: 6px 0 0; font-size: .78rem; line-height: 1.35; color: var(--pl-etiket); overflow-wrap: anywhere; }
+.bg-terim .bg-terim-b { font-size: .74rem; margin-left: 2px; }
+/* 11d) Yarış sırasında kompakt tahmin satırı + güven ⓘ + ilk 10 */
+.tp-kompakt { padding-top: 10px; padding-bottom: 10px; }
+.tp-kompakt .tp-ust { margin-bottom: 4px; }
+.tp-k-satir { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0; min-width: 0; }
+.tp-k-l { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; min-width: 0; font-family: var(--f-sayi); font-size: .86rem; font-variant-numeric: tabular-nums; }
+.tp-k-p b { font-weight: 700; }
+.tp-k-ayr { color: var(--pl-etiket); }
+.tp-k-ac { flex: none; font-family: var(--f-sayi); font-size: .64rem; font-weight: 700; letter-spacing: .1em; padding: 6px 10px; min-height: 32px; border: 1px solid var(--cizgi); border-radius: 3px; background: transparent; color: var(--yazi); cursor: pointer; }
+.tp-ust .tp-k-ac { margin-left: auto; }
+.tp-guven.tp-guven-ik { display: flex; align-items: baseline; gap: 6px; margin: 4px 0 0; padding: 0; border: 0; background: none; }
+.tp-guven-ik .tp-g-ik { font-size: .8rem; color: var(--pl-etiket); }
+.tp-guven-ik .tp-g-d.tp-g-yok { font-family: inherit; font-size: .72rem; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--pl-etiket); border: 0; padding: 0; background: none; }
+.tp-tumu-p { margin: 10px 0 0; }
+/* 11e) Mobil sütunlar: SEZON puan tablosu (puan kesilmez) + tahmin tablosu (isim kesilmez). Yatay kaydırma YOK. */
+.pg-tm { display: none; }
+@media (max-width: 560px) {
+  .kap:has(#pilot-govde) .pg-tc { display: none; }
+  #pilot-govde .pg-on { display: none; }
+  #pilot-govde .pg-pc { min-width: 0; }
+  #pilot-govde .pg-tm { display: block; margin-top: 4px; }
+  #pilot-govde .pg-tm .takim { font-size: .58rem; padding: 1px 7px; max-width: 100%; }
+  .kap:has(#pilot-govde) { overflow: visible; }
+  .tp-tablo th:first-child { width: 47%; }
+  .tp-tablo th { font-size: .5rem; letter-spacing: .02em; }
+  .tp-c-p { overflow: visible; }
+  .tp-c-p .pilot { white-space: nowrap; }
+}
+/* 11f) HAFTA SONU hiyerarşisi: Yarış > Sıralama/Sprint > Antrenman; bitmiş soluk, sıradaki belirgin */
+.h-cz.h-onem-fp { opacity: .82; }
+.h-cz.h-onem-fp b { font-weight: 500; color: var(--pl-etiket); }
+.h-cz.h-onem-fp .h-cz-s { font-size: 1.2rem; }
+.h-cz.h-onem-ana b { font-weight: 700; }
+.h-cz.h-onem-yaris { border-width: 2px; }
+.h-cz.h-onem-yaris b { font-weight: 800; color: var(--yazi); }
+.h-cz.h-onem-yaris .h-cz-s { font-size: 1.62rem; }
+.h-cz.h-bitti, .h-cz.h-tamamlandi { opacity: .6; }
+.h-cz.h-onem-fp.h-bitti, .h-cz.h-onem-fp.h-tamamlandi { opacity: .5; }
+.h-cz.h-siradaki { border-color: var(--yazi); }
+.h-cz.h-siradaki .h-cz-d { color: var(--yazi); }
+/* 11g) Tekrarlayan pist silüeti / program: SEZON "Sıradaki" kartında silüet küçük, seans ızgarası yerine tek satır yarış saati.
+   Tam program + büyük silüet HAFTA SONU'nda; BUGÜN kahramanında küçük silüet (yön bulma) kalır. */
+.st-p-pist { max-width: 220px; }
+.st-p-yaris { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 18px 0 0; padding-top: 12px; border-top: 1px solid var(--st-ayrac, var(--cizgi)); }
+.st-p-yaris span { font-family: var(--f-sayi); font-size: .64rem; font-weight: 700; letter-spacing: .14em; color: var(--st-p-soluk, var(--pl-etiket)); }
+.st-p-yaris b { font-family: var(--f-sayi); font-size: 1.05rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--yazi); }
+.st-p-yaris small { flex-basis: 100%; font-size: .74rem; color: var(--st-p-soluk, var(--pl-etiket)); }
+@media (max-width: 640px) {
+  .st-p-ust { grid-template-columns: minmax(0, 1fr) !important; }
+  .st-p-pist { max-width: 150px; }
+}
+/* 11h) Grafik özet cümlesi (veriden; sebep yorumu yok) */
+.a3-cumle { margin: 2px 0 8px; font-size: .92rem; line-height: 1.4; color: var(--yazi); overflow-wrap: anywhere; }
+.a3-cumle[hidden] { display: none; }
+/* 11i) Start → Bitiş tek tablo: mobilde kod + sayılar (soyad ve yarış sayısı sütunu gizli; yatay kaydırma yok) */
+@media (max-width: 560px) {
+  .a32-sf .a32-sf-a { display: none; }
+  .a32-sf th:nth-child(5), .a32-sf td:nth-child(5) { display: none; }
+  .a32-sf th, .a32-sf td { padding-left: 6px; padding-right: 6px; white-space: nowrap; }
+  .a32-sf thead th { font-size: .56rem; letter-spacing: .04em; }
+}

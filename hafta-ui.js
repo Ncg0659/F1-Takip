@@ -65,13 +65,13 @@
       if (st.durum === "LIVE") {
         if (st.kaynak === "feed") { return "<span class='dr live' title='Race Feed notlarına göre'>LIVE</span>" + chip; }
         var faz = st.faz && st.faz.id ? " <span class='dr yakinda' title='Planlı saate göre tahmin; gerçek faz verisi yok'>" + esc(st.faz.id) + " <small class='tahmini'>tahmini</small></span>" : "";
-        return "<span class='dr live' title='Saat/faz hesabına göre tahmini durum. Kesin canlı veri değildir.'>LIVE <small class='tahmini'>tahmini</small></span>" + faz + chip;
+        return "<span class='dr tahmin' title='Saat/faz hesabına göre tahmini durum. Kesin canlı veri değildir.'>LIVE TAHMİNİ</span>" + faz + chip;
       }
     }
     return durumRozetiEski(d);
   }
   function durumRozetiEski(d) {
-    if (d === "canli") { return "<span class='dr live' title='Saat hesabına göre tahmini durum. Kesin canlı veri değildir.'>LIVE <small class='tahmini'>tahmini</small></span>"; }
+    if (d === "canli") { return "<span class='dr tahmin' title='Saat hesabına göre tahmini durum. Kesin canlı veri değildir.'>LIVE TAHMİNİ</span>"; }
     if (d === "tamamlandi") { return "<span class='dr bitti' title='Sonuç verisi alındı.'>TAMAMLANDI</span>"; }
     if (d === "sonuc-bekleniyor") { return "<span class='dr bekle'>SONUÇ BEKLENİYOR</span>"; }
     if (d === "bitti") { return "<span class='dr bitti'>BİTTİ</span>"; }
@@ -333,7 +333,7 @@
     else { govde = sekmeler.filter(function (x) { return x.k === aktif; })[0].html; }
     var tabs = sekmeler.length ? V3.sekmeler([{ k: "sonuc", ad: "SONUÇ" }].concat(sekmeler), aktif, "psek", "Seans ayrıntıları") + "<div class='v3-sek-govde' data-v3-sek='" + esc(aktif) + "'>" + govde + "</div>" : (govde ? "<div class='v3-sek-govde'>" + govde + "</div>" : "");
     var neden = (d === "yaklasan" || d === "canli") && !durdu0 ? V3.neden(s.acikla) : "";
-    return "<div class='h-seans h-v3 h-" + kartSinif + "'>" +
+    return "<div class='h-seans h-v3 h-" + kartSinif + " hz-" + ton + "'>" +
       "<header class='v3-ph'><div class='v3-ph-sol'><div class='h-baslik'><b>" + esc(s.ad) + "</b><span class='h-info' tabindex='0' title='" + esc(s.acikla) + "'>ⓘ</span></div>" +
         "<div class='h-zaman v3-tarih'><b>" + esc(tr) + "</b><span>" + esc(gun) + "</span>" + (durdu0 ? "" : pistBilgi(se, h)) + eskiSaat + "</div></div>" +
         V3.durum(durumRozeti(d, st), durumMetni(h, s, bd, pp), ton) + "</header>" +
@@ -407,9 +407,9 @@
       if (st.durum === "RED_FLAG") { return ["KIRMIZI BAYRAK", "kirmizi"]; }
       if (st.durum === "SESSION_STOPPED") { return ["DURDURULDU", "bekle"]; }
       if (st.durum === "RESUMED") { return ["YENİDEN BAŞLADI", "live"]; }
-      if (st.durum === "LIVE") { return ["LIVE", "live"]; }
+      if (st.durum === "LIVE") { return st.kaynak === "feed" ? ["LIVE", "live"] : ["LIVE TAHMİNİ", "tahmin"]; }   // kırmızı yalnız doğrulanmış canlı
     }
-    if (d === "canli") { return ["LIVE", "live"]; }
+    if (d === "canli") { return ["LIVE TAHMİNİ", "tahmin"]; }
     if (d === "tamamlandi") { return ["TAMAMLANDI", "bitti"]; }
     if (d === "sonuc-bekleniyor") { return ["SONUÇ BEKLENİYOR", "bekle"]; }
     if (d === "bitti") { return ["BİTTİ", "bitti"]; }
@@ -433,6 +433,8 @@
   }
 
   function cizelge(h, sec) {
+    var siradaki = null;     // ilk yaklaşan seans → "SIRADAKİ" vurgusu (mevcut durum çıktısından)
+    h.seanslar.forEach(function (s) { if (!siradaki && durumBul(h, s).d === "yaklasan") { siradaki = s.anahtar; } });
     return "<section class='h-prog' aria-label='Seans programı'><p class='h-prog-bas'>SEANS PROGRAMI</p><div class='h-cizelge' role='group' aria-label='Seans seç'>" + h.seanslar.map(function (s) {
       var bd = durumBul(h, s), d = bd.d;
       var durdu = bd.st && (bd.st.durum === "DELAYED" || bd.st.durum === "RED_FLAG" || bd.st.durum === "SESSION_STOPPED" || programDurdu(bd.st));
@@ -442,7 +444,9 @@
       var saatM = bd.st && bd.st.durum === "POSTPONED" ? "ERT." : (bd.st && bd.st.durum === "CANCELLED" ? "İPT." : V.saatYaz(se.baslangic, ANA));
       var g = String(V.kisaGunYaz(se.baslangic, ANA) || "").split(/\s+/), gun = g.length === 3 ? g[0] + " " + g[1] + " · " + g[2] : g.join(" ");
       var secili = sec && sec.anahtar === s.anahtar;
-      return "<button type='button' class='h-cz h-" + d + " hz-" + et[1] + (secili ? " h-sec" : "") + "' data-act='seans' data-key='" + esc(s.anahtar) + "' aria-pressed='" + (secili ? "true" : "false") + "'>" +
+      var onem = s.anahtar === "Race" ? "yaris" : (/Practice/.test(s.anahtar) ? "fp" : "ana");    // hiyerarşi: Yarış > Sıralama/Sprint > Antrenman
+      if (siradaki === s.anahtar && !et[0]) { et = ["SIRADAKİ", "yaklasan"]; }
+      return "<button type='button' class='h-cz h-" + d + " hz-" + et[1] + " h-onem-" + onem + (siradaki === s.anahtar ? " h-siradaki" : "") + (secili ? " h-sec" : "") + "' data-act='seans' data-key='" + esc(s.anahtar) + "' aria-pressed='" + (secili ? "true" : "false") + "'>" +
         "<span class='h-cz-g'>" + esc(buyuk(gun)) + "</span><b>" + esc(buyuk(s.ad)) + "</b><span class='h-cz-s'>" + esc(saatM) + "</span><i class='h-cz-d'>" + esc(et[0]) + "</i></button>";
     }).join("") + "</div></section>";
   }

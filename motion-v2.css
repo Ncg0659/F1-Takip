@@ -96,3 +96,16 @@ tr.mo2-kay-b { animation: mo2-kay-b 700ms var(--motion-ease) backwards; }
 @keyframes mo2-cik { to { opacity: 0; visibility: hidden; } }
 @keyframes mo2-cik-hizli { to { opacity: 0; visibility: hidden; } }
 @media (max-width: 380px) { .mo2-isik-sira i { width: 24px; height: 24px; } .mo2-isik-sira { gap: 10px; } }
+
+/* 6b) KISA GİRİŞ (~1.8 sn; ilk açılıştan sonraki açılışlar): aynı ışıklar + marka, hızlı. Çizgi ve kinetik kelimeler yok. Dokununca yine atlanır. */
+.mo2-isik.mo2-kisa { animation: mo2-cik 300ms 1500ms ease forwards; }
+.mo2-kisa .mo2-isik-sira { animation: mo2-sira-git 220ms 1000ms cubic-bezier(.4, 0, .7, .2) forwards; }
+.mo2-kisa .mo2-isik-sira i { animation: mo2-yan 110ms ease forwards, mo2-son 100ms 950ms ease forwards; }
+.mo2-kisa .mo2-isik-sira i:nth-child(1) { animation-delay: 60ms, 950ms; }
+.mo2-kisa .mo2-isik-sira i:nth-child(2) { animation-delay: 220ms, 950ms; }
+.mo2-kisa .mo2-isik-sira i:nth-child(3) { animation-delay: 380ms, 950ms; }
+.mo2-kisa .mo2-isik-sira i:nth-child(4) { animation-delay: 540ms, 950ms; }
+.mo2-kisa .mo2-isik-sira i:nth-child(5) { animation-delay: 700ms, 950ms; }
+.mo2-kisa .mo2-cizgiler, .mo2-kisa .mo2-kelime { display: none; }
+.mo2-kisa .mo2-marka b { animation: mo2-kalk-e 380ms 1050ms cubic-bezier(.2, .8, .2, 1) forwards; }
+.mo2-kisa .mo2-marka span { animation: mo2-kalk 380ms 1120ms cubic-bezier(.2, .8, .2, 1) forwards; }

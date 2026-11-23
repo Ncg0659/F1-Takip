@@ -8,7 +8,7 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 if [ "$REPO" != "/home/claude/f1-takip" ] && [ ! -e /home/claude/f1-takip ]; then mkdir -p /home/claude && ln -s "$REPO" /home/claude/f1-takip; fi
 mkdir -p /tmp/f1-ekran
 cd "$REPO/testler"
-CEKIRDEK="polish_v1_test motion_v2_test bugun_v3_test raceday_390_test feed_v1_test feed_state_test sezon_arasi_test offline_pwa_test pist_yon_test prediction_snapshot_test yaris_v3_test ghost_lap_v1_test telemetry_data_v1_test prediction_ui_v1_test prediction_engine_v1_test gecmis_yaris_v1_test favori_v1_test nav_v3_test nav_v3_faz2_test ogren_v2_test"
+CEKIRDEK="polish_v1_test motion_v2_test bugun_v3_test raceday_390_test feed_v1_test feed_state_test sezon_arasi_test offline_pwa_test pist_yon_test prediction_snapshot_test yaris_v3_test ghost_lap_v1_test telemetry_data_v1_test prediction_ui_v1_test prediction_engine_v1_test gecmis_yaris_v1_test favori_v1_test nav_v3_test nav_v3_faz2_test ogren_v2_test audit_fixes_v1_test"
 LISTE="${*:-$CEKIRDEK}"
 TOPLAM_HATA=0
 for t in $LISTE; do

@@ -9,6 +9,10 @@
   var SA = 3600 * 1000, C_PENCERE = 36 * SA, HAFTA_ONCE = 12 * SA;
   var KRITIK = { RED_FLAG: 1, STOPPED: 1, SAFETY_CAR: 1, VSC: 1, DELAYED: 1, POSTPONED: 1, CANCELLED: 1, RESCHEDULED: 1 };
   var CANLI_K = { LIVE: 1, RESUMED: 1, SAFETY_CAR: 1, VSC: 1, RED_FLAG: 1, STOPPED: 1 };
+  var TERIM = { VSC: ["vsc", "VSC · Pilotlar belirlenen delta hızına uyar; sollama yapılmaz."],
+                SAFETY_CAR: ["safety-car", "SC · Güvenlik aracı pistte; araçlar arkasında dizilir, sollama yapılmaz."],
+                RED_FLAG: ["kirmizi-bayrak", "Kırmızı bayrak · Seans durduruldu; araçlar pit yoluna döner."],
+                STOPPED: ["kirmizi-bayrak", "Kırmızı bayrak · Seans durduruldu; araçlar pit yoluna döner."] };
   var UZATMA = 3 * SA, FEED_AKTIF = { LIVE: 1, RESUMED: 1, RED_FLAG: 1, SESSION_STOPPED: 1 }, FEED_K = { RED_FLAG: 1, STOPPED: 1, SAFETY_CAR: 1, VSC: 1, RESUMED: 1 };
   var S = { html: null, tick: 0, istendi: false, liste: {}, gozlendi: false, model: null, feedHepsi: false };
 
@@ -140,6 +144,8 @@
     else if (tk && tk.durum && tk.durum !== "canli") { kr = (tk.oturum === "Sprint" ? "Sprint" : "Yarış") + " " + ({ gecikti: "başlangıcı gecikti", ertelendi: "ertelendi", iptal: "iptal edildi" })[tk.durum]; }
     if (!kr && m.canli && !m.aktif && m.now >= m.race.bitis.getTime()) { kr = "Planlı bitiş geçti · yarış sürüyor (Race Feed'e göre)"; }
     var kritik = kr ? "<p class='bg-kritik' role='status'><b>KRİTİK</b><span>" + esc(kr) + "</span></p>" : "";
+    var te = kan && TERIM[kan.anahtar];       // izlerken öğren: durum rozeti için tek satır (sözlükteki terime bağlı)
+    if (te) { kritik += "<p class='bg-terim'><span>" + esc(te[1]) + "</span> <button type='button' class='a2-baglanti bg-terim-b' data-terim='" + esc(te[0]) + "'>Nedir?</button></p>"; }
     var zaman = "<ul class='bg-zaman' aria-label='Seans durumu'>" + m.ses.map(function (s, i) {
       return "<li class='bg-z bg-z-" + esc(m.dur[i]) + "'><span class='bg-z-ad'>" + esc(s.kisa) + "</span><span class='bg-z-sa'>" + esc(saat(s.baslangic)) + "</span></li>";
     }).join("") + "</ul>";
@@ -208,13 +214,20 @@
     var c = pd ? yorumCumlesi(y, pd) : "", mc = modulCipleri(h);
     var ne = (c || mc.length) ? "<section class='bg-blok bg-ne' aria-label='Ne oldu?'><h3 class='bg-h'>NE OLDU?</h3>" + (c ? "<p class='bg-cumle'>" + esc(c) + "</p>" : "") +
              (mc.length ? "<p class='bg-cipler'>" + mc.map(function (x) { return "<span class='bg-cip'><b>" + esc(x[0]) + "</b> " + esc(x[1]) + "</span>"; }).join("") + "</p>" : "") + "</section>" : "";
-    return hero + ne + "<div class='bg-cta'>" + cta("yaris", "YARIŞ ANALİZİNE GİT", true) + "</div>";
+    var sm = pd ? sampManset() : "", samp = sm ? "<section class='bg-blok bg-sampiyona' aria-label='Şampiyona'><h3 class='bg-h'>ŞAMPİYONA</h3>" + sm + "</section>" : "";
+    return hero + samp + ne + "<div class='bg-cta'>" + cta("yaris", "YARIŞ ANALİZİNE GİT", true) + "</div>";
   }
 
+  // Şampiyonluk manşeti: ortak mantık (sampiyonluk-durum.js). Hesaplanamıyorsa boş (iddia yok).
+  function sampManset() {
+    var SD = bul(function () { return window.SampiyonlukDurumu.mevcut(); }, null);
+    if (!SD || SD.durum === "yok") { return ""; }
+    return "<p class='bg-samp-m' data-samp='" + esc(SD.durum) + "'><b>" + esc(SD.manset) + "</b><small>" + esc(SD.kisa) + "</small></p>";
+  }
   // ---- MOD B ----
   function htmlB(m) {
     var K = m.K, y = m.y, pil = (K.pilotlar || []).slice(0, 3);
-    var sip = pil.length ? "<section class='bg-blok bg-sampiyona' aria-label='Şampiyona'><h3 class='bg-h'>ŞAMPİYONA</h3><ol class='bg-std'>" + pil.map(function (r, i) {
+    var sip = pil.length ? "<section class='bg-blok bg-sampiyona' aria-label='Şampiyona'><h3 class='bg-h'>ŞAMPİYONA</h3>" + sampManset() + "<ol class='bg-std'>" + pil.map(function (r, i) {
       var d = r.Driver || {}, ad = ((d.givenName || "") + " " + (d.familyName || "")).trim(), tk = r.Constructors && r.Constructors[0] ? r.Constructors[0].name : "";
       return "<li>" + bul(function () { return F1UI.pozRozet(String(i + 1)); }, "<b>" + (i + 1) + "</b>") + "<span class='bg-std-p'>" + bul(function () { return F1UI.pilotHucresi(d.code || "", ad); }, esc(ad)) + "</span><span class='bg-std-t'>" + (tk ? bul(function () { return F1UI.takimRozeti(tk); }, "") : "") + "</span><span class='bg-std-pt'>" + esc(r.points) + " <small>PUAN</small></span></li>";
     }).join("") + "</ol></section>" : "";

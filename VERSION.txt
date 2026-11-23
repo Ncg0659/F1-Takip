@@ -1,6 +1,18 @@
 F1 TAKİP
-Version: 3.0.8
-Release: F1 çekirdek tamamlama — tahmin arşivi, durum denetimi, vitrin
+Version: 3.0.9
+Release: Ürün denetimi düzeltmeleri v1 — sadeleştirme, öncelik, okunabilirlik
+
+3.0.9
+- Şampiyonluk manşeti tek mantıktan (sampiyonluk-durum.js): BUGÜN, SEZON, hesaplayıcı, ANALİZ ve tahmin aynı sonucu söyler.
+- Yarış/seans aktifken BUGÜN'de tahmin tek satır (AÇ ile tam kart; sabit tahmin aynen). SC/VSC/kırmızı bayrak altında tek satır terim açıklaması.
+- "Ne oldu?": sıralama 1.'si farklı sıradan başladıysa açıkça yazılır (neden uydurulmaz).
+- LIVE TAHMİNİ her yerde amber; FINISHED → TAMAMLANDI.
+- Mobil 390 px: SEZON puan sütunu ve tahmin tablosu isimleri kesilmez (yatay kaydırma yok).
+- HAFTA SONU: "Bilmen gereken 5 şey" → en fazla 3 kısa madde; seans hiyerarşisi (Yarış > Sıralama/Sprint > Antrenman, SIRADAKİ).
+- ANALİZ: sezon net pozisyon sıralaması ve "en çok pozisyon kazanan" kaldırıldı; Start → Bitiş tek tablo; grafiklere veriden tek cümle; varsayılan 3 belirgin çizgi.
+- Ghost Lap "ÖNE ÇIKAN ANALİZ" olarak yarış analizinin üstünde. Tahmin tablosu ilk 10 + TÜMÜNÜ GÖSTER; güven uyarısı tek ⓘ satırı.
+- Giriş: ilk açılışta tam (~5.8 sn), sonraki açılışlarda kısa (~1.8 sn).
+- SEZON "Sıradaki" kartı: küçük silüet + tek satır yarış saati (tam program HAFTA SONU'nda).
 
 3.0.8
 - Tahmin arşivi: PRE_WEEKEND / POST_QUALIFYING / RACE_START_FROZEN tahminleri cihazda saklanır (prediction-snapshot.js); yarış sonrası değerlendirme (geliştirici aracı). Model/ağırlık değişmedi.
@@ -18,7 +30,7 @@ Release: F1 çekirdek tamamlama — tahmin arşivi, durum denetimi, vitrin
 3.0.6
 - Visual Polish + Motion Fixes (giriş animasyonu, pist çizimi/nokta, ticker, kart sistemi, Ghost Lap akıcılığı, tahmin renkleri, mobil pist profili).
 
-Service Worker cache: F1-TAKIP-v3.0.8-PWA1 (yalnız yerel statik dosyalar; API önbelleğe alınmaz)
+Service Worker cache: F1-TAKIP-v3.0.9-PWA1 (yalnız yerel statik dosyalar; API önbelleğe alınmaz)
 Önceki sürüme dönüş: GitHub'da main dalının geçmişi 
 
 Repository:

@@ -47,7 +47,7 @@
       // çizgiler
       oo.seriler.forEach(function (s) {
         var d = s.deger.map(function (v, k) { return (k ? "L" : "M") + f(X(k)) + "," + f(Y(v)); }).join(" ");
-        var op = s.soluk ? " sg-soluk" : "";
+        var op = s.soluk ? " sg-soluk" : (s.arka ? " sg-arka" : "");
         h += "<g class='sg-seri" + op + "' data-id='" + esc(s.id) + "'>";
         h += "<path class='sg-cizgi' d='" + d + "' style='stroke:" + s.renk + "'" + (s.kesik ? " stroke-dasharray='7 4'" : "") + "/>";
         if (n <= 30) {
@@ -58,8 +58,10 @@
       // uç etiketleri (çakışma giderme)
       var uc = oo.seriler.map(function (s) { return { s: s, y: Y(s.deger[n - 1]) }; }).sort(function (a, b) { return a.y - b.y; });
       for (var k = 1; k < uc.length; k++) { if (uc[k].y - uc[k - 1].y < 12) { uc[k].y = uc[k - 1].y + 12; } }
+      var altSin = H - m.b;                                         // alt sınırı aşan etiketleri yukarı it (üst üste binme olmasın)
+      if (uc.length && uc[uc.length - 1].y > altSin) { uc[uc.length - 1].y = altSin; for (var q = uc.length - 2; q >= 0; q--) { if (uc[q + 1].y - uc[q].y < 12) { uc[q].y = uc[q + 1].y - 12; } } }
       uc.forEach(function (u) {
-        h += "<text class='sg-uc" + (u.s.soluk ? " sg-soluk" : "") + "' x='" + (W - m.r + 6) + "' y='" + f(Math.min(u.y + 4, H - m.b + 4)) + "' style='fill:" + u.s.renk + "'>" + esc(u.s.kod) + "</text>";
+        h += "<text class='sg-uc" + (u.s.soluk ? " sg-soluk" : (u.s.arka ? " sg-arka" : "")) + "' x='" + (W - m.r + 6) + "' y='" + f(u.y + 4) + "' style='fill:" + u.s.renk + "'>" + esc(u.s.kod) + "</text>";
       });
       // etkileşim katmanı
       h += "<g class='sg-isaret' hidden><line class='sg-rehber' y1='" + m.t + "' y2='" + (H - m.b) + "'/>";

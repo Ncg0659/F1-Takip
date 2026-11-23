@@ -122,11 +122,12 @@
     var konum = [yer.locality, pistAd].filter(Boolean);
     var basladi = zaman(y.date, y.time).getTime() <= simdi;
     // Seans kartları (mini takvim grid). Durum yalnız mevcut saf kuraldan (HV.seansDurumu) okunur; yeni durum mantığı yok.
+    var yarisS = hafta.seanslar.filter(function (s) { return s.anahtar === "Race"; })[0] || null;
     var satirlar = hafta.seanslar.map(function (s) {
       var dur = "yaklasan";
       try { dur = HV.seansDurumu(s, hafta, simdi) || "yaklasan"; } catch (e) { dur = "yaklasan"; }
       var g = String(HV.kisaGunYaz(s.baslangic, tz()) || "").split(/\s+/), gun = g.length === 3 ? g[0] + " " + g[1] + " · " + g[2] : g.join(" ");
-      return "<li class='st-p-ss st-ss-" + esc(dur) + "'><span class='st-p-ssg'>" + esc(gun.toLocaleUpperCase("tr")) + (dur === "canli" ? "<b class='st-p-canli'>LIVE</b>" : "") + "</span>" +
+      return "<li class='st-p-ss st-ss-" + esc(dur) + "'><span class='st-p-ssg'>" + esc(gun.toLocaleUpperCase("tr")) + (dur === "canli" ? "<b class='st-p-canli'>LIVE TAHMİNİ</b>" : "") + "</span>" +
              "<span class='st-p-sad'>" + esc(String(s.ad).toLocaleUpperCase("tr").replace(/SPRİNT/g, "SPRINT")) + "</span><span class='st-p-sz'>" + esc(HV.saatYaz(s.baslangic, tz())) + "</span></li>";
     }).join("");
     return "<div class='st-p-ust'><div class='st-p-sol'>" +
@@ -135,7 +136,8 @@
              "<p class='st-p-yer'>" + bayrak(yer.country) + "<span>" + (yer.locality ? esc(sehirGorunen(yer.locality)) + (pistAd ? " · " : "") : "") + (pistAd ? pistAdi(y, pistAd) : "") + "</span></p>" +
              "<div class='st-p-sayac' id='a2-sayac' data-bas='" + zaman(y.date, y.time).getTime() + "' role='timer' aria-label='Yarışa kalan süre'>" + (basladi ? "Yarış günü" : sayacKutulari()) + "</div>" +
            "</div><div class='st-p-sag'>" + pistSvg(y.Circuit && y.Circuit.circuitId) + "</div></div>" +
-           "<section class='st-p-seans'><h4 class='st-p-bas'>SEANS PROGRAMI</h4><ul class='st-p-liste'>" + satirlar + "</ul><p class='st-p-not'>Saatler Türkiye saatiyle.</p></section>" +
+           // Tam seans programı HAFTA SONU'nda (ana kullanım orada); burada tek satır yarış saati → aynı ızgara iki ekranda tekrar etmez
+           (yarisS ? "<p class='st-p-yaris'><span>YARIŞ</span><b>" + esc(HV.kisaGunYaz(yarisS.baslangic, tz())) + " · " + esc(HV.saatYaz(yarisS.baslangic, tz())) + "</b><small>Türkiye saati · tüm seanslar Yarış Haftası'nda</small></p>" : "") +
            "<footer class='st-p-alt'><button type='button' class='st-git st-p-git' data-git='hafta'>Yarış Haftası'na git" + ik("sag", 14) + "</button></footer>";
   }
 

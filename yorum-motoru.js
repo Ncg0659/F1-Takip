@@ -66,13 +66,18 @@
     if (pole && pole.k === kaz.kod) {
       if (kaz.grid === 1) { c1.push(kaz.ad + " pole'dan başlayıp yarışı kazandı."); }
       else {
-        c1.push(kaz.ad + " pole pozisyonunu aldı ve yarışı kazandı.");
-        if (!isNaN(kaz.grid)) { c1.push("Yarışa " + startYaz(kaz.grid) + " başladı."); }
+        // pole = sıralama 1.; grid farklıysa açıkça söylenir (nedeni bilinmez → yazılmaz)
+        if (!isNaN(kaz.grid)) { c1.push(kaz.ad + " sıralamada 1. oldu, yarışa " + startYaz(kaz.grid) + " başladı ve yarışı kazandı."); }
+        else { c1.push(kaz.ad + " pole pozisyonunu aldı ve yarışı kazandı."); }
       }
     } else if (pole) {
       var poleAd = poleSatir ? poleSatir.ad : (pole.a || pole.k);
-      c1.push("Pole pozisyonunu " + poleAd + " aldı; yarışı " + kaz.ad + " kazandı.");
-      if (poleSatir) {
+      var gridFarkli = poleSatir && basladiMi(poleSatir) && !isNaN(poleSatir.grid) && poleSatir.grid !== 1;
+      c1.push(gridFarkli ? "Yarışı " + kaz.ad + " kazandı." : "Pole pozisyonunu " + poleAd + " aldı; yarışı " + kaz.ad + " kazandı.");
+      if (gridFarkli) {      // sıralama 1. ≠ grid 1.: yalnız doğrulanabilen fark (ceza/neden uydurulmaz)
+        c1.push(poleAd + " sıralamada 1. oldu, yarışa " + startYaz(poleSatir.grid) + " başladı ve " +
+          (bitirdiMi(poleSatir) ? poleSatir.pos + ". bitirdi." : "yarışı tamamlayamadı (" + durumTr(poleSatir.durum) + ")."));
+      } else if (poleSatir) {
         var basla = basladiMi(poleSatir) && !isNaN(poleSatir.grid) ? poleAd + " yarışa " + (poleSatir.grid === 1 ? "pole'dan (1. sıradan)" : startYaz(poleSatir.grid)) + " başladı" : null;
         var bitis = bitirdiMi(poleSatir) ? (poleSatir.pos + ". bitirdi") :
           (!basladiMi(poleSatir) ? "yarışa başlayamadı" : "yarışı tamamlayamadı (" + durumTr(poleSatir.durum) + ")");
