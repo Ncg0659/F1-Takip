@@ -233,3 +233,14 @@ tr.sezon-bos td { white-space: normal; color: var(--soluk); font-size: .88rem; l
   .a32-sf th, .a32-sf td { padding-left: 6px; padding-right: 6px; white-space: nowrap; }
   .a32-sf thead th { font-size: .56rem; letter-spacing: .04em; }
 }
+
+/* 12) VERİ KAYNAĞI ERİŞİLEMİYOR (3.0.10) — sade kart; kırmızı değil (canlı/kritik durum değil), amber uyarı çizgisi; teknik metin yok */
+.kaynak-hata { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin: 0; padding: 14px 16px; border: 1px solid var(--cizgi); border-left: 3px solid #b45309; border-radius: 4px; background: var(--kart); color: var(--yazi); text-align: left; min-width: 0; }
+:root[data-tema="koyu"] .kaynak-hata { border-left-color: #f59e0b; }
+.kaynak-hata-b { margin: 0; font-family: var(--f-sayi); font-size: .74rem; font-weight: 700; letter-spacing: .12em; overflow-wrap: anywhere; }
+.kaynak-hata-a { margin: 0; font-size: .9rem; line-height: 1.4; color: var(--pl-etiket); overflow-wrap: anywhere; white-space: normal; }
+.kaynak-hata-d { margin-top: 4px; min-height: 40px; padding: 8px 14px; font-family: var(--f-sayi); font-size: .7rem; font-weight: 700; letter-spacing: .12em; border: 1px solid var(--yazi); border-radius: 3px; background: transparent; color: var(--yazi); cursor: pointer; }
+.kaynak-hata-d[disabled] { opacity: .6; cursor: progress; }
+.bg-kaynak { margin: 0 0 12px; }
+.kaynak-satir td { white-space: normal; }
+.h-eski { border-left-color: #b45309; }

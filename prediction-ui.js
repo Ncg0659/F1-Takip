@@ -36,7 +36,7 @@
         if (!r.ok) { return { tur: r.status === 404 ? "bos" : "hata", veri: null }; }
         var j = await r.json();
         return { tur: "ok", veri: j && j.MRData ? j.MRData : null };
-      } catch (e) { return { tur: "hata", veri: null }; }
+      } catch (e) { return { tur: "hata", veri: null }; }      // zaman aşımı dahil (kaynak-durum.js): sonsuz bekleme yok
     }
     return { tur: "hata", veri: null };
   }

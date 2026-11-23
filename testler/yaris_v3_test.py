@@ -147,7 +147,7 @@ with sync_playwright() as p:
     b.close()
     d=Durum(); d.sonuc[("17","qualifying")]=siralama(); d.sonuc_ag_hata=True
     page,errs,b=ac2(p,d,NOW,1100,sayfa="yaris"); page.clock.run_for(15000); page.wait_for_timeout(400)
-    yaz("G4 gerçek ağ hatası yutulmaz ('Veri alınamadı' kalır), sayfa çökmez", "Veri alınamadı" in page.inner_text("#yaris-durum") and errs==[], (page.inner_text("#yaris-durum"),errs))
+    yaz("G4 gerçek ağ hatası yutulmaz (3.0.10: 'VERİ KAYNAĞINA ULAŞILAMIYOR' kartı + YENİDEN DENE, teknik metin yok), sayfa çökmez", "VERİ KAYNAĞINA ULAŞILAMIYOR" in page.inner_text("#yaris-durum") and page.locator("#yaris-durum [data-kaynak-yeniden]").count()==1 and "Hata:" not in page.inner_text("#yaris-durum") and errs==[], (page.inner_text("#yaris-durum"),errs))
     b.close()
     # ===== D) Normal (Sprint olmayan) tamamlanmış yarış: tur 16 =====
     d,page,errs,b=hazir(p)

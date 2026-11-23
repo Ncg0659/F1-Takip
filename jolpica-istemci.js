@@ -24,7 +24,9 @@
       sonCagri = Date.now();
       var cevap;
       try { cevap = await fetch(TABAN + yol); }
-      catch (e) { if (deneme === 3) { throw new Error(yol + " -> ağ hatası"); } await bekle(1500 * (deneme + 1)); continue; }
+      catch (e) {
+        if (e && e.kaynak) { throw e; }        // kaynak-durum.js: zaman aşımı / erişilemiyor → tekrar tekrar bekleme (3.0.10)
+        if (deneme === 3) { throw new Error(yol + " -> ağ hatası"); } await bekle(1500 * (deneme + 1)); continue; }
       if (cevap.status === 429) { await bekle(2000 * (deneme + 1)); continue; }
       if (!cevap.ok) { throw new Error(yol + " -> sunucu cevabı: " + cevap.status); }
       return (await cevap.json()).MRData;
@@ -44,13 +46,13 @@
   async function al(yol, opsiyon) {
     var o = opsiyon || {};
     var kayit = o.onbellek ? oku(o.onbellek) : null;
-    if (kayit && (!o.omurMs || Date.now() - kayit.t < o.omurMs)) { return { veri: kayit.veri, eski: false, onbellekten: true }; }
+    if (kayit && (!o.omurMs || Date.now() - kayit.t < o.omurMs)) { return { veri: kayit.veri, eski: false, onbellekten: true, t: kayit.t }; }
     try {
       var veri = await sirali(yol);
       if (o.onbellek && (!o.kaydetKosul || o.kaydetKosul(veri))) { yaz(o.onbellek, { t: Date.now(), veri: veri }); }
       return { veri: veri, eski: false, onbellekten: false };
     } catch (hata) {
-      if (kayit) { return { veri: kayit.veri, eski: true, onbellekten: true }; }
+      if (kayit) { return { veri: kayit.veri, eski: true, onbellekten: true, t: kayit.t }; }   // son iyi veri: çağıran "GÜNCEL OLMAYABİLİR" göstermeli
       throw hata;
     }
   }

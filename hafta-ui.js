@@ -393,7 +393,8 @@
         "<div class='yk-yer'>" + bay + "<div><b>" + esc(h.ad) + "</b><span class='alt'>" + esc(pistGorunen(h)) + " · " + esc(sehirG(h.yer)) + ", " + esc(h.ulke) + "</span></div></div>" +
         (tarih ? "<p class='h-hero-meta'>" + esc(tarih) + "</p>" : "") + "</div>" + svg + "</div>" +
       "<p class='h-not'>Saatler Türkiye saatiyle gösterilir" + (h.pistTz ? "; pist yerel saati küçük yazıyla eklenir." : ".") + "</p>" +
-      (S.hata ? "<p class='h-uyari'>" + esc(S.hata) + "</p>" : "") +
+      (S.hata && S.hata !== "kaynak" ? "<p class='h-uyari'>" + esc(S.hata) + "</p>" : "") +
+      (S.takvimEski ? "<p class='h-uyari h-eski' data-eski-veri>GÜNCEL OLMAYABİLİR · Takvim için son kaydedilen veri gösteriliyor" + (S.takvimT && window.KaynakDurum ? " (son güncelleme " + esc(KaynakDurum.sonGuncelleme(S.takvimT)) + ")" : "") + ".</p>" : "") +
       (h.hata ? "<p class='h-uyari'>Veri güncellenemedi" + (h.eski ? "; son kaydedilen veri gösteriliyor." : ".") + "</p>" : "") + "</div>";
   }
 
@@ -516,7 +517,8 @@
     var a = document.getElementById("sekme-hafta"), b = document.getElementById("sekme-sprint");
     if (!a || !b) { return; }
     if (!S.hafta) {
-      var msg = S.hata ? "<p class='h-uyari'>" + esc(S.hata) + "</p><button class='yenile' data-act='yenile'>Yeniden dene</button>" :
+      var msg = S.hata === "kaynak" && window.KaynakDurum ? KaynakDurum.kart() :
+        S.hata ? "<p class='h-uyari'>" + esc(S.hata) + "</p><button class='yenile' data-act='yenile'>Yeniden dene</button>" :
         (S.takvimYok ? "<p class='h-not'>" + esc(S.takvimYok) + " takvimi henüz yayınlanmadı. Takvim yayınlanınca ilk yarış haftası burada görünür.</p>" : "<p class='h-not'>Yükleniyor...</p>");
       a.innerHTML = "<h1>Yarış Haftası</h1>" + msg; b.innerHTML = "<h1>Sprint</h1>" + msg;
       return;
@@ -560,7 +562,7 @@
     S.hazir = (async function () {
       try {
         var t = await V.takvimYukle(new Date().getFullYear());
-        S.yarislar = t.yarislar; S.takvimEski = t.eski;
+        S.yarislar = t.yarislar; S.takvimEski = t.eski; S.takvimT = t.t || null; S.hata = null;
         var v = V.varsayilanTur(S.yarislar);
         if (!S.yarislar || !S.yarislar.length) { S.takvimYok = new Date().getFullYear(); }   // sezon arası: takvim henüz yayınlanmadı (hata değil)
         if (v) {
@@ -568,7 +570,7 @@
           S.hafta = V.haftaKur(v, "f1");
           sprintDugmesi();
         }
-      } catch (e) { S.hata = "Takvim alınamadı: " + e.message; S.hazir = null; }
+      } catch (e) { S.hata = window.KaynakDurum && KaynakDurum.hataMi(e) ? "kaynak" : "Takvim şu an alınamadı."; S.hazir = null; }   // 3.0.10: teknik metin yok
     })();
     return S.hazir;
   }
@@ -587,6 +589,12 @@
   }
 
   function durdur() { durdurBekle(); S.aktifSayfa = null; }
+  // 3.0.10 YENİDEN DENE (kaynak-durum.js): takvim alınamadıysa takvimi, hafta verisi alınamadıysa yalnız haftayı yeniden ister (sayfa yenilenmez)
+  document.addEventListener("f1-kaynak-yeniden", function () {
+    if (S.aktifSayfa == null) { if (!S.hafta && S.hata) { S.hata = null; S.hazir = null; } return; }
+    if (!S.hafta && S.hata) { S.hata = null; S.hazir = null; ac(S.aktifSayfa); return; }
+    if (S.hafta && (S.hafta.hata || S.takvimEski) && !S.yukleniyor) { if (S.takvimEski) { V.takvimYukle(new Date().getFullYear()).then(function (t) { S.yarislar = t.yarislar; S.takvimEski = t.eski; S.takvimT = t.t || null; cizHafta(); }, function () { /* hâlâ erişilemiyor: etiket kalır */ }); } if (S.hafta.hata) { turYukle(S.tur); } }
+  });
 
   function sonAltSekme() {
     try { var v = localStorage.getItem(ALT_KEY); if (v === "hafta" || v === "sprint" || v === "gun" || v === "yaris") { return v; } } catch (e) { /* yok */ }

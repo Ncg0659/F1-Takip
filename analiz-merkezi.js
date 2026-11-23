@@ -369,10 +369,13 @@
       if (S.pole === null || yenile) { poleYukle(); }
       S.dogrulama = null; dogrulamaBekle(0);
     } catch (e) {
-      if (S.model) { S.durum = "hazir"; } else { eskiyeDon(e && e.message); }
+      if (S.model) { S.durum = "hazir"; }
+      else if (window.KaynakDurum && KaynakDurum.hataMi(e)) { S.durum = "hata"; S.hata = "kaynak"; k.innerHTML = "<h1>Sezon Analiz Merkezi</h1>" + KaynakDurum.kart(); }   // 3.0.10: sonsuz yükleme / teknik metin yok
+      else { eskiyeDon(e && e.message); }
     }
     S.yukleniyor = false;
   }
+  document.addEventListener("f1-kaynak-yeniden", function () { if (S.durum === "hata" && S.hata === "kaynak" && kok()) { S.durum = "bos"; ac(false); } });
 
   // ---- etkileşim ----
   function sakla() { yaz(K_PILOT, S.sec.pilot); yaz(K_TAKIM, S.sec.takim); bildir("secim"); }
