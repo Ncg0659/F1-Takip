@@ -26,7 +26,7 @@ with sync_playwright() as p:
     d,page,errs,b=hazir(p)
     yaz("A1 Yarış Analizi tur 17 (Sprint hafta sonu) seçili", page.input_value("#yaris-sec")=="17", page.input_value("#yaris-sec"))
     yaz("A2 Sprint rozeti hero'da", page.locator("#yv-tur .yv-sprint").count()==1)
-    yaz("A3 hero: yarış adı + pist + COMPLETED(FINISHED) rozeti + pist silueti", "Singapore" in page.inner_text("#yv-yer") and "FINISHED" in page.inner_text("#yv-durum") and gorunur(page,"#yv-pist svg"))
+    yaz("A3 hero: yarış adı + pist + TAMAMLANDI rozeti + pist silueti", "Singapore" in page.inner_text("#yv-yer") and "TAMAMLANDI" in page.inner_text("#yv-durum") and gorunur(page,"#yv-pist svg"))
     yaz("A4 hero KAZANAN + PODYUM", "KAZANAN" in page.inner_text("#yv-meta") and "PODYUM" in page.inner_text("#yv-meta"), page.inner_text("#yv-meta"))
     T=tabs(page)
     yaz("A5 sekmeler SONUÇ,OLAYLAR,TURLAR,GEÇİŞ,PİT,HAVA", T==["SONUÇ","OLAYLAR","TURLAR","GEÇİŞ","PİT","HAVA"], T)

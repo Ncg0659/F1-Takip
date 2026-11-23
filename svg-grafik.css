@@ -27,3 +27,7 @@
 .sg-ad { fill:var(--soluk); font-size:12px; }
 .sg-zemin { fill:var(--kart2); stroke:var(--cizgi); stroke-width:1; }
 .sg-deger { fill:var(--yazi); font-size:12px; font-weight:700; font-family:var(--f-sayi, monospace); }
+/* PRODUCT AUDIT v1: varsayılan olarak en anlamlı 3 çizgi belirgin; diğerleri geri planda (renk sistemi aynı, glow yok) */
+.sg-seri.sg-arka { opacity:.32; }
+.sg-seri.sg-arka .sg-cizgi { stroke-width:1.4; }
+.sg-uc.sg-arka { opacity:.45; }

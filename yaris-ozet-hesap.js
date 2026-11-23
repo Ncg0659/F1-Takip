@@ -114,7 +114,12 @@
       var a = g.standings[0], b = g.standings[1];
       if (a && b && a.Driver && b.Driver && isFinite(Number(a.points)) && isFinite(Number(b.points))) {
         var A1 = pilotOzet(a), B1 = pilotOzet(b), fark = Number(a.points) - Number(b.points);
-        S.push(satir("sampiyona", "Güncel şampiyona tablosu", [pRef(A1), " lider. ", pRef(B1), " ile fark " + fark + " puan"]));
+        // ortak şampiyonluk mantığı (sampiyonluk-durum.js): aynı veride şampiyon belliyse "lider" değil "şampiyon" denir
+        var SD = null;
+        try { SD = (typeof window !== "undefined" && window.SampiyonlukDurumu) ? window.SampiyonlukDurumu.mevcut() : null; } catch (e) { SD = null; }
+        var belli = SD && SD.durum === "belli" && SD.sampiyon && a.Driver.driverId === SD.sampiyon.id && Number(a.points) === SD.sampiyon.puan;
+        S.push(satir("sampiyona", "Güncel şampiyona tablosu", belli ? [pRef(A1), " " + SD.sezon + " Dünya Şampiyonu (matematiksel olarak belli). ", pRef(B1), " ile fark " + fark + " puan"]
+                                                                  : [pRef(A1), " lider. ", pRef(B1), " ile fark " + fark + " puan"]));
       }
     }
 

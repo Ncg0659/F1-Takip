@@ -152,7 +152,7 @@
            (t.basladi ? "<span class='tp-sabit' title='Yarış başladı; tahmin yarış öncesi verilerle sabit'>YARIŞ ÖNCESİ · SABİT</span>" : "");
   }
   function guvenHtml(sev) {
-    if (!GUVEN_ETIKET[sev]) { return "<p class='tp-guven' data-guven='UNRELIABLE'><b class='tp-g-d tp-g-yok'>" + esc(GUVEN_YOK) + "</b></p>"; }
+    if (!GUVEN_ETIKET[sev]) { return "<p class='tp-guven tp-guven-ik' data-guven='UNRELIABLE'><span class='tp-g-ik' aria-hidden='true'>ⓘ</span> <b class='tp-g-d tp-g-yok'>" + esc(GUVEN_YOK) + "</b></p>"; }   // tek küçük ⓘ satırı
     return "<p class='tp-guven' data-guven='" + esc(sev) + "'><span class='tp-g-et'>Güven:</span> <b class='tp-g-d'>" + esc(GUVEN_ETIKET[sev] || sev) + "</b><small>" + esc(GUVEN_NOT) + "</small></p>";
   }
 
@@ -171,6 +171,15 @@
       "<p class='tp-not'>" + esc(NOT) + "</p></section>";
   }
 
+  // Seans/yarış canlıyken BUGÜN'de tahmin tek satır (ekranın yarısını kaplamaz); "AÇ" ile tam kart. Değerler aynı (sabit tahmin korunur).
+  function seansAktif(now) { return bul(function () { var m = window.BugunV3.modBelirle(now); return !!(m && m.mod === "A" && (m.aktif || m.canli)); }, false); }
+  function kompaktHtml(t, st) {
+    var l = st.pred.suruculer.slice(0, 3); if (!l.length) { return ""; }
+    var ozet = l.map(function (s) { var p = pilotBilgi(st, s.driver); return "<span class='tp-k-p'><b>" + esc(p.kod || s.driver) + "</b> " + pct(s.winProbability) + "</span>"; }).join("<span class='tp-k-ayr' aria-hidden='true'>·</span>");
+    return "<section class='tp-kart tp-kompakt' id='tp-kart' data-mod='" + esc(st.mod) + "' data-kompakt='1' aria-label='Yarış tahmini (özet)'>" +
+      "<p class='tp-ust'><b class='tp-baslik'>YARIŞ TAHMİNİ</b>" + modEtiket(st, t) + "</p>" +
+      "<p class='tp-k-satir'><span class='tp-k-l'>" + ozet + "</span><button type='button' class='tp-k-ac' data-tp-kompakt aria-expanded='false'>AÇ</button></p></section>";
+  }
   function nedenHtml(s) {
     var r = (s.reasons || []).slice(0, 5);
     var gh = GUVEN_ETIKET[s.confidenceSeviye] ? "<p class='tp-d-g' data-guven='" + esc(s.confidenceSeviye) + "'>Güven: <b>" + esc(GUVEN_ETIKET[s.confidenceSeviye]) + "</b></p>" : "<p class='tp-d-g' data-guven='UNRELIABLE'>" + esc(GUVEN_YOK) + "</p>";
@@ -179,21 +188,27 @@
   }
   function panelHtml(t, st) {
     var l = st.pred.suruculer, mw = l[0].winProbability, mp = Math.max.apply(null, l.map(function (s) { return s.podiumProbability; })), mq = Math.max.apply(null, l.map(function (s) { return s.pointsProbability; }));
-    var satir = l.map(function (s) {
+    var ILK = 10, gizle = function (i) { return !S.tumu && i >= ILK ? " hidden" : ""; };     // ilk 10 pilot; devamı TÜMÜNÜ GÖSTER (hesap aynı)
+    var satir = l.map(function (s, i) {
       var p = pilotBilgi(st, s.driver), ac = !!S.acik[s.driver], nid = "tp-n-" + s.driver;
-      return "<tr class='tp-sat' data-driver='" + esc(s.driver) + "'><td class='tp-c-p'><button type='button' class='tp-ac' data-tp-ac='" + esc(s.driver) + "' aria-expanded='" + (ac ? "true" : "false") + "' aria-controls='" + esc(nid) + "'><span class='tp-ok' aria-hidden='true'></span>" + pilotHtml(p) + "</button></td>" +
+      return "<tr class='tp-sat' data-driver='" + esc(s.driver) + "'" + gizle(i) + "><td class='tp-c-p'><button type='button' class='tp-ac' data-tp-ac='" + esc(s.driver) + "' aria-expanded='" + (ac ? "true" : "false") + "' aria-controls='" + esc(nid) + "'><span class='tp-ok' aria-hidden='true'></span>" + pilotHtml(p) + "</button></td>" +
         "<td class='tp-c-y'><span class='tp-y'>" + pct(s.winProbability) + "</span>" + bar(s.winProbability, mw) + "</td>" +
         "<td class='tp-c-y'><span class='tp-y'>" + pct(s.podiumProbability) + "</span>" + bar(s.podiumProbability, mp) + "</td>" +
         "<td class='tp-c-y'><span class='tp-y'>" + pct(s.pointsProbability) + "</span>" + bar(s.pointsProbability, mq) + "</td></tr>" +
-        "<tr class='tp-neden' id='" + esc(nid) + "'" + (ac ? "" : " hidden") + "><td colspan='4'>" + nedenHtml(s) + "</td></tr>";
+        "<tr class='tp-neden' id='" + esc(nid) + "'" + (ac && !gizle(i) ? "" : " hidden") + "><td colspan='4'>" + nedenHtml(s) + "</td></tr>";
     }).join("");
-    var tablo = "<table class='tp-tablo'><caption class='bg-sr'>Pilot bazında olasılıklar</caption><thead><tr><th scope='col'>Pilot</th><th scope='col'>Kazanma %</th><th scope='col'>Podyum %</th><th scope='col'>Puan %</th></tr></thead><tbody>" + satir + "</tbody></table>";
+    var tablo = "<table class='tp-tablo'><caption class='bg-sr'>Pilot bazında olasılıklar</caption><thead><tr><th scope='col'>Pilot</th><th scope='col'>Kazanma %</th><th scope='col'>Podyum %</th><th scope='col'>Puan %</th></tr></thead><tbody>" + satir + "</tbody></table>" +
+      (l.length > ILK ? "<p class='tp-tumu-p'><button type='button' class='bg-feed-dug tp-tumu' data-tp-tumu aria-expanded='" + (S.tumu ? "true" : "false") + "'>" + (S.tumu ? "İLK 10" : "TÜMÜNÜ GÖSTER (" + l.length + ")") + "</button></p>" : "");
     return "<section class='tp-panel' id='tp-panel' data-mod='" + esc(st.mod) + "' aria-label='Yarış tahmini ayrıntısı'>" +
       "<p class='tp-ust'><b class='tp-baslik'>YARIŞ TAHMİNİ</b>" + modEtiket(st, t) + "<span class='tp-meta'>TUR " + esc(t.round) + " / " + esc(t.toplam) + "</span></p>" +
       "<h2 class='tp-ad' lang='en'>" + esc(t.ad) + "</h2>" + guvenHtml(genelGuven(st.pred)) + tablo + sampiyonHtml(st) +
       "<p class='tp-not'>" + esc(NOT) + "</p></section>";
   }
   function sampiyonHtml(st) {
+    var SD = null; try { SD = window.SampiyonlukDurumu ? SampiyonlukDurumu.mevcut() : null; } catch (e) { SD = null; }
+    if (SD && SD.durum === "belli") {             // ortak mantık: şampiyon matematiksel olarak belli → olasılık listesi yerine matematiksel sonuç (çelişki yok)
+      return "<section class='tp-ch' id='tp-ch' aria-label='Şampiyonluk'><h3 class='tp-h'>ŞAMPİYONLUK</h3><p class='tp-ch-m'>" + esc(SD.manset) + "</p><p class='tp-alt'>" + esc(SD.kisa) + "</p></section>";
+    }
     var c = st.champ; if (!c || !c.suruculer) { return ""; }
     var gecerli = c.suruculer.filter(function (s) { return typeof s.championshipProbability === "number"; }), ilk = gecerli.filter(function (s) { return s.championshipProbability > 0; }).slice(0, 5);
     if (!ilk.length) { return ""; }
@@ -213,7 +228,8 @@
     try {
       if (kb && sb && !sb.hidden) {
         var t = hedefBul(now, true), st = t && !t.gizle ? S.sonuc[anahtar(t)] : null;
-        yaz(kb, "bugun", st ? kartHtml(t, st) : "");
+        var kmp = st && seansAktif(now);
+        yaz(kb, "bugun", st ? (kmp && !S.kompaktAcik ? kompaktHtml(t, st) : kartHtml(t, st).replace("</p><ol", (kmp ? "<button type='button' class='tp-k-ac' data-tp-kompakt aria-expanded='true'>DARALT</button>" : "") + "</p><ol")) : "");
       }
       if (ka && sg && !sg.hidden) {
         var t2 = hedefBul(now, false), st2 = t2 ? S.sonuc[anahtar(t2)] : null;
@@ -234,6 +250,10 @@
     saatGozle(); ciz(); tetikle(e.detail === "grafik");
   });
   document.addEventListener("click", function (e) {
+    var km = e.target.closest && e.target.closest("[data-tp-kompakt]");
+    if (km) { S.kompaktAcik = !S.kompaktAcik; ciz(); var yb = document.querySelector("[data-tp-kompakt]"); if (yb) { try { yb.focus(); } catch (x) { /* önemsiz */ } } return; }
+    var tm = e.target.closest && e.target.closest("[data-tp-tumu]");
+    if (tm) { S.tumu = !S.tumu; S.html.analiz = null; ciz(); var yt = document.querySelector("[data-tp-tumu]"); if (yt) { try { yt.focus(); } catch (x) { /* önemsiz */ } } return; }
     var go = e.target.closest && e.target.closest("[data-tp-git]");
     if (go) { if (typeof window.sekmeAc === "function") { window.sekmeAc("grafik"); var p = $("tp-panel"); if (p && p.scrollIntoView) { p.scrollIntoView({ block: "start" }); } } return; }
     var b = e.target.closest && e.target.closest("[data-tp-ac]"); if (!b) { return; }

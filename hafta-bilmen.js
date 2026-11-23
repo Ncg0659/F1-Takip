@@ -1,4 +1,4 @@
-/* A4.3 — "BİLMEN GEREKEN 5 ŞEY" (Yarış Haftası, yarış öncesi bağlam kartı). YENİ API ÇAĞRISI YOK, yeni tercih anahtarı YOK, yeni hesap sistemi YOK.
+/* A4.3 — HAFTA SONU bağlam kartı (eski "Bilmen gereken 5 şey"; artık en fazla 3 madde) (Yarış Haftası, yarış öncesi bağlam kartı). YENİ API ÇAĞRISI YOK, yeni tercih anahtarı YOK, yeni hesap sistemi YOK.
    İki katman:
    1) BilmenHesap.uret(girdi) — SAF fonksiyon (DOM/ağ yok; Node'da test edilir). Sabit öncelik sırasıyla (rastgelelik yok) 5 madde üretir.
    2) DOM katmanı — A1'in #sekme-hafta kapsayıcısına DOKUNMAZ; kendi kardeş kapsayıcısını (#a43-bilmen) kullanır, A1 yeniden çizince MutationObserver ile tazelenir.
@@ -9,7 +9,10 @@
 
   // ---------- 1) SAF KATMAN ----------
   // Sabit öncelik sırası (kullanıcı onaylı): 1-5 ana maddeler, 6-12 alternatif havuz
-  var SIRA = ["sampiyona", "sonyaris", "son5", "sprint", "pist", "galibiyet", "pole", "takvim", "kalan", "saat", "sprintsayisi", "yer", "kalanyaris"];
+  // PRODUCT AUDIT v1: en fazla 3 kısa madde; BUGÜN'de zaten görünen bilgi (şampiyona/lider, geri sayım, yarış saati) burada TEKRARLANMAZ.
+  // Önce bu hafta sonuna özgü bağlam (format, pist, sezondaki yeri), sonra son form.
+  var SIRA = ["sprint", "pist", "kalanyaris", "son5", "sonyaris", "pole", "galibiyet", "takvim", "sprintsayisi", "yer"];
+  var EN_COK = 3;
   var ETIKET = { sampiyona: "Şampiyona", sonyaris: "Son yarış", son5: "Son 5", sprint: "Sprint", pist: "Pist", galibiyet: "Galibiyet", pole: "Pole",
                  takvim: "Takvim", kalan: "Zaman", saat: "Yarış saati", sprintsayisi: "Sprint sayısı", yer: "Yer", kalanyaris: "Sezon sonu" };
   var IKON = { sampiyona: "trophy", sonyaris: "flag", son5: "chart", sprint: "zap", pist: "pin", galibiyet: "trophy", pole: "flag",
@@ -84,10 +87,10 @@
     }
   };
 
-  // girdi → en çok 5 madde (her zaman aynı öncelik; veri yoksa sıradaki kullanılır)
+  // girdi → en çok 3 madde (her zaman aynı öncelik; veri yoksa sıradaki kullanılır)
   function uret(g) {
     var cikti = [];
-    for (var i = 0; i < SIRA.length && cikti.length < 5; i++) {
+    for (var i = 0; i < SIRA.length && cikti.length < EN_COK; i++) {
       var k = SIRA[i], r = null;
       try { r = KUR[k](g || {}); } catch (e) { r = null; }
       if (r && r.metin) { cikti.push({ anahtar: k, etiket: ETIKET[k], ikon: IKON[k], terim: TERIM[k] || null, metin: r.metin, alt: r.alt || null }); }
@@ -202,13 +205,12 @@
   }
 
   function esc(x) { return F.esc(x); }
-  function html(maddeler) {
-    return "<h2 class='bm-baslik' id='bm-b'>Bilmen gereken 5 şey</h2><ol class='bm-liste'>" + maddeler.map(function (m, i) {
+  function html(maddeler) {      // düz, okunur liste: kesme yok, büyük harf/mono yok, açılır kutu yok
+    return "<h2 class='bm-baslik' id='bm-b'>Bu hafta sonu</h2><ul class='bm-liste'>" + maddeler.map(function (m) {
       var bilgi = m.terim && kok.ICERIK && ICERIK.sozluk && ICERIK.sozluk.terimler[m.terim]
         ? " <button type='button' class='a2-i' data-terim='" + esc(m.terim) + "' aria-haspopup='dialog' aria-label='" + esc(ICERIK.sozluk.terimler[m.terim].ad) + " nedir?' title='" + esc(ICERIK.sozluk.terimler[m.terim].ad) + " nedir?'></button>" : "";
-      return "<li class='bm-m' data-bm='" + esc(m.anahtar) + "'><details class='bm-d'><summary class='bm-s'><span class='bm-no' aria-hidden='true'>" + String(i + 1).padStart(2, "0") + "</span><span class='bm-ik' aria-hidden='true'>" + F.ikon(m.ikon, 18) + "</span>" +
-        "<div class='bm-ic'><span class='bm-et'>" + esc(m.etiket) + "</span><span class='bm-tx'>" + esc(m.metin) + bilgi + "</span></div></summary>" + (m.alt ? "<span class='bm-alt'>" + esc(m.alt) + "</span>" : "") + "</details></li>";
-    }).join("") + "</ol>";
+      return "<li class='bm-m' data-bm='" + esc(m.anahtar) + "'><span class='bm-ik' aria-hidden='true'>" + F.ikon(m.ikon, 18) + "</span><p class='bm-tx'>" + esc(m.metin) + bilgi + (m.alt ? " <span class='bm-alt'>" + esc(m.alt) + "</span>" : "") + "</p></li>";
+    }).join("") + "</ul>";
   }
 
   function ciz() {

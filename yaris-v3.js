@@ -28,7 +28,7 @@
     var y = c.y, lok = y.Circuit.Location, L = Y.liste, w = L && L[0], tarih = "";
     try { tarih = new Date(y.date + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }); } catch (e) {}
     $("yv-tur").innerHTML = "TUR " + esc(y.round) + (c.toplam >= Number(y.round) ? " <small>/ " + c.toplam + "</small>" : "") + (c.h && c.h.sprintMi ? " <span class='yv-sprint'>SPRINT</span>" : "");
-    $("yv-durum").innerHTML = L ? "<span class='dr bitti'>FINISHED</span>" : "";
+    $("yv-durum").innerHTML = L ? "<span class='dr bitti'>TAMAMLANDI</span>" : "";
     $("yv-yer").innerHTML = window.F1UI.bayrak(lok.country) + "<div><b>" + esc(y.raceName) + "</b><span class='alt'>" + esc(pistAd(y)) + " · " + esc(((window.SezonTakvim && SezonTakvim.sehirGorunen) ? SezonTakvim.sehirGorunen(lok.locality) : lok.locality) + ", " + lok.country) + "</span></div>";
     var m = "<span>" + esc(tarih) + "</span>";
     if (w) { m += "<span><i>KAZANAN</i> <b>" + esc(ad(w)) + "</b>" + (w.Constructor ? " · " + esc(w.Constructor.name) : "") + "</span>"; }

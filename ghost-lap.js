@@ -29,12 +29,14 @@
   // ---------- panel ----------
   function kur() {
     if (kok()) { return true; }
-    var ek = document.getElementById("yv-tur-ek"), ust = ek ? ek.parentNode : document.getElementById("yv-detay");
+    // ÖNE ÇIKAN ANALİZ: yarış analizinin en altında kaybolmasın → YARIŞ ANALİZİ sekmelerinin ÜSTÜNDE ayrı kart (kapalı açılır; veri mantığı aynı)
+    var det = document.getElementById("yv-detay"), ust = det ? det.parentNode : null;
     if (!ust) { return false; }
     var d = document.createElement("details");
-    d.id = "gl-ghost"; d.className = "gl";
-    d.innerHTML = "<summary>GHOST LAP</summary><div class='gl-ic'></div>";
-    if (ek && ek.nextSibling) { ust.insertBefore(d, ek.nextSibling); } else { ust.appendChild(d); }
+    d.id = "gl-ghost"; d.className = "gl gl-one";
+    d.innerHTML = "<summary><span class='gl-one-m'><span class='gl-one-et'>ÖNE ÇIKAN ANALİZ</span><b class='gl-one-b'>GHOST LAP</b>" +
+      "<span class='gl-one-a'>İki pilotun en hızlı turu yan yana: sektör, delta, hız ve pist üzerinde oynatma</span></span><span class='gl-one-ac' aria-hidden='true'>AÇ</span></summary><div class='gl-ic'></div>";
+    ust.insertBefore(d, det);
     d.addEventListener("toggle", function () { if (d.open) { ciz(); } else { duraklat(); } });
     d.addEventListener("change", function (e) { var t = e.target; if (!t || !t.getAttribute) { return; } var a = t.getAttribute("data-gl"); if (a) { secim(a, t.value); } else if (t.hasAttribute("data-gl-kaydir")) { kaydir(Number(t.value)); } });
     d.addEventListener("input", function (e) { var t = e.target; if (t && t.hasAttribute && t.hasAttribute("data-gl-kaydir")) { kaydir(Number(t.value)); } });

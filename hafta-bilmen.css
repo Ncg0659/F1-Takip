@@ -30,3 +30,11 @@
 .bm-m { border-radius:3px; }
 .bm-no { font-family:var(--f-sayi); }
 .bm-et { letter-spacing:.06em; }
+
+/* PRODUCT AUDIT v1: en fazla 3 madde, düz okunur liste (kesme / line-clamp / mono büyük harf yok) */
+.bm-liste { display:flex; flex-direction:column; gap:6px; grid-template-columns:none; margin:0; padding:0; list-style:none; }
+.bm-m { display:grid; grid-template-columns:18px minmax(0,1fr); gap:8px; align-items:start; border:0; padding:0; }
+.bm-ik { padding-top:2px; }
+.bm-tx { display:block; -webkit-line-clamp:unset; overflow:visible; margin:0; font-size:.9rem; line-height:1.4; color:var(--yazi); overflow-wrap:anywhere; }
+.bm-alt { display:inline; margin:0; font-size:.8rem; }
+.bm-baslik { font-family:inherit; font-size:.74rem; letter-spacing:.08em; }

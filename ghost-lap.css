@@ -34,3 +34,16 @@
 #gl-ghost .gl-kaydir { flex:1 1 auto; min-width:0; width:100%; min-height:40px; }
 #gl-ghost .gl-sure { flex:0 0 auto; font-size:.78rem; font-variant-numeric:tabular-nums; color:var(--soluk); }
 @media (max-width:480px) { #gl-ghost .gl-rp-2 { flex-wrap:wrap; } #gl-ghost .gl-sure { flex-basis:100%; } #gl-ghost .gl-btn { padding:6px 10px; } }
+/* PRODUCT AUDIT v1: "ÖNE ÇIKAN ANALİZ" başlığı — yarış analizinin üstünde, fark edilir (veri/oynatma mantığı aynı) */
+#gl-ghost.gl-one { border-left:3px solid var(--gl-a); border-radius:4px; }
+#gl-ghost.gl-one > summary { list-style:none; justify-content:space-between; gap:12px; padding:12px 0; min-height:56px; }
+#gl-ghost.gl-one > summary::-webkit-details-marker { display:none; }
+#gl-ghost .gl-one-m { display:flex; flex-direction:column; gap:3px; min-width:0; }
+#gl-ghost .gl-one-et { font-family:var(--f-sayi); font-size:.6rem; font-weight:700; letter-spacing:.14em; color:var(--soluk); }
+#gl-ghost .gl-one-b { font-size:1.12rem; font-weight:800; letter-spacing:.06em; color:var(--yazi); }
+#gl-ghost .gl-one-a { font-size:.8rem; font-weight:400; letter-spacing:0; line-height:1.35; color:var(--soluk); overflow-wrap:anywhere; }
+#gl-ghost .gl-one-ac { flex:none; font-family:var(--f-sayi); font-size:.64rem; font-weight:700; letter-spacing:.12em; padding:6px 10px; border:1px solid var(--cizgi); border-radius:3px; }
+#gl-ghost.gl-one[open] .gl-one-ac { visibility:hidden; }
+#sekme-yaris > #gl-ghost { order:5; }                              /* yarış kahramanı + özetten sonra, YARIŞ ANALİZİ'nden önce */
+#gl-ghost.gl-one > summary { text-transform:none; font-family:inherit; color:var(--yazi); }
+#gl-ghost .gl-one-a { font-family:inherit; text-transform:none; }
