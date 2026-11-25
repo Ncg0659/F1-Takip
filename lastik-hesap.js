@@ -107,7 +107,7 @@
     var satirlar = PJ.liste.map(function (p) {
       var ham = hamS[p.no] ? Object.keys(hamS[p.no]).map(function (k) { return hamS[p.no][k]; }) : [];
       ham.sort(function (a, b) { return (a.n == null ? 1e9 : a.n) - (b.n == null ? 1e9 : b.n) || a.bas - b.bas; });
-      var sinir = p.tur > 0 ? p.tur : null, st = [];
+      var sinir = p.dns ? 0 : (p.tur > 0 ? p.tur : null), st = [];          // DNS: hiç tur tamamlanmadı → blok çizilmez
       ham.forEach(function (s, i) {
         var son = i === ham.length - 1, bit = s.bitHam;
         if (bit == null && son && sinir != null) { bit = sinir; }                 // son stint açık: pilotun tamamladığı tur (Jolpica)
@@ -117,10 +117,14 @@
       });
       var pl = pitBy[p.no] || [];
       st.forEach(function (s, i) { if (i === 0) { return; } var m = pl.filter(function (x) { return !x.es && (x.tur === s.bas - 1 || x.tur === s.bas); })[0]; if (m) { m.es = true; s.pit = m; } });
+      // tutarlılık: pit verisi varken her pit bir stint geçişiyle, her geçiş bir pitle eşleşmeli; değilse satır özet maddelerinde kullanılmaz
+      // (son turda yapılan, ardından stint kaydı gelmeyen pit — ör. pit sonrası çekilme — eşleşmemiş sayılmaz)
+      var sonBit = st.length ? st[st.length - 1].bit : null;
+      var tutarli = !pitVar || (pl.every(function (x) { return x.es || (sonBit != null && x.tur >= sonBit); }) && st.slice(1).every(function (x) { return !!x.pit; }));
       var uzunlar = st.filter(function (s) { return s.uzun != null; }), enUzun = uzunlar.slice().sort(function (a, b) { return b.uzun - a.uzun || a.bas - b.bas; })[0] || null;
       return { id: p.id, kod: p.kod, soyad: p.soyad, ad: p.ad, takim: p.takim, no: p.no, bitis: p.bitis, pt: p.pt, siniflandi: p.siniflandi, grid: p.grid, pitYolu: p.pitYolu,
                tur: p.tur, cekildi: p.cekildi, dns: p.dns, stintler: st, pitler: pitVar ? pl.map(function (x) { return { tur: x.tur, lane: x.lane, durak: x.durak, eslesti: x.es }; }) : null,
-               pitSayisi: pitVar ? pl.length : null, enUzun: enUzun };
+               pitSayisi: pitVar ? pl.length : null, enUzun: enUzun, tutarli: tutarli };
     });
     satirlar.sort(function (a, b) {
       var ak = a.siniflandi && a.bitis ? a.bitis : 1000 - a.tur, bk = b.siniflandi && b.bitis ? b.bitis : 1000 - b.tur;
@@ -133,7 +137,7 @@
   // En fazla 3 deterministik bilgi. Hesaplanamayan madde hiç üretilmez. Değerlendirme ("en iyi", "yanlış") yok.
   function stratejiOzet(R) {
     var out = [], sat = (R && R.satirlar) || [];
-    var tam = sat.filter(function (s) { return s.stintler.length && s.stintler.every(function (x) { return x.uzun != null; }); });
+    var tam = sat.filter(function (s) { return s.tutarli !== false && s.stintler.length && s.stintler.every(function (x) { return x.uzun != null; }); });
     var enUz = null; tam.forEach(function (s) { s.stintler.forEach(function (x) { if (!enUz || x.uzun > enUz.x.uzun) { enUz = { s: s, x: x }; } }); });
     if (enUz && enUz.x.b.k !== "bilinmiyor") { out.push("En uzun stint: " + enUz.s.soyad + ", " + ING[enUz.x.b.k] + " ile " + enUz.x.uzun + " tur (tur " + enUz.x.bas + "–" + enUz.x.bit + ")."); }
     var kaz = sat.filter(function (s) { return s.bitis === 1; })[0];

@@ -70,4 +70,11 @@ k("S17 tempo hariç: 1. tur, pit giriş (stint sonu) ve çıkış turu, süresiz
 k("S18 tempo: medyan ve en hızlı yalnız temiz turlardan", Math.abs(tp[0].medyan - 90.3) < 1e-9 && tp[0].enHizli === 90, [tp[0].medyan, tp[0].enHizli]);
 k("S19 SC penceresiyle çakışan turlar ve pencere sonrası ilk tur hariç; temiz tur < 5 → tempo hesaplanmaz (null)", tp[1].haric.bayrak === 3 && tp[1].haric.pit === 1 && tp[1].kullanilan < LH.EN_AZ_TEMIZ && tp[1].medyan === null && tp[1].enHizli === null, tp[1]);
 k("S20 tur verisi yoksa tempo null", LH.tempo(null, satT, []) === null && LH.tempo([], satT, []) === null);
+// 9) DNS ve tutarsız kayıt (2026 Las Vegas gerçek doğrulamasında görülen durumlar; burada sentetik)
+const sDns = JSON.parse(JSON.stringify(sonuc)); const hm = sDns.filter(r => r.Driver.driverId === "hamilton")[0]; hm.positionText = "DNS"; hm.position = ""; hm.laps = "0";
+const Rn = LH.strateji({ stintRows, sonuc: sDns, pit }), hmS = Rn.satirlar.filter(x => x.id === "hamilton")[0];
+k("S21 DNS (0 tur): kaynakta stint satırı olsa da blok çizilmez", hmS.dns && hmS.stintler.length === 0, hmS.stintler);
+const Rt = LH.strateji({ stintRows, sonuc, pit: pit.concat([{ driverNumber: 87, lapNumber: 30, laneDuration: 20, stopDuration: 2 }]) });
+const beaT = Rt.satirlar.filter(x => x.id === "bearman")[0], ozT = LH.stratejiOzet(Rt);
+k("S22 pit kaydı stint geçişiyle eşleşmeyen pilot 'tutarsız' işaretlenir ve özet maddelerinde kullanılmaz", beaT.tutarli === false && !ozT.some(t => /Bearman/.test(t)) && R.satirlar.every(x => x.tutarli), ozT[0]);
 console.log(JSON.stringify(S));

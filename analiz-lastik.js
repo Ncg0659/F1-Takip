@@ -137,7 +137,8 @@
     var pit = st.pit ? "Pit: tur " + st.pit.tur + (st.pit.lane != null ? " · pit lane süresi " + sn(st.pit.lane) : "") + (st.pit.durak != null ? " · durağan süre " + sn(st.pit.durak) : "") :
       (D.secili.i === 0 ? "Yarışa bu lastikle başladı." : (D.pit ? "Bu stint için eşleşen pit kaydı yok." : "Pit verisi yok."));
     return "<div class='ls-det'><p class='ls-det-b'><b>" + esc(s.soyad) + "</b> <span class='ls-bil ls-c-" + st.b.k + "'>" + esc(LH.ING[st.b.k]) + "</span></p>" +
-      "<p>Tur " + st.bas + "–" + st.bit + " · " + st.uzun + " tur" + (st.yas != null ? " · başlangıç lastik yaşı " + st.yas + " tur" : " · başlangıç yaşı: veri yok") + "</p><p>" + esc(pit) + "</p></div>";
+      "<p>Tur " + st.bas + "–" + st.bit + " · " + st.uzun + " tur" + (st.yas != null ? " · başlangıç lastik yaşı " + st.yas + " tur" : " · başlangıç yaşı: veri yok") + "</p><p>" + esc(pit) + "</p>" +
+      (s.tutarli === false ? "<p class='ls-not'>Bu pilot için OpenF1 stint ve pit kayıtları birbiriyle tam eşleşmiyor; kayıtlar olduğu gibi gösterilir.</p>" : "") + "</div>";
   }
   function kisiHtml(s) {
     if (!s) { return "<div class='ls-k'><p class='ls-yok'>Veri yok</p></div>"; }
@@ -150,7 +151,8 @@
     if (dur) { r.push(["Durağan süre", dur.join(" · ")]); }
     r.push(["Start → bitiş", (s.grid ? "P" + s.grid : (s.pitYolu ? "Pit yolu" : "—")) + " → " + (s.siniflandi && s.bitis ? "P" + s.bitis : (s.cekildi ? "DNF (" + s.tur + " tur)" : s.pt || "—"))]);
     return "<div class='ls-k'><p class='ls-k-ad'><b>" + esc(s.soyad) + "</b> <span class='ls-alt'>" + esc(s.takim) + "</span></p><dl>" +
-      r.map(function (x) { return "<dt>" + esc(x[0]) + "</dt><dd>" + (x[0] === "Lastik dizilimi" ? x[1] : esc(x[1])) + "</dd>"; }).join("") + "</dl></div>";
+      r.map(function (x) { return "<dt>" + esc(x[0]) + "</dt><dd>" + (x[0] === "Lastik dizilimi" ? x[1] : esc(x[1])) + "</dd>"; }).join("") + "</dl>" +
+      (s.tutarli === false ? "<p class='ls-not'>OpenF1 stint ve pit kayıtları bu pilot için tam eşleşmiyor.</p>" : "") + "</div>";
   }
   function tempoHtml(s) {
     if (!s) { return ""; }
