@@ -41,7 +41,7 @@ with sync_playwright() as p:
     kontrol("2.5 BUGÜN ŞAMPİYONA P1–P3: yalnız NOR satırı işaretli (ANT/RUS değil)", pg.evaluate("[...document.querySelectorAll('#bg-kok .bg-std li')].map(l=>l.hasAttribute('data-fav'))")==[False,False,True], pg.evaluate("[...document.querySelectorAll('#bg-kok .bg-std li')].map(l=>l.hasAttribute('data-fav'))"))
     kontrol("2.6 state rengiyle karışmaz: blok çizgisi/★/kod kırmızı değil", not kirmizi(stil(pg,"#fv-bugun","borderLeftColor")) and not kirmizi(stil(pg,"#fv-bugun .fv-y","color")) and not kirmizi(stil(pg,"#fv-bugun .fv-kod","borderTopColor")))
     kontrol("2.7 hero etiketi (SIRADAKİ YARIŞ/ton) favoriden etkilenmedi", M_ if (M_:=None) else pg.evaluate("document.querySelector('#bg-kok [data-mod]').dataset.mod")=="B")
-    PT=re.compile(r"/(results|qualifying|pitstops)/\?limit=100&offset=|/\d+/pitstops/\?limit=100")   # Prediction UI'nin kendi (favoriden bağımsız, zamanlamaya bağlı) istekleri sayılmaz
+    PT=re.compile(r"/(results|qualifying|pitstops)/\?limit=100&offset=|/\d+/pitstops/\?limit=100|/(19\d\d|20[01]\d|202[0-5])/driverstandings/$")   # Prediction UI ve geçmiş şampiyonlar taramasının (favoriden bağımsız, zamanlamaya bağlı) istekleri sayılmaz
     sayN=lambda cc,n: len([u for u in cc.net[n:] if not PT.search(u)])
     ilerle(pg,3); ek=sayN(c,n0)
     pg2,e2,c2,b2=ac(p,"2026-10-06T10:00:00Z"); m0=len(c2.net); ilerle(pg2,5); ek2=sayN(c2,m0); b2.close()
