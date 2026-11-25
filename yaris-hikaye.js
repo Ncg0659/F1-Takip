@@ -48,6 +48,7 @@
     var rows = poz.map(function (r, i) { return { t: ms(al(r, "date", "t")), dn: sayi(al(r, "driver_number", "dn")), p: sayi(al(r, "position", "p")), i: i }; })
       .filter(function (r) { return r.t != null && r.dn != null && r.p != null && P.no[r.dn]; })
       .sort(function (a, b) { return a.t - b.t || a.i - b.i; });
+    rows = gecicileriAt(rows);
     var sinir = [], eksik = 0;
     for (var L = 1; L <= N; L++) { var b = turBas[L + 1]; if (L < N && b == null) { eksik++; } sinir.push(L < N ? b : null); }
     if (!rows.length || eksik > Math.max(2, N * 0.1)) { return null; }
@@ -61,6 +62,22 @@
     // son tur: resmî sonuç (ceza sonrası) esas
     var son = {}; Object.keys(P.id).forEach(function (id) { var x = P.id[id]; if (x.siniflandi && x.bitis) { son[id] = x.bitis; } }); S[N] = son;
     return S;
+  }
+  // Geçici sıra titremesi: bir pilot A → B → A dönüşünü GECICI_MS içinde yaparsa B kaydı (ve dönüş kaydı) yok sayılır.
+  // OpenF1 position akışında tur çizgisi yakınında kısa süreli sahte yer değişimleri olur (2026 Las Vegas: P1/P2 her ~5 dk'da ~20–30 sn ters).
+  // Net değişim olmadığı için olay da yoktur; gerçek ve kalıcı geçişler etkilenmez. Deterministik, veri eklemez.
+  var GECICI_MS = 60000;
+  function gecicileriAt(rows) {
+    var son = {}, at = {};
+    rows.forEach(function (r) {
+      var l = son[r.dn] || (son[r.dn] = []);
+      if (l.length >= 2) {
+        var b = l[l.length - 1], a = l[l.length - 2];
+        if (r.p === a.p && b.p !== a.p && r.t - b.t <= GECICI_MS) { at[b.i] = 1; at[r.i] = 1; l.pop(); return; }
+      }
+      l.push(r);
+    });
+    return rows.filter(function (r) { return !at[r.i]; });
   }
   function liderOf(s) { if (!s) { return null; } var l = null; Object.keys(s).forEach(function (id) { if (s[id] === 1) { l = id; } }); return l; }
   function aktif(P, id, L) { var x = P.id[id]; return !!x && (x.cekildi ? L <= x.tur : (x.siniflandi || L <= x.tur)); }
@@ -86,7 +103,9 @@
     (rc || []).forEach(function (e) {
       var tip = e.normalizedType, alt = e.subType, tur = sayi(e.lapNumber);
       if (tip === "SAFETY_CAR" || tip === "VSC") {
-        if (alt !== "END") { if (!acik[tip]) { acik[tip] = { tur: tur }; } }
+        // Başlangıç yalnız açık "... DEPLOYED" mesajıyla. SC sırasındaki bilgi mesajları ("LAPPED CARS MAY NOW OVERTAKE…", "SAFETY CAR LIGHTS OFF")
+        // yeni bir SC başlatmaz (2026 Las Vegas smoke testinde ikinci, bitişsiz SC kartı üretiyordu).
+        if (alt !== "END") { if (!acik[tip] && /DEPLOYED/i.test(String(e.message || ""))) { acik[tip] = { tur: tur }; } }
         else if (acik[tip]) { out.push({ tip: tip === "VSC" ? "VSC" : "SC", bas: acik[tip].tur, bit: tur }); acik[tip] = null; }
       } else if (tip === "RED_FLAG") { if (!out.some(function (o) { return o.tip === "RED" && o.bas === tur; })) { out.push({ tip: "RED", bas: tur }); } }
       else if (tip === "SESSION_RESUMED" && alt === "EXPLICIT") { out.push({ tip: "RESUMED", bas: tur }); }
@@ -249,7 +268,7 @@
     return { olaylar: out, sinirli: sinirli, kaynak: { pozisyon: !!S, rc: !!(g.rc && g.rc.length), pit: pitler.length > 0, stint: Object.keys(stint).length > 0 }, toplamTur: N };
   }
 
-  var API = { kur: kur, _pdan: pdan, _anlikSiralar: anlikSiralar, _bayraklar: bayraklar, TERIM: TERIM, EN_COK_POZ: EN_COK_POZ };
+  var API = { kur: kur, _pdan: pdan, _gecicileriAt: gecicileriAt, GECICI_MS: GECICI_MS, _anlikSiralar: anlikSiralar, _bayraklar: bayraklar, TERIM: TERIM, EN_COK_POZ: EN_COK_POZ };
   if (typeof module !== "undefined" && module.exports) { module.exports = API; }
   if (kok) { kok.YarisHikaye = API; }
 })(typeof window !== "undefined" ? window : (typeof globalThis !== "undefined" ? globalThis : this));

@@ -1,6 +1,11 @@
 F1 TAKİP
-Version: 3.1.0
-Release: Yarışın Hikâyesi v1
+Version: 3.1.1
+Release: Yarışın Hikâyesi düzeltmeleri
+
+3.1.1
+- Yarışın Hikâyesi: güvenlik aracı sırasındaki bilgi mesajları ("LAPPED CARS MAY NOW OVERTAKE…", "SAFETY CAR LIGHTS OFF") artık ikinci, bitişsiz bir SC kartı açmaz; SC yalnız açık "DEPLOYED" mesajıyla başlar.
+- Yarışın Hikâyesi: OpenF1 sıra verisindeki kısa süreli ters kayıtlar (60 sn içinde geri dönen) sahte liderlik kartı üretmez; kalıcı geçişler aynen gösterilir.
+- Yarışın Hikâyesi: tur numarasının yarışın (liderin) turu olduğu ve pozisyonların o turun sonundaki kayıt olduğu açıklaması eklendi (turlanmış pilotlarda ±1 tur farkı olabilir).
 
 3.1.0
 - YARIŞIN HİKÂYESİ (ANALİZ → Yarış Analizi): tamamlanmış yarış için tek dikey olay akışı — START, SC / VSC / kırmızı bayrak,
@@ -43,7 +48,7 @@ Release: Yarışın Hikâyesi v1
 3.0.6
 - Visual Polish + Motion Fixes (giriş animasyonu, pist çizimi/nokta, ticker, kart sistemi, Ghost Lap akıcılığı, tahmin renkleri, mobil pist profili).
 
-Service Worker cache: F1-TAKIP-v3.1.0-PWA1 (yalnız yerel statik dosyalar; API önbelleğe alınmaz)
+Service Worker cache: F1-TAKIP-v3.1.1-PWA1 (yalnız yerel statik dosyalar; API önbelleğe alınmaz)
 Önceki sürüme dönüş: GitHub'da main dalının geçmişi 
 
 Repository:
