@@ -63,8 +63,9 @@ with sync_playwright() as p:
     # --- A6 "Lastik stratejisini gör" bağlantısı: TURLAR sekmesini açar, OpenF1 başlatmaz
     if page.locator("#yo-kart [data-yo=lastik]").count():
         of0=len(d.of_cagri); page.click("#yo-kart [data-yo=lastik]"); page.wait_for_timeout(700)
-        yaz("L1 Lastik bağlantısı TURLAR sekmesini açar, lastik bloğu görünür", page.locator("#yv-sek [data-v='tur']").get_attribute("aria-selected")=="true" and gorunur(page,"#a34b-lastik > summary"))
-        yaz("L2 Lastik bağlantısı OpenF1 isteği başlatmaz", len(d.of_cagri)==of0, d.of_cagri[of0:])
+        # v3.2.0: bağlantı artık sekme değiştirmez; üst düzey LASTİK STRATEJİSİ bölümüne (#ls-strateji) kaydırır
+        yaz("L1 Lastik bağlantısı LASTİK STRATEJİSİ bölümüne götürür (sekme değişmez)", gorunur(page,"#ls-strateji") and page.evaluate("(()=>{const r=document.getElementById('ls-strateji').getBoundingClientRect();return r.top<innerHeight&&r.bottom>0})()") and page.locator("#yv-sek [data-v='tur']").get_attribute("aria-selected")!="true")
+        yaz("L2 Lastik bağlantısı ağır OpenF1 isteği başlatmaz (laps/position/car_data yok; yalnız stint/pit/race_control)", all(c.split("?")[0] in ("stints","pit","race_control","sessions","meetings","drivers") for c in d.of_cagri[of0:]), d.of_cagri[of0:])
         gec(page,"sonuc"); page.clock.run_for(2000)
         d.__dict__["ofbase"]=len(d.of_cagri) if False else d.ofbase
         for e in EP.values():

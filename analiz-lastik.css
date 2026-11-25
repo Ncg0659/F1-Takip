@@ -1,26 +1,79 @@
-/* A3.4b — Lastik stratejisi. Yalnızca #a34b-lastik kapsamı. Bileşik renkleri lastik rehberiyle aynı (yumuşak kırmızı, orta sarı, sert beyaz, ara yeşil, yağmur mavi). */
-#a34b-lastik { --l-soft:#e10600; --l-medium:#f5c400; --l-hard:#e9eef5; --l-inter:#2e9e4f; --l-wet:#2f7de1; margin:12px 0; background:var(--kart); border:1px solid var(--cizgi); border-radius:10px; padding:0 12px; }
-#a34b-lastik > summary { cursor:pointer; min-height:44px; display:flex; align-items:center; font-weight:700; font-size:1rem; }
-.a34b-ic { padding:0 0 12px; min-width:0; }
-.a34b-mesaj, .a34b-bilgi, .a34b-alt { margin:6px 0; font-size:.84rem; color:var(--soluk); }
-.a34b-rehber { margin:10px 0 0; }
-.a34b-liste { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
-.a34b-p { border-top:1px solid var(--cizgi); padding-top:10px; min-width:0; }
-.a34b-ph { display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; }
-.a34b-oz { margin:4px 0 6px; font-size:.86rem; }
-.a34b-serit { display:flex; height:10px; border-radius:5px; overflow:hidden; gap:2px; margin:0 0 8px; }
-.a34b-serit i { display:block; min-width:4px; }
-.a34b-sl { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:6px; }
-.a34b-st { display:flex; flex-wrap:wrap; align-items:center; gap:2px 8px; font-size:.82rem; padding:6px 8px; border:1px solid var(--cizgi); border-radius:8px; min-width:0; }
-.a34b-ar { font-variant-numeric:tabular-nums; font-weight:600; }
-.a34b-uz { color:var(--soluk); }
-.a34b-yas { flex-basis:100%; font-size:.72rem; color:var(--soluk); }
-.a34b-bil { display:inline-block; padding:1px 8px; border-radius:10px; font-weight:700; font-size:.76rem; border:1px solid rgba(0,0,0,.25); }
-.a34b-soft { background:var(--l-soft); color:#fff; } .a34b-medium { background:var(--l-medium); color:#1a1a1a; } .a34b-hard { background:var(--l-hard); color:#1a1a1a; }
-.a34b-inter { background:var(--l-inter); color:#fff; } .a34b-wet { background:var(--l-wet); color:#fff; } .a34b-bilinmiyor { background:transparent; color:var(--soluk); border:1px dashed var(--soluk); }
-.a34b-serit .a34b-soft { background:var(--l-soft); } .a34b-serit .a34b-medium { background:var(--l-medium); } .a34b-serit .a34b-hard { background:var(--l-hard); box-shadow:inset 0 0 0 1px rgba(0,0,0,.25); }
-.a34b-serit .a34b-inter { background:var(--l-inter); } .a34b-serit .a34b-wet { background:var(--l-wet); } .a34b-serit .a34b-bilinmiyor { background:var(--cizgi); border:0; }
-.a34b-pit { margin:6px 0 0; font-size:.76rem; color:var(--soluk); }
-.a34b-fark { margin:4px 0 0; font-size:.76rem; color:#d99a00; }
-.a34b-btn { font:inherit; font-size:.84rem; min-height:40px; padding:6px 14px; border:1px solid var(--cizgi); border-radius:8px; background:var(--kart); color:var(--yazi); cursor:pointer; }
-@media (max-width:480px) { .a34b-sl { grid-template-columns:1fr; } }
+/* LASTİK VE YARIŞ STRATEJİSİ (v3.2.0) — #ls-strateji. Kart sistemi ANALİZ → GRAFİK ile aynı dil.
+   Lastik renkleri YALNIZ bileşik semantiği: SOFT kırmızı · MEDIUM sarı · HARD beyaz · INTERMEDIATE yeşil · WET mavi · bilinmiyor gri.
+   Genel arayüzün LIVE/kritik renk kuralı değişmez. Neon/glow yok. */
+#ls-strateji { --l-soft:#e10600; --l-medium:#f5c400; --l-hard:#eef1f5; --l-inter:#2e9e4f; --l-wet:#2f7de1; --l-yok:#8a919c;
+  order:5; margin:14px 0 6px; padding:14px 14px 12px; border:1px solid var(--cizgi); border-radius:4px; background:var(--kart); min-width:0; }
+#ls-strateji[hidden] { display:none; }
+.ls-baslik { margin:0; font-family:var(--f-sayi); font-size:.86rem; font-weight:800; letter-spacing:.14em; color:var(--yazi); }
+.ls-altb { margin:4px 0 10px; font-size:.8rem; color:var(--pl-etiket, var(--soluk)); }
+.ls-oz { margin:0 0 10px; padding:0 0 0 18px; font-size:.88rem; line-height:1.45; color:var(--yazi); }
+.ls-oz li { overflow-wrap:anywhere; }
+.ls-filtre { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 8px; }
+.ls-f { font-family:var(--f-sayi); font-size:.64rem; font-weight:700; letter-spacing:.1em; min-height:34px; padding:6px 10px; border:1px solid var(--cizgi); border-radius:3px; background:transparent; color:var(--yazi); cursor:pointer; transition:background .15s ease, border-color .15s ease; }
+.ls-f[aria-pressed="true"] { background:var(--yazi); color:var(--zemin, #000); border-color:var(--yazi); }
+.ls-f[disabled] { opacity:.4; cursor:not-allowed; }
+.ls-lejant { display:flex; flex-wrap:wrap; gap:4px 12px; margin:0 0 8px; font-family:var(--f-sayi); font-size:.6rem; font-weight:700; letter-spacing:.08em; color:var(--pl-etiket, var(--soluk)); }
+.ls-lj { display:inline-flex; align-items:center; gap:5px; }
+.ls-lj i { display:inline-block; width:14px; height:8px; border-radius:2px; }
+.ls-c-soft { background:var(--l-soft); color:#fff; } .ls-c-medium { background:var(--l-medium); color:#1a1a1a; } .ls-c-hard { background:var(--l-hard); color:#1a1a1a; box-shadow:inset 0 0 0 1px rgba(0,0,0,.28); }
+.ls-c-inter { background:var(--l-inter); color:#fff; } .ls-c-wet { background:var(--l-wet); color:#fff; } .ls-c-bilinmiyor { background:var(--l-yok); color:#fff; }
+.ls-grafik { display:flex; flex-direction:column; gap:3px; min-width:0; }
+.ls-satir { display:grid; grid-template-columns:62px minmax(0,1fr); align-items:center; gap:6px; min-height:22px; }
+.ls-ad { font-family:var(--f-sayi); font-size:.66rem; letter-spacing:.04em; white-space:nowrap; color:var(--yazi); font-variant-numeric:tabular-nums; }
+.ls-ad b { display:inline-block; min-width:2.6em; font-weight:700; color:var(--pl-etiket, var(--soluk)); }
+.ls-fav .ls-ad { font-weight:800; }
+.ls-fav .ls-iz { box-shadow:0 0 0 1px var(--yazi); }
+.ls-iz { position:relative; height:18px; border-radius:2px; background:color-mix(in srgb, var(--cizgi) 45%, transparent); min-width:0; }
+.ls-band { position:absolute; top:0; bottom:0; pointer-events:none; z-index:2; }   /* blokların üstünde ince tarama: lastik rengi okunur kalır */
+.ls-iz .ls-band-SC, .ls-iz .ls-band-VSC { background:repeating-linear-gradient(135deg, rgba(180,83,9,.32) 0 1.5px, transparent 1.5px 5px); border-left:1px solid rgba(180,83,9,.45); border-right:1px solid rgba(180,83,9,.45); }
+.ls-iz .ls-band-RED { background:repeating-linear-gradient(135deg, rgba(212,22,28,.35) 0 1.5px, transparent 1.5px 5px); border-left:1px solid rgba(212,22,28,.6); border-right:1px solid rgba(212,22,28,.6); }
+.ls-lj .ls-band { position:static; display:inline-block; width:14px; height:8px; border:1px solid currentColor; }
+.ls-lj .ls-band-SC, .ls-lj .ls-band-VSC { background:rgba(245,158,11,.35); border-color:#b45309; } .ls-lj .ls-band-RED { background:rgba(212,22,28,.3); border-color:#d4161c; }
+.ls-st { position:absolute; top:2px; bottom:2px; margin:0; padding:0; border:0; border-radius:2px; cursor:pointer; display:flex; align-items:center; justify-content:center; overflow:hidden; min-width:3px; transform-origin:left center; }
+.ls-st.ls-pitli::before { content:""; position:absolute; left:-2px; top:-3px; bottom:-3px; width:2px; background:var(--yazi); }
+.ls-st.ls-sec { outline:2px solid var(--yazi); outline-offset:1px; z-index:1; }
+.ls-st:focus-visible { outline:2px solid var(--yazi); outline-offset:1px; }
+.ls-st-e { font-family:var(--f-sayi); font-size:.58rem; font-weight:800; pointer-events:none; }
+.ls-dnf { position:absolute; top:50%; transform:translateY(-50%); font-family:var(--f-sayi); font-size:.54rem; font-weight:800; letter-spacing:.06em; color:var(--pl-etiket, var(--soluk)); white-space:nowrap; }
+.ls-eksen { min-height:16px; }
+.ls-eksen .ls-iz { background:none; height:14px; border-top:1px solid var(--cizgi); border-radius:0; }
+.ls-eksen .ls-ad { color:var(--pl-etiket, var(--soluk)); font-size:.56rem; }
+.ls-tik { position:absolute; top:2px; font-family:var(--f-sayi); font-size:.56rem; color:var(--pl-etiket, var(--soluk)); font-variant-numeric:tabular-nums; }
+.ls-anim .ls-st { animation:ls-buyu 600ms cubic-bezier(.2,.8,.2,1) both; }
+@keyframes ls-buyu { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .ls-anim .ls-st { animation:none; } .ls-f { transition:none; } }
+.ls-detay { margin:10px 0 0; min-height:40px; }
+.ls-ipucu, .ls-yok, .ls-not { margin:6px 0; font-size:.8rem; line-height:1.4; color:var(--pl-etiket, var(--soluk)); overflow-wrap:anywhere; }
+.ls-det { padding:8px 10px; border:1px solid var(--cizgi); border-radius:3px; font-size:.86rem; line-height:1.4; }
+.ls-det p { margin:0 0 2px; overflow-wrap:anywhere; }
+.ls-bil { display:inline-block; padding:0 7px; border-radius:9px; font-family:var(--f-sayi); font-size:.6rem; font-weight:800; letter-spacing:.06em; line-height:1.6; vertical-align:1px; }
+.ls-kars { margin:12px 0 0; padding-top:10px; border-top:1px solid var(--cizgi); }
+.ls-secim { display:flex; flex-wrap:wrap; gap:8px 14px; margin:0 0 8px; font-size:.8rem; }
+.ls-secim select { font:inherit; min-height:36px; margin-left:4px; max-width:100%; }
+.ls-kk { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; }
+.ls-k { min-width:0; padding:8px 10px; border:1px solid var(--cizgi); border-radius:3px; }
+.ls-k-ad { margin:0 0 6px; font-size:.92rem; overflow-wrap:anywhere; }
+.ls-alt { font-size:.74rem; color:var(--pl-etiket, var(--soluk)); }
+.ls-k dl { margin:0; display:grid; grid-template-columns:minmax(0,1fr); gap:1px; font-size:.82rem; }
+.ls-k dt { font-family:var(--f-sayi); font-size:.58rem; font-weight:700; letter-spacing:.1em; color:var(--pl-etiket, var(--soluk)); margin-top:5px; }
+.ls-k dd { margin:0; overflow-wrap:anywhere; line-height:1.5; }
+.ls-h3 { margin:12px 0 4px; font-family:var(--f-sayi); font-size:.68rem; letter-spacing:.12em; }
+.ls-btn { font-family:var(--f-sayi); font-size:.66rem; font-weight:700; letter-spacing:.1em; min-height:38px; padding:8px 12px; border:1px solid var(--yazi); border-radius:3px; background:transparent; color:var(--yazi); cursor:pointer; }
+.ls-tempo-k { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; }
+.ls-tempo, .ls-pit { width:100%; border-collapse:collapse; font-size:.78rem; font-variant-numeric:tabular-nums; }
+.ls-tempo caption { text-align:left; font-weight:700; padding:0 0 4px; }
+.ls-tempo th, .ls-tempo td, .ls-pit th, .ls-pit td { text-align:left; padding:4px 4px; border-bottom:1px solid var(--cizgi); white-space:nowrap; }
+.ls-tempo th, .ls-pit thead th { font-family:var(--f-sayi); font-size:.56rem; letter-spacing:.08em; color:var(--pl-etiket, var(--soluk)); }
+.ls-pit td { white-space:normal; overflow-wrap:anywhere; }
+.ls-pit-d { margin:12px 0 0; }
+.ls-pit-d > summary { cursor:pointer; min-height:40px; display:flex; align-items:center; font-family:var(--f-sayi); font-size:.68rem; font-weight:700; letter-spacing:.12em; }
+.ls-pit-kap { max-width:100%; }
+.ls-ogren { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; margin:12px 0 0; font-size:.8rem; }
+.ls-ogren span { font-family:var(--f-sayi); font-size:.58rem; font-weight:700; letter-spacing:.12em; color:var(--pl-etiket, var(--soluk)); }
+@media (max-width:560px) {
+  #ls-strateji { padding:12px 10px 10px; }
+  .ls-satir { grid-template-columns:54px minmax(0,1fr); gap:4px; }
+  .ls-kk, .ls-tempo-k { grid-template-columns:minmax(0,1fr); }
+  .ls-tempo th, .ls-tempo td { padding:4px 3px; }
+}
+@media (min-width:900px) { .ls-satir { grid-template-columns:76px minmax(0,1fr); } .ls-iz { height:20px; } }

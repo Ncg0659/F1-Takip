@@ -25,8 +25,9 @@
     var k = document.getElementById("yh-hikaye"); if (k) { return k; }
     var det = document.getElementById("yv-detay"); if (!det || !det.parentNode) { return null; }
     k = document.createElement("section"); k.id = "yh-hikaye"; k.className = "yh"; k.setAttribute("aria-labelledby", "yh-b");
-    var gl = document.getElementById("gl-ghost");
-    det.parentNode.insertBefore(k, gl && gl.parentNode === det.parentNode ? gl : det);
+    var ls = document.getElementById("ls-strateji"), gl = document.getElementById("gl-ghost");   // sıra: Hikâye → Lastik Stratejisi → Ghost Lap
+    var once = (ls && ls.parentNode === det.parentNode) ? ls : (gl && gl.parentNode === det.parentNode ? gl : det);
+    det.parentNode.insertBefore(k, once);
     return k;
   }
 
@@ -98,7 +99,8 @@
       "<p class='yh-ust'><span class='yh-tur'>" + esc(tur) + "</span><span class='yh-tip'>" + esc(ETIKET[o.tip] || o.tip) + "</span></p>" +
       "<p class='yh-b'>" + esc(o.baslik) + "</p>" +
       (o.aciklama ? "<p class='yh-a'>" + esc(o.aciklama) + te + "</p>" : (te ? "<p class='yh-a'>" + te + "</p>" : "")) +
-      (o.satirlar && o.satirlar.length ? "<ul class='yh-s'>" + o.satirlar.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + "</ul>" : "") + "</li>";
+      (o.satirlar && o.satirlar.length ? "<ul class='yh-s'>" + o.satirlar.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + "</ul>" : "") +
+      (o.tip === "PIT" && o.pilotlar[0] && document.getElementById("ls-strateji") ? "<p class='yh-a'><button type='button' class='a2-baglanti yh-ls' data-ls-git='" + esc(o.pilotlar[0]) + "'>Lastik grafiğinde gör</button></p>" : "") + "</li>";
   }
   function ciz() {
     var k = kok(); if (!k) { return; }

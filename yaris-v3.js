@@ -140,7 +140,7 @@
   document.addEventListener("click", function (e) {
     var t = e.target.closest && e.target.closest("button[data-yo='lastik']");
     if (!t || !Y.liste || !$("sekme-yaris") || !$("sekme-yaris").contains(t)) { return; }
-    if (Y.aktif !== "tur") { Y.aktif = "tur"; Y.sekImza = ""; Y.panelK = ""; Y.sessiz = true; try { sekDegis(); } finally { Y.sessiz = false; } }
+    // 3.2.0: Lastik ve Yarış Stratejisi artık sekmelerin üstünde ana bölüm (#ls-strateji) → sekme değiştirilmez; kaydırmayı A6 işleyicisi yapar
   }, true);
   // A7 verisi sonradan yüklenince yalnız çip şeridi tazelenir (zamanlayıcı yok; çip kutusu gözlenen alanın DIŞINDA → döngü yok)
   function gozlemKur() {
