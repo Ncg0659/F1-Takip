@@ -139,7 +139,11 @@
     var out = [], sat = (R && R.satirlar) || [];
     var tam = sat.filter(function (s) { return s.tutarli !== false && s.stintler.length && s.stintler.every(function (x) { return x.uzun != null; }); });
     var enUz = null; tam.forEach(function (s) { s.stintler.forEach(function (x) { if (!enUz || x.uzun > enUz.x.uzun) { enUz = { s: s, x: x }; } }); });
-    if (enUz && enUz.x.b.k !== "bilinmiyor") { out.push("En uzun stint: " + enUz.s.soyad + ", " + ING[enUz.x.b.k] + " ile " + enUz.x.uzun + " tur (tur " + enUz.x.bas + "–" + enUz.x.bit + ")."); }
+    if (enUz && enUz.x.b.k !== "bilinmiyor") {
+      var es = tam.filter(function (s) { return s.stintler.some(function (x) { return x.uzun === enUz.x.uzun; }); }).length;   // eşit uzunlukta stint yapan pilot sayısı
+      out.push(es > 1 ? "En uzun stint " + enUz.x.uzun + " tur; " + es + " pilot bu uzunlukta stint yaptı (ör. " + enUz.s.soyad + ", " + ING[enUz.x.b.k] + ", tur " + enUz.x.bas + "–" + enUz.x.bit + ")." :
+        "En uzun stint: " + enUz.s.soyad + ", " + ING[enUz.x.b.k] + " ile " + enUz.x.uzun + " tur (tur " + enUz.x.bas + "–" + enUz.x.bit + ").");
+    }
     var kaz = sat.filter(function (s) { return s.bitis === 1; })[0];
     if (kaz && kaz.stintler.length && tam.indexOf(kaz) >= 0) {
       var d = kaz.stintler.length - 1;

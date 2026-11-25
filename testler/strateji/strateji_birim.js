@@ -77,4 +77,6 @@ k("S21 DNS (0 tur): kaynakta stint satırı olsa da blok çizilmez", hmS.dns && 
 const Rt = LH.strateji({ stintRows, sonuc, pit: pit.concat([{ driverNumber: 87, lapNumber: 30, laneDuration: 20, stopDuration: 2 }]) });
 const beaT = Rt.satirlar.filter(x => x.id === "bearman")[0], ozT = LH.stratejiOzet(Rt);
 k("S22 pit kaydı stint geçişiyle eşleşmeyen pilot 'tutarsız' işaretlenir ve özet maddelerinde kullanılmaz", beaT.tutarli === false && !ozT.some(t => /Bearman/.test(t)) && R.satirlar.every(x => x.tutarli), ozT[0]);
+const Re = LH.strateji({ stintRows: [1, 81].flatMap(no => [{ driver_number: no, stint_number: 1, lap_start: 1, lap_end: 30, compound: "SOFT" }, { driver_number: no, stint_number: 2, lap_start: 31, lap_end: 72, compound: "HARD" }]), sonuc, pit: null });
+k("S23 eşit uzunlukta en uzun stint birden çok pilotta: tek pilot öne çıkarılmaz, sayı verilir", /^En uzun stint 42 tur; 2 pilot bu uzunlukta stint yaptı \(ör\. Piastri, HARD, tur 31–72\)\.$/.test(LH.stratejiOzet(Re)[0]), LH.stratejiOzet(Re)[0]);
 console.log(JSON.stringify(S));

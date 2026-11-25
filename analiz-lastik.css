@@ -76,4 +76,5 @@
   .ls-kk, .ls-tempo-k { grid-template-columns:minmax(0,1fr); }
   .ls-tempo th, .ls-tempo td { padding:4px 3px; }
 }
-@media (min-width:900px) { .ls-satir { grid-template-columns:76px minmax(0,1fr); } .ls-iz { height:20px; } }
+@media (min-width:900px) { .ls-satir { grid-template-columns:76px minmax(0,1fr); } .ls-iz { height:20px; }
+  .ls-k dl { grid-template-columns:auto minmax(0,1fr); column-gap:14px; row-gap:4px; align-items:baseline; } .ls-k dt { margin-top:0; } }
