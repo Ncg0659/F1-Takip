@@ -1,6 +1,29 @@
 F1 TAKİP
-Version: 3.2.0
-Release: Lastik ve Yarış Stratejisi
+Version: 3.3.1
+Release: Lastik ve Yarış Stratejisi + Canlı veri ve Race Feed v2 (birleşik)
+
+3.3.1
+- Birleşik sürüm: 3.2.0 (Lastik ve Yarış Stratejisi) + 3.3.0 (Canlı veri ve Race Feed v2). Yeni özellik yok.
+- Sürüm ve Service Worker önbelleği 3.3.1'e taşındı (eski F1-TAKIP-* önbellekleri açılışta silinir).
+
+3.3.0
+- Jolpica: tüm istekler tek merkezi kuyrukta (≈2,9 istek/sn, aynı anda en çok 2; resmî sınır 4/sn, 500/saat). Aynı adrese eşzamanlı istekler tek istekte birleşir,
+  dolu yanıtlar 15 sn ekranlar arasında paylaşılır. Açılış istekleri 29 → 8, tüm sekmeler 98 → 21 (ölçüm: test düzeneği, önbelleği boş cihaz).
+- Geçmiş şampiyonlar (1950'den bugüne ~77 istek) artık yalnız ŞAMPİYONLAR açılınca yüklenir (önceden her açılışta: saatlik sınırı tüketiyordu → 429).
+- 429: Retry-After (okunabiliyorsa) ya da 2 → 4 → 8 sn artan bekleme, en çok 3 deneme; ağ/CORS hatasında 2 deneme; zaman aşımında deneme yok.
+  Denemeler bitince "VERİ KAYNAĞI ŞU AN YOĞUN" / "VERİ KAYNAĞINA ULAŞILAMIYOR" kartı; sekme görünürken en çok 2 kez (10 dk) otomatik yeniden deneme.
+- HAFTA SONU takvimi Jolpica'dan alınamazsa aynı oturumda zaten yüklenmiş takvim kullanılır (eski önbellekten önce).
+- Race Feed: ikinci muhabir Rory Mitchell (did:plc:bmmxdktsmsdklw5arywa36iw). Kaynaklar paralel ve bağımsız (biri kapalıysa diğeri çalışır, kaynak başına 8 sn).
+  Aynı olay iki muhabirden gelirse tek kart; ikinci kaynak adı kartta görünür.
+- Race Feed artık TÜM seanslarda: FP1, FP2, FP3, Sprint Sıralaması, Sprint, Sıralama, Yarış. Her seansın kendi deposu (antrenman notu yarış kartını etkilemez;
+  Yarış Günü yalnız yarış notlarını gösterir). Antrenman/Sıralama için dar zaman penceresi ve planlı bitişten sonra kısa kapanış payı.
+- F2 / F3 / Formula E / MotoGP vb. notları F1 akışına alınmaz (muhabirler bunları da #F1 etiketiyle paylaşabiliyor).
+- Seans durumu: doğrulanmış seans uzatması ("extended the session by 13 minutes") efektif bitişe eklenir; antrenman/sıralama bitiş işaretleri
+  ("X tops FP2", "takes pole"); kırmızı bayraktan sonra pistte yeni olay bildirilirse "büyük olasılıkla yeniden başladı (tahmini)" — kesin "yeniden başladı" uydurulmaz.
+  Canlı seansta muhabir paylaşımı yoksa açıkça yazılır. LIVE / LIVE TAHMİNİ ayrımı korunur.
+- Yeni şablonlar: kırmızı/sarı bayrak, seans uzatması, seans başlangıcı, "FP'de en hızlı", pole. Tırnak içindeki takım telsizi ("You see that?") belirsizlik sayılmaz.
+- F2 durum metni ve doğrulama tarihi güncellendi (puanlar resmî tabloyla aynı; Bakü'den beri F2 yarışı yok). F3 final tablosu olarak işaretlendi.
+- kaynak-test.html v2: Jolpica, OpenF1, Chris Medland, Rory Mitchell, F2/F3 — erişim, son veri tarihi, hata türü, yanıt süresi (yalnız düğmeyle, sürekli istek yok).
 
 3.2.0
 - LASTİK STRATEJİSİ (ANALİZ → Yarış Analizi, Yarışın Hikâyesi'nin altında): tamamlanan yarışta yatay stint zaman çizelgesi —
@@ -61,7 +84,7 @@ Release: Lastik ve Yarış Stratejisi
 3.0.6
 - Visual Polish + Motion Fixes (giriş animasyonu, pist çizimi/nokta, ticker, kart sistemi, Ghost Lap akıcılığı, tahmin renkleri, mobil pist profili).
 
-Service Worker cache: F1-TAKIP-v3.2.0-PWA1 (yalnız yerel statik dosyalar; API önbelleğe alınmaz)
+Service Worker cache: F1-TAKIP-v3.3.1-PWA1 (yalnız yerel statik dosyalar; API önbelleğe alınmaz)
 Önceki sürüme dönüş: GitHub'da main dalının geçmişi 
 
 Repository:

@@ -1,4 +1,7 @@
-/* A4.5b — Canlı oturum boyunca Race Feed'in TEK sahibi. YENİ endpoint, YENİ ikinci polling döngüsü, YENİ ücretli servis/token YOK.
+/* 3.3.0 — Race Feed artık TÜM seanslarda: FP1, FP2, FP3, Sprint Sıralaması, Sprint, Sıralama, Yarış. Her seansın kendi deposu var (RaceFeed.oturumAnahtari):
+   antrenman notu yarış kartını etkilemez. Antrenman/Sıralama için dar pencere (başlangıç −15 dk → bitiş + doğrulanmış uzatma + 30 dk) ve planlı bitişten
+   sonra kısa bir "kapanış" poll payı (uzatma + 20 dk; doğrulanmış kırmızı bayrak/gecikme sürerken en çok +2 saat) vardır. Yeni fetch türü/timer yok.
+   A4.5b — Canlı oturum boyunca Race Feed'in TEK sahibi. YENİ endpoint, YENİ ikinci polling döngüsü, YENİ ücretli servis/token YOK.
    Aynı kaynak (RaceFeed.poll → mevcut Bluesky kaynakları), aynı olay motoru/çevirisi/dedupe, aynı 30 sn ritmi kullanılır. Değişen tek şey yaşam döngüsü:
    "Yarış Günü sekmesi açık mı?" yerine "desteklenen canlı oturum var mı?" (yalnızca Sprint ve Race; FP / Sıralama / Sprint Sıralaması asla).
    Tek sahip: poll'u yapan TEK fonksiyon index.html'deki feedPoll()'dur. Bu modül yalnızca KARAR verir (ne zaman, hangi bağlamla) ve her poll arasında
@@ -11,6 +14,23 @@
   "use strict";
   var S = { son: 0, zaman: null, takvimYedek: null, takvimIstendi: false, sezonBekle: 0, hata: false, sonZaman: null, sonAnahtar: null };
   var TIK_MS = 5000;                        // YEREL değerlendirme sıklığı (ağ yok); poll KESİN olarak en az 30 sn arayla (pratikte 30–35 sn)
+  var DK = 60000, KAPANIS_DK = 20, SEANS_UZATMA_UST_MS = 2 * 3600 * 1000;
+
+  function yarisTipi(an) { return an === "Sprint" || an === "Race"; }
+  function anahtarYap(y, s, simdi) {
+    var yil = y.season || new Date(simdi).getFullYear();
+    if (kok.RaceFeed && RaceFeed.oturumAnahtari) { return RaceFeed.oturumAnahtari(yil, y.round, s.anahtar); }
+    return yil + "-" + y.round + (s.anahtar === "Sprint" ? "-sprint" : (s.anahtar === "Race" ? "" : "-" + s.anahtar));
+  }
+  // Seansın Race Feed deposundaki DOĞRULANMIŞ durumu (HaftaState.feedDurumu; yalnız okur)
+  function seansFeed(raceKey, s, simdi, bas, bit) {
+    var HS = kok.HaftaState, RF = kok.RaceFeed;
+    if (!HS || !HS.feedDurumu || !RF || !RF.yukle) { return null; }
+    return bul(function () {
+      var ol = RF.yukle(raceKey).olaylar.filter(function (o) { return !o.raceId || o.raceId === raceKey; });
+      return HS.feedDurumu(ol, { anahtar: s.anahtar, baslangic: new Date(bas != null ? bas : s.baslangic.getTime()), bitis: new Date(bit != null ? bit : s.bitis.getTime()), planliBaslangic: s.baslangic }, simdi);
+    }, null);
+  }
 
   function bul(f, d) { try { return f(); } catch (e) { return d; } }
   function minMs() { var a = bul(function () { return kok.NOTLAR_AYAR.pollSaniye; }, 30); return Math.max(30, Number(a) || 30) * 1000; }
@@ -27,8 +47,11 @@
     return S.takvimYedek || [];
   }
 
-  // Canlılık: mevcut A1 seans sistemi. Yalnızca Sprint ve Race.
-  function canli(simdi) {
+  // Canlılık: mevcut A1 seans sistemi. canli() = yalnız Sprint ve Race (ESKİ ANLAM: Yarış Günü otomatik açılışı/yarış seçimi bunu kullanır).
+  // canliSeans() = 3.3.0 tüm seanslar (Race Feed poll kararı bunu kullanır).
+  function canli(simdi) { return canliIc(simdi, true); }
+  function canliSeans(simdi) { return canliIc(simdi, false); }
+  function canliIc(simdi, sadeceYaris) {
     simdi = simdi == null ? Date.now() : simdi;
     var HV = kok.HaftaVeri; if (!HV || !HV.haftaKur || !HV.seansDurumu) { return null; }
     var yl = takvim(), i, y, h, j, s, Y;
@@ -41,10 +64,9 @@
       if (Y && Number(Y.tur) === Number(h.tur) && Y.seanslar) { h = Y; }    // A1'in çözümlenmiş sonuçları varsa (sonuç yayımlandı) onu kullan
       for (j = 0; j < h.seanslar.length; j++) {
         s = h.seanslar[j];
-        if ((s.anahtar === "Sprint" || s.anahtar === "Race") && HV.seansDurumu(s, h, simdi) === "canli") {
-          var yil = y.season || new Date(simdi).getFullYear();
+        if ((!sadeceYaris || yarisTipi(s.anahtar)) && HV.seansDurumu(s, h, simdi) === "canli") {   // 3.3.0: sadeceYaris=false → tüm seanslar
           return { oturum: s.anahtar, tur: Number(h.tur), ad: h.ad, bas: s.baslangic.getTime(), bit: s.bitis.getTime(),
-                   raceKey: yil + "-" + y.round + (s.anahtar === "Sprint" ? "-sprint" : "") };
+                   raceKey: anahtarYap(y, s, simdi), yaris: yarisTipi(s.anahtar) };
         }
       }
     }
@@ -71,7 +93,11 @@
       if (Y && Number(Y.tur) === Number(h.tur) && Y.seanslar) { h = Y; }
       for (j = 0; j < h.seanslar.length; j++) {
         s = h.seanslar[j];
-        if (s.anahtar !== "Sprint" && s.anahtar !== "Race") { continue; }
+        if (!yarisTipi(s.anahtar)) {                                                         // 3.3.0: Antrenman / Sıralama kapanış payı
+          var sk = kapanis(y, h, s, simdi);
+          if (sk) { return sk; }
+          continue;
+        }
         var bas = s.baslangic.getTime(), bit = s.bitis.getTime();
         if (simdi < bit) { continue; }                                                      // planlı süre içinde → canli() zaten ele alır
         // Doğrulanmış PROGRAM değişikliği (hafta-baglam.js; resmi/statik girdi ya da Race Feed'den açık "yeni saat/ertelendi"): pencere YENİ saate kayar. Yeni saat için
@@ -100,6 +126,22 @@
     return null;
   }
 
+  // Antrenman/Sıralama: planlı bitişten sonra poll ne zamana kadar sürer?
+  //  • doğrulanmış seans uzatması (ör. "extended the session by 13 minutes") → bitiş + uzatma + 20 dk
+  //  • uzatma yoksa → bitiş + 20 dk (seans sonu özet notları: "X tops FP2", sonuç)
+  //  • doğrulanmış kırmızı bayrak / durdurma / gecikme sürüyorsa (ENDED değil) → en çok bitiş + 2 saat
+  //  • muhabir "seans bitti" dediyse (ENDED) → bitiş/ENDED + 20 dk'dan hangisi erkense
+  function kapanis(y, h, s, simdi) {
+    var bas = s.baslangic.getTime(), bit = s.bitis.getTime();
+    if (simdi < bit || simdi > bit + SEANS_UZATMA_UST_MS) { return null; }
+    var raceKey = anahtarYap(y, s, simdi), fd = seansFeed(raceKey, s, simdi);
+    var uz = fd && fd.uzatmaDk ? fd.uzatmaDk : 0, son = bit + (uz + KAPANIS_DK) * DK;
+    if (fd && (fd.tip === "RED_FLAG" || fd.tip === "SESSION_STOPPED" || fd.tip === "DELAYED") ) { son = bit + SEANS_UZATMA_UST_MS; }
+    if (fd && fd.tip === "ENDED" && fd.bittiTs != null) { son = Math.min(son, Math.max(bit, fd.bittiTs) + KAPANIS_DK * DK); }
+    if (simdi > son) { return null; }
+    return { oturum: s.anahtar, tur: Number(h.tur), ad: h.ad, bas: bas, bit: bit + uz * DK, raceKey: raceKey, uzatma: true, uzatmaDk: uz, yaris: false };
+  }
+
   // Ticker için oturum seçimi (YALNIZCA okur; poll kararını etkilemez → canli()/pollOturumu() değişmedi).
   // Öncelik: COMPLETED (sonuç var → program override'ı yok sayılır) > PROGRAM override (BaglamUI.program: sezon+tur+seans anahtarlı) > Race Feed durumu (DELAYED) > normal takvim.
   //  NEW_TIME_CONFIRMED → tüm hesap YENİ saate göre (planlı saatte LIVE yok); DELAYED / POSTPONED / CANCELLED → planlı başlangıçtan planlı bitiş +3 sa'e kadar durum satırı.
@@ -119,8 +161,14 @@
       for (j = 0; j < h.seanslar.length; j++) {
         s = h.seanslar[j];
         var eski = HV.seansDurumu(s, h, simdi);
-        if (s.anahtar !== "Sprint" && s.anahtar !== "Race") {                                  // FP1-3 / Sıralama / Sprint Sıralaması: yalnız ticker (poll yok, feed yok) → saat tahmini
-          if (eski === "canli") { return { oturum: s.anahtar, tur: Number(h.tur), ad: h.ad, bas: s.baslangic.getTime(), bit: s.bitis.getTime(), raceKey: (y.season || new Date(simdi).getFullYear()) + "-" + y.round + "-" + s.anahtar, durum: "canli", feedYok: true }; }
+        if (!yarisTipi(s.anahtar)) {                                                          // 3.3.0: FP1-3 / Sıralama / Sprint Sıralaması: Race Feed VAR (kendi deposu)
+          var rk = anahtarYap(y, s, simdi);
+          if (eski === "canli") { return { oturum: s.anahtar, tur: Number(h.tur), ad: h.ad, bas: s.baslangic.getTime(), bit: s.bitis.getTime(), raceKey: rk, durum: "canli", feedYok: false }; }
+          if (eski === "sonuc-bekleniyor" || eski === "bitti") {                             // planlı bitiş geçti: yalnız DOĞRULANMIŞ uzatma/kırmızı bayrak varsa hâlâ canlı
+            var fdS = seansFeed(rk, s, simdi), uzS = fdS && fdS.uzatmaDk ? fdS.uzatmaDk : 0;
+            var surer = fdS && fdS.tip && fdS.tip !== "ENDED" && (fdS.tip === "RED_FLAG" || fdS.tip === "SESSION_STOPPED" || fdS.tip === "RESUMED" || (uzS && simdi < s.bitis.getTime() + uzS * DK));
+            if (surer && simdi < s.bitis.getTime() + SEANS_UZATMA_UST_MS) { return { oturum: s.anahtar, tur: Number(h.tur), ad: h.ad, bas: s.baslangic.getTime(), bit: s.bitis.getTime() + uzS * DK, raceKey: rk, durum: "canli", feedYok: false, uzatmaDk: uzS }; }
+          }
           continue;
         }
         if (eski === "tamamlandi") { continue; }                                              // COMPLETED: override ticker'ı etkilemez
@@ -151,14 +199,19 @@
     return null;
   }
   // Poll kararı: önce mevcut canlı tanımı, yoksa (yalnızca poll için) uzatılmış pencere
-  function pollOturumu(simdi) { return canli(simdi) || uzatilmis(simdi); }
+  function pollOturumu(simdi) { return canliSeans(simdi) || uzatilmis(simdi); }
 
   // RaceFeed.poll bağlamı (mevcut feedCtx ile aynı biçim): pencere, oturumun başlangıcına göre
   function ctx(c) {
-    c = c || canli(); if (!c) { return null; }
+    c = c || pollOturumu(); if (!c) { return null; }
     var st = bul(function () { return typeof sezonPilotlar !== "undefined" ? sezonPilotlar : []; }, []);
-    return { raceKey: c.raceKey, raceStart: new Date(c.bas),
+    var r = { raceKey: c.raceKey, raceStart: new Date(c.bas), oturum: c.oturum,
              pilotlar: st.map(function (k) { return { family: k.Driver.familyName, given: k.Driver.givenName, code: k.Driver.code }; }) };
+    if (c.oturum && !yarisTipi(c.oturum) && kok.RaceFeed && RaceFeed.seansPencere) {     // antrenman/sıralama: seansa özel dar pencere
+      var p = RaceFeed.seansPencere(new Date(c.bas), new Date(c.bit), new Date(), 0);
+      r.pencereBas = p.bas; r.pencereBit = p.bit;
+    }
+    return r;
   }
 
   // Canlı oturumda poll izni: en az 30 sn arayla, tarayıcı sekmesi gizli değilken
@@ -207,5 +260,5 @@
   }
   if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", baslat); } else { baslat(); }
 
-  kok.FeedCanli = { canli: canli, tickerOturum: tickerOturum, uzatilmis: uzatilmis, pollOturumu: pollOturumu, ctx: ctx, izin: izin, bildir: bildir, degerlendir: degerlendir, durum: function () { return { hata: S.hata, sonZaman: S.sonZaman, son: S.son }; }, _durum: S };
+  kok.FeedCanli = { canli: canli, canliSeans: canliSeans, tickerOturum: tickerOturum, uzatilmis: uzatilmis, pollOturumu: pollOturumu, ctx: ctx, izin: izin, bildir: bildir, degerlendir: degerlendir, durum: function () { return { hata: S.hata, sonZaman: S.sonZaman, son: S.son }; }, _durum: S };
 })(typeof window !== "undefined" ? window : null);

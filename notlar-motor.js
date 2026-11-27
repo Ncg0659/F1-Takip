@@ -4,13 +4,31 @@
 (function (kok) {
   "use strict";
 
-  const MOTOR_SURUM = 3;   // her çeviri/şablon değişikliğinde artır: saklı olaylar özgün metinden yeniden çevrilir
+  const MOTOR_SURUM = 4;   // her çeviri/şablon değişikliğinde artır: saklı olaylar özgün metinden yeniden çevrilir (4: 3.3.0 tüm seanslar + FP/Q şablonları)
 
   function ayar() {
-    return Object.assign({ pollSaniye: 30, oncePencereDk: 60, sonraPencereDk: 60, maxYarisSaat: 4, maxOlay: 200 }, kok.NOTLAR_AYAR || {});
+    return Object.assign({ pollSaniye: 30, oncePencereDk: 60, sonraPencereDk: 60, maxYarisSaat: 4, maxOlay: 200, seansOnceDk: 15, seansSonraDk: 30, kaynakZamanAsimiMs: 8000 }, kok.NOTLAR_AYAR || {});
   }
 
+  // ---------- Oturum deposu anahtarı (TEK tanım) ----------
+  // Yarış: "<yıl>-<tur>" (eski anahtar, değişmedi) · Sprint: "-sprint" · FP1/2/3: "-fp1/-fp2/-fp3" · Sprint Sıralaması: "-sq" · Sıralama: "-q".
+  // Her seansın notları ayrı depoda: antrenman notu yarış/sprint kartını etkilemez, seanslar arası olay taşınmaz.
+  const SEANS_EK = { Race: "", Sprint: "-sprint", FirstPractice: "-fp1", SecondPractice: "-fp2", ThirdPractice: "-fp3",
+                     SprintQualifying: "-sq", SprintShootout: "-sq", Qualifying: "-q" };
+  function oturumAnahtari(sezon, tur, seansAnahtar) {
+    const ek = SEANS_EK[seansAnahtar || "Race"];
+    return String(sezon) + "-" + String(tur) + (ek == null ? "" : ek);
+  }
+  function yarisTipiMi(seansAnahtar) { return !seansAnahtar || seansAnahtar === "Race" || seansAnahtar === "Sprint"; }
+
   // ---------- Zaman penceresi ----------
+  // Antrenman/Sıralama: dar pencere [başlangıç − seansOnceDk, bitiş (+doğrulanmış uzatma) + seansSonraDk] → bir önceki/sonraki seansın notları karışmaz.
+  function seansPencere(basla, bitis, simdi, uzatmaDk) {
+    const a = ayar(), s = simdi || new Date();
+    const bas = new Date(basla.getTime() - a.seansOnceDk * 60000);
+    const bit = new Date(bitis.getTime() + ((uzatmaDk || 0) + a.seansSonraDk) * 60000);
+    return { bas: bas, bit: bit, aktif: s >= bas && s <= bit };
+  }
   function pencere(basla, simdi) {
     const a = ayar();
     const s = simdi || new Date();
@@ -134,7 +152,33 @@
   const D = "§(\\d+)§";
   const TYRE_RE = "(softs?|mediums?|hards?|intermediates?|inters?|wets?)";
   function T(o) { return o; }
+  const FP_BUL = { FP1: "FP1'de", FP2: "FP2'de", FP3: "FP3'te" };
   const SABLONLAR = [
+    // --- 3.3.0 Antrenman / Sıralama seans olayları ---
+    T({ cat: "RED_FLAG", kalip: "^\\W*red[- ]flags?\\b", kosul: function (t) { return !/\b(expected|likely|possible|could|would|after|before|since|following)\b/i.test(t); },
+        yap: function () { return "Kırmızı bayrak çıktı; seans durduruldu."; } }),
+    T({ cat: "INCIDENT", kalip: "^\\W*(double )?yellow flags?\\b|\\b(double )?yellow flags? (?:is |are )?(?:out|shown|waved)\\b",
+        kosul: function (t) { return !/\b(infringement|under (?:the )?(?:double )?yellow|for (?:a |the )?(?:double )?yellow|ignor\w*)\b/i.test(t); },
+        yap: function (m) { return (m[1] || m[2] ? "Çift sarı bayrak" : "Sarı bayrak") + " çıktı."; } }),
+    T({ cat: "RACE_STATUS", kalip: "(?:session|it|qualifying|practice|FP[123]|Q[123]|SQ[123])\\s+(?:has been |is |was |will be )?extended by (\\d+) min\\w*|extended the session by (\\d+) min\\w*",
+        yap: function (m) { return "Seans " + (m[1] || m[2]) + " dakika uzatıldı."; } }),
+    T({ cat: "START", kalip: "\\b(?:FP[123]|practice|qualifying|sprint qualifying|sprint shootout|Q[123]|SQ[123]|the session)\\s+(?:is |has )?(?:now )?(?:under ?way|started|begun|go(?:ne|ing)? green)\\b",
+        yap: function () { return "Seans başladı."; } }),
+    T({ cat: "RESULT", kalip: D + "\\s+(?:is|was|ends up|ended up|finishes|finished)\\s+(?:the )?(?:quickest|fastest)\\s+in\\s+(FP[123])\\b",
+        kosul: function (t) { return !/\b(so far|currently|at the moment|early on|for now|at this stage|provisional)\b/i.test(t); },
+        yap: function (m, c) { return c.ad(m[1]) + ", " + (FP_BUL[m[2].toUpperCase()] || m[2]) + " en hızlı isim oldu."; } }),
+    T({ cat: "RESULT", kalip: D + "\\s+tops\\s+(FP[123]|Friday|Saturday|practice)\\b",
+        kosul: function (t) { return !/\b(so far|currently|at the moment|early on|for now)\b/i.test(t); },
+        yap: function (m, c) {
+          const k = m[2].toLowerCase();
+          if (k === "friday") { return c.ad(m[1]) + " cuma antrenmanlarını zirvede tamamladı."; }
+          if (k === "saturday") { return c.ad(m[1]) + " cumartesi antrenmanını zirvede tamamladı."; }
+          if (k === "practice") { return c.ad(m[1]) + " antrenmanı zirvede tamamladı."; }
+          return c.ad(m[1]) + ", " + (FP_BUL[m[2].toUpperCase()] || m[2]) + " en hızlı isim oldu.";
+        } }),
+    T({ cat: "RESULT", kalip: D + "\\s+(?:takes|has taken|took|claims|claimed|grabs|grabbed|seals|sealed|secures|secured)\\s+(?:the )?(?:sprint )?pole(?: position)?\\b",
+        kosul: function (t) { return !/\b(provisional|provisionally|so far|for now|currently)\b/i.test(t); },
+        yap: function (m, c) { return c.ad(m[1]) + " pole pozisyonunu aldı."; } }),
     // --- POSITION: geçişler ---
     T({ cat: "POSITION", kalip: D + "\\s+(?:is |has |gets |got |goes |went )?(?:gone )?through on\\s+" + D,
         yap: function (m, c) { return c.ad(m[1]) + ", " + c.acc(m[2]) + " geçti" + (c.postP ? " ve " + pYonelme(c.postP) + " yükseldi" : "") + "."; } }),
@@ -410,7 +454,7 @@
     ["INVESTIGATION", function (t) { return /\b(investigat\w*|steward\w*)\b/i.test(t); }],
     ["RESULT", function (t) { return /\b(wins|won|winner|chequered flag|checkered flag|final results?|classified)\b/i.test(t); }],
     ["TECHNICAL", function (t, n) { return /\b(retire\w*|engine|gearbox|brake\w*|mechanical|power unit|hydraulic)\b/i.test(t) || (n > 0 && /\bstopped\b/i.test(t)); }],
-    ["INCIDENT", function (t) { return /\b(crash\w*|collision|collid\w*|contact|spin|spins|spun|damage\w*|debris|off track|beached|gravel|barrier)\b/i.test(t); }],
+    ["INCIDENT", function (t) { return /\b(crash\w*|collision|collid\w*|contact|spin|spins|spun|damage\w*|debris|off track|beached|gravel|barrier|near[- ]miss|lock[- ]?up|locked up)\b/i.test(t); }],
     ["PIT", function (t) { return /\b(pit|pits|pitted|pitting|pitstop|pit stop|box|boxes)\b/i.test(t); }],
     ["STRATEGY", function (t) { return /\b(strategy|undercut|overcut|one-stop|two-stop|three-stop)\b/i.test(t); }],
     ["WEATHER", function (t) { return /\b(rain\w*|storm\w*|drizzle|thunder\w*|downpour)\b/i.test(t); }],
@@ -437,6 +481,11 @@
   // Seans DURUMU bildiren çıplak notlar ("Next inspection at 17:15", "This isn't starting for at least 15 minutes", "Standing water… medical car") ILGILI listesinde
   // yoktu ve elendiği için canlı durum kartı (hafta-state.js) bu bilgiyi hiç göremiyordu. Yalnızca "ilgili mi?" kararını genişletir; çeviri/kategori/tekrar mantığı değişmedi.
   const DURUM_ILGILI = /\b(delay\w*|postpone\w*|inspect\w*|medical car|standing water|aquaplan\w*|(?:isn'?t|aren'?t|won'?t|not)\s+(?:be\s+)?(?:start\w*|begin\w*)|resum\w*|suspend\w*|green flag|at least \d+\s*(?:more\s+)?min\w*)\b/i;
+
+  // 3.3.0: Başka yarış serisi notları F1 seansına KARIŞMAZ. Muhabirler F2/F3 notlarını da #F1 etiketiyle paylaşabiliyor
+  // (ör. "F3 champion … takes pole position on his F2 debut" → F1 pole olayı üretmemeli). Temkinli: seri adı geçen not F1 akışına alınmaz.
+  const DIGER_SERI = /\b(F2|F3|Formula (?:2|3|Two|Three|E)|F1 Academy|MotoGP|Moto2|Moto3|IndyCar|WEC|Le Mans|NASCAR|WRC|DTM|Super Formula|GT World(?: Cup)?|feature race)\b|#(?:F2|F3|FIAF2|FIAF3|F1Academy|MotoGP|IndyCar|WEC)\b/i;
+  function digerSeriMi(metin) { return DIGER_SERI.test(String(metin || "")); }
 
   // ---------- Depolama ----------
   function anahtar(raceKey) { return "f1-feed-v1-" + raceKey; }
@@ -476,7 +525,8 @@
     const rkey = String(post.uri || "").split("/").pop();
     const seviye = kaynak.trustLevel || "C";
     const simdi = new Date().toISOString();
-    const globalBelirsiz = BELIRSIZ.test(gorunen);
+    // 3.3.0: tırnak içi konuşma (takım telsizi: "You see that?") muhabirin belirsizliği değildir → belirsizlik testi tırnak dışı metinle yapılır
+    const globalBelirsiz = BELIRSIZ.test(gorunen.replace(/"[^"]{0,200}"/g, " "));
     let tasLar;
     if (grup.length) {
       tasLar = grup.map(function (g) { return { cat: g.cat, tr: g.text, yedek: false, belirsiz: g.belirsiz }; });
@@ -502,8 +552,9 @@
         translationFallback: g.yedek, motor: MOTOR_SURUM, createdAt: simdi, updatedAt: simdi
       };
     });
-    const ilgili = ILGILI.test(gorunen) || DURUM_ILGILI.test(gorunen) || t.mentions.length > 0 || grup.length > 0 || olaylar[0].category !== "COMMENT";
-    return { ilgili: ilgili, olaylar: olaylar, olay: olaylar[0] };
+    const seri = digerSeriMi(gorunen);
+    const ilgili = !seri && (ILGILI.test(gorunen) || DURUM_ILGILI.test(gorunen) || t.mentions.length > 0 || grup.length > 0 || olaylar[0].category !== "COMMENT");
+    return { ilgili: ilgili, olaylar: olaylar, olay: olaylar[0], digerSeri: seri };
   }
 
   // Seans durumu geçişi türü: yalnızca "aynı kategori + sürücüsüz" tekrar kuralında kullanılır. Farklı geçişler (örn. "Restart expected at 17:40" → "Green flag! Restart!",
@@ -522,8 +573,13 @@
       const e = mevcut[i];
       if (e.postId && e.postId === yeni.postId) { continue; }   // aynı postun kendi olayları birbirinin kopyası sayılmaz
       const fark = Math.abs(new Date(e.timestamp).getTime() - tYeni);
-      if (fark < 10 * 60000 && normMetin(e.textTr) === nt) { return e; }
+      // 3.3.0: bayrak/durum olayları (aynı Türkçe metinle) art arda gerçekten tekrar edebilir ("Red flag" 17:29, "Red flag again!" 17:38) → yalnız 3 dk içinde aynı sayılır
+      const durumKat = ["RED_FLAG", "SAFETY_CAR", "VSC", "RESTART"].indexOf(yeni.category) >= 0;
+      if (fark < (durumKat ? 3 : 10) * 60000 && normMetin(e.textTr) === nt) { return e; }
       if (fark < 3 * 60000 && e.fingerprint === yeni.fingerprint && KRITIK.indexOf(yeni.category) >= 0 && yeni.drivers.length > 0) { return e; }
+      // 3.3.0: iki FARKLI muhabir aynı pilot olayını (pist dışı, spin, kaza…) farklı cümleyle yazabilir → tek kart (kaynaklar birleşir)
+      if (fark < 3 * 60000 && e.sourceName && yeni.sourceName && e.sourceName !== yeni.sourceName && e.fingerprint === yeni.fingerprint &&
+          ["INCIDENT", "START"].indexOf(yeni.category) >= 0 && (yeni.drivers.length > 0 || yeni.category === "START")) { return e; }
       if (fark < 3 * 60000 && e.category === yeni.category && yeni.drivers.length === 0 && ["SAFETY_CAR", "VSC", "RED_FLAG", "RESTART"].indexOf(yeni.category) >= 0 &&
           gecisTuru(e.originalText) === gecisTuru(yeni.originalText)) { return e; }
     }
@@ -563,23 +619,37 @@
       return s.enabled && s.liveSource && s.type === "bluesky";
     });
     const simdi = opts.simdi || new Date();
-    const pen = pencere(ctx.raceStart, simdi);
+    // Yarış/Sprint: eski pencere (değişmedi). Antrenman/Sıralama: ctx.pencereBas/pencereBit (seansPencere) → dar, seansa özel.
+    const pen = ctx.pencereBas && ctx.pencereBit ? { bas: ctx.pencereBas, bit: ctx.pencereBit, aktif: simdi >= ctx.pencereBas && simdi <= ctx.pencereBit } : pencere(ctx.raceStart, simdi);
     const durum = yukle(ctx.raceKey, opts.depo);
-    const ist = { zaman: simdi.toISOString(), kaynak: [], fetched: 0, new: 0, relevant: 0, rejected: 0, duplicate: 0,
-                  eventsAdded: 0, translated: 0, fallbackEN: 0, reddedilme: { zaman: 0, ilgisiz: 0, repost: 0, bos: 0 },
+    const ist = { zaman: simdi.toISOString(), kaynak: [], fetched: 0, new: 0, relevant: 0, rejected: 0, duplicate: 0, merged: 0,
+                  eventsAdded: 0, translated: 0, fallbackEN: 0, reddedilme: { zaman: 0, ilgisiz: 0, repost: 0, bos: 0, seri: 0 },
                   hatalar: [], lastPost: null,
                   pencere: { bas: pen.bas.toISOString(), bit: pen.bit.toISOString(), aktif: pen.aktif }, testMode: !!opts.testMode };
 
     ist.healed = yenidenCevir(durum, ctx, opts.kaynaklar || kok.NOTLAR_KAYNAKLAR || []);
+    // 3.3.0: kaynaklar PARALEL ve birbirinden bağımsız çekilir; her biri en çok kaynakZamanAsimiMs bekler. Biri kapalı/yavaşsa diğeri çalışmaya devam eder.
+    function cek(kaynak) {
+      if (!getir) { return Promise.resolve({ hata: "fetch yok" }); }
+      const url = "https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=" + encodeURIComponent(kaynak.did || kaynak.handle) + "&limit=30";
+      const t0 = Date.now();
+      return new Promise(function (coz) {
+        let bitti = false;
+        const zaman = setTimeout(function () { if (!bitti) { bitti = true; coz({ hata: "zaman aşımı", ms: Date.now() - t0 }); } }, a.kaynakZamanAsimiMs);
+        Promise.resolve().then(function () { return getir(url); }).then(function (r) {
+          if (!r.ok) { throw new Error("HTTP " + r.status); }
+          return r.json();
+        }).then(function (veri) { if (!bitti) { bitti = true; clearTimeout(zaman); coz({ veri: veri, ms: Date.now() - t0 }); } },
+          function (e) { if (!bitti) { bitti = true; clearTimeout(zaman); coz({ hata: (e && e.message) || "hata", ms: Date.now() - t0 }); } });
+      });
+    }
+    const cevaplar = await Promise.all(kaynaklar.map(cek));
     for (let k = 0; k < kaynaklar.length; k++) {
-      const kaynak = kaynaklar[k];
-      const kd = { id: kaynak.id, name: kaynak.name, durum: "ACTIVE", hata: "" };
+      const kaynak = kaynaklar[k], cv = cevaplar[k];
+      const kd = { id: kaynak.id, name: kaynak.name, durum: "ACTIVE", hata: "", ms: cv.ms != null ? cv.ms : null, lastPost: null };
       try {
-        if (!getir) { throw new Error("fetch yok"); }
-        const url = "https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=" + encodeURIComponent(kaynak.handle) + "&limit=30";
-        const r = await getir(url);
-        if (!r.ok) { throw new Error("HTTP " + r.status); }
-        const veri = await r.json();
+        if (cv.hata) { throw new Error(cv.hata); }
+        const veri = cv.veri || {};
         const feed = veri.feed || [];
         ist.fetched += feed.length;
         const kayitlar = feed.map(function (o) { return { post: o.post, repost: !!o.reason }; }).filter(function (x) { return x.post; });
@@ -589,6 +659,7 @@
         kayitlar.forEach(function (x) {
           const zaman = (x.post.record || {}).createdAt || x.post.indexedAt;
           if (zaman && (!ist.lastPost || zaman > ist.lastPost)) { ist.lastPost = zaman; }
+          if (zaman && (!kd.lastPost || zaman > kd.lastPost)) { kd.lastPost = zaman; }
         });
         kayitlar.forEach(function (x) {
           const uri = x.post.uri;
@@ -603,7 +674,7 @@
           if (!((x.post.record || {}).text || "").trim()) { ist.rejected++; ist.reddedilme.bos++; durum.gorulen[uri] = Date.now(); return; }
           const u = olayUret(x.post, kaynak, ctx);
           durum.gorulen[uri] = Date.now();
-          if (!u.ilgili) { ist.rejected++; ist.reddedilme.ilgisiz++; return; }
+          if (!u.ilgili) { ist.rejected++; if (u.digerSeri) { ist.reddedilme.seri++; } else { ist.reddedilme.ilgisiz++; } return; }
           ist.relevant++;
           if (u.olaylar[0].translationFallback) { ist.fallbackEN++; } else { ist.translated++; }
           u.olaylar.forEach(function (ev) {
@@ -612,6 +683,10 @@
               ist.duplicate++;
               tek.updatedAt = new Date().toISOString();
               tek.status = tek.status === "unconfirmed" && ev.status === "confirmed" ? "updated" : tek.status;
+              if (ev.sourceName && tek.sourceName && ev.sourceName !== tek.sourceName) {          // aynı olay başka muhabirden: tek kart, kaynak listesi
+                tek.ekKaynaklar = tek.ekKaynaklar || [];
+                if (!tek.ekKaynaklar.some(function (q) { return q.ad === ev.sourceName; })) { tek.ekKaynaklar.push({ ad: ev.sourceName, url: ev.sourceUrl, ts: ev.timestamp }); ist.merged++; }
+              }
               return;
             }
             durum.olaylar.push(ev);
@@ -638,7 +713,7 @@
     return { stats: ist, olaylar: durum.olaylar };
   }
 
-  const API = { poll: poll, yukle: yukle, pencere: pencere, tokenle: tokenle, cevirPost: cevirPost, kategoriBul: kategoriBul,
+  const API = { poll: poll, yukle: yukle, pencere: pencere, seansPencere: seansPencere, oturumAnahtari: oturumAnahtari, yarisTipiMi: yarisTipiMi, digerSeriMi: digerSeriMi, SEANS_EK: SEANS_EK, tokenle: tokenle, cevirPost: cevirPost, kategoriBul: kategoriBul,
                 belirtmeEki: belirtmeEki, yonelmeEki: yonelmeEki, bulunmaEki: bulunmaEki, tamlayanEki: tamlayanEki,
                 pYonelme: pYonelme, olayUret: olayUret, tekrarMi: tekrarMi, MOTOR_SURUM: MOTOR_SURUM };
   kok.RaceFeed = API;

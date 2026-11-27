@@ -27,9 +27,17 @@
     return Math.max(m, 1) + " dk";
   }
   // ---------- Canlı seans durumu (hafta-state.js): Race Feed deposu → faz → saat tahmini. Sonuç motoruna dokunmaz. ----------
+  function feedAnahtari(h, s) {          // 3.3.0: her seansın kendi deposu (tek tanım: RaceFeed.oturumAnahtari)
+    if (window.RaceFeed && RaceFeed.oturumAnahtari) { return RaceFeed.oturumAnahtari(h.sezon, h.tur, s.anahtar); }
+    return h.sezon + "-" + h.tur + (s.anahtar === "Sprint" ? "-sprint" : "");
+  }
   function feedOlaylari(h, s) {
-    if (!window.RaceFeed || (s.anahtar !== "Sprint" && s.anahtar !== "Race")) { return null; }
-    try { return window.RaceFeed.yukle(h.sezon + "-" + h.tur + (s.anahtar === "Sprint" ? "-sprint" : "")).olaylar || null; } catch (e) { return null; }   // yalnızca okunur: yeni fetch/timer yok
+    if (!window.RaceFeed) { return null; }
+    if (!(window.RaceFeed.oturumAnahtari) && s.anahtar !== "Sprint" && s.anahtar !== "Race") { return null; }
+    try { return window.RaceFeed.yukle(feedAnahtari(h, s)).olaylar || null; } catch (e) { return null; }   // yalnızca okunur: yeni fetch/timer yok
+  }
+  function feedKaynakAdlari() {
+    try { return (window.NOTLAR_KAYNAKLAR || []).filter(function (k) { return k.enabled && k.liveSource; }).map(function (k) { return k.name; }).join(", "); } catch (e) { return ""; }
   }
   function durumBul(h, s) {
     var d0 = V.seansDurumu(s, h);
@@ -57,7 +65,7 @@
       if (st.durum === "POSTPONED") { return "<span class='dr bekle' title='Program değişikliği'>ERTELENDİ</span>"; }
       if (st.durum === "CANCELLED") { return "<span class='dr kirmizi' title='Program değişikliği'>İPTAL</span>"; }
       if (st.durum === "UPCOMING" && st.yeniSaat) { return "<span class='dr bekle' title='Program değişikliği: yeni saat açıklandı'>YENİ SAAT</span>"; }
-      if (st.durum === "DELAYED") { return "<span class='dr bekle' title='Race Feed (Chris Medland) notlarına göre'>BAŞLANGIÇ GECİKTİ</span>"; }
+      if (st.durum === "DELAYED") { return "<span class='dr bekle' title='Race Feed (muhabir notları) notlarına göre'>BAŞLANGIÇ GECİKTİ</span>"; }
       if ((st.durum === "RED_FLAG" || st.durum === "SESSION_STOPPED") && st.restartAciklandi) { return "<span class='dr bekle' title='Race Feed notlarına göre: yarış henüz yeniden başlamadı'>YENİDEN BAŞLAMA AÇIKLANDI</span>" + chip; }
       if (st.durum === "RED_FLAG") { return "<span class='dr kirmizi' title='Race Feed notlarına göre'>KIRMIZI BAYRAK</span>"; }
       if (st.durum === "SESSION_STOPPED") { return "<span class='dr sc' title='Race Feed notlarına göre'>SEANS DURDURULDU</span>"; }
@@ -280,11 +288,19 @@
       (ek ? "<button type='button' class='h-ac v3-mini' data-act='bk' data-key='" + esc(key) + "' aria-expanded='" + acik + "'>" + (acik ? "DARALT" : "DETAY") + "</button>" : "") + "</div>";
   }
   function feedPanel(h, s) {            // Race Feed: MEVCUT depodan salt-okunur; son 5 önemli not + [TÜMÜNÜ GÖSTER]. Yeni fetch/timer yok.
-    var ol = feedOlaylari(h, s);
-    if (!ol || !ol.length) { return ""; }
-    var bas = s.baslangic.getTime() - 90 * 60000;
+    var ol = feedOlaylari(h, s) || [];
+    var yaris = s.anahtar === "Sprint" || s.anahtar === "Race";
+    var bas = s.baslangic.getTime() - (yaris ? 90 : 20) * 60000;
     ol = ol.filter(function (o) { var t = Date.parse(o.timestamp); return isFinite(t) && t >= bas; }).sort(function (a, b) { return Date.parse(b.timestamp) - Date.parse(a.timestamp); });
-    if (!ol.length) { return ""; }
+    if (!ol.length) {
+      // 3.3.0: seans canlıyken (veya kapanış payındayken) muhabir paylaşımı yoksa bunu açıkça söyle; seans dışında boş panel çizilmez
+      var oc = null; try { oc = window.FeedCanli ? FeedCanli.pollOturumu() : null; } catch (e) { oc = null; }
+      if (oc && oc.raceKey === feedAnahtari(h, s)) {
+        return "<section class='v3-feed' aria-label='Race Feed'><div class='v3-feed-ust'><b>RACE FEED</b><span>0 not</span></div>" +
+          "<p class='h-not' data-feed-bos>Canlı kaynaklarda (" + esc(feedKaynakAdlari()) + ") bu seans için henüz paylaşım yok. Bu, seansta bir şey olmadığı anlamına gelmez.</p></section>";
+      }
+      return "";
+    }
     var yuksek = ol.filter(function (o) { return o.priority === "high"; }).length, gor;
     if (S.feedPAcik) { gor = ol.slice(0, 40); }
     else {
@@ -500,7 +516,7 @@
     var dugme = ol.length > gorunen.length || S.feedAcik
       ? "<button class='h-ac' data-act='feed' aria-expanded='" + S.feedAcik + "'>" + (S.feedAcik ? "Listeyi daralt" : "Tüm notları göster (" + ol.length + ")") + "</button>" : "";
     return baslik + "<div class='kap h-feed'><div class='tl'>" + liste + "</div>" + dugme +
-           "<p class='h-not'>Kaynak: Race Feed (Chris Medland). Yarış Günü ile aynı kayıttan gösterilir.</p></div>";
+           "<p class='h-not'>Kaynak: Race Feed (" + esc(feedKaynakAdlari()) + "). Yarış Günü ile aynı kayıttan gösterilir.</p></div>";
   }
 
   function sprintSayfasi(h) {
