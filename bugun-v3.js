@@ -45,7 +45,9 @@
   var FEED_KISA = 5, FEED_UZUN = 40;
   function feedNotlari(K, y, hBas, hepsi) {
     var out = [];
-    ["", "-sprint"].forEach(function (ek) {
+    // 3.2.0: hafta sonunun TÜM seans depoları (FP1-3, SQ, Sprint, Q, Yarış); kimlik ve metin tekrarı aşağıda elenir
+    var ekler = ["", "-sprint", "-fp1", "-fp2", "-fp3", "-sq", "-q"];
+    ekler.forEach(function (ek) {
       var o = bul(function () { return RaceFeed.yukle(K.sezon + "-" + y.round + ek).olaylar; }, []) || [];
       o.forEach(function (e) {
         var ts = Date.parse(e && e.timestamp); if (isNaN(ts) || ts < hBas) { return; }
@@ -66,9 +68,10 @@
 
   // Race Feed'in DOĞRULADIĞI seans durumu (HaftaState.feedDurumu, yalnız okur). null = feed yok → saat tabanlı tahmin
   function feedTip(K, y, s, now) {
-    if (!s || (s.anahtar !== "Race" && s.anahtar !== "Sprint")) { return null; }
+    if (!s) { return null; }
     return bul(function () {
-      var o = RaceFeed.yukle(K.sezon + "-" + y.round + (s.anahtar === "Sprint" ? "-sprint" : "")).olaylar || [];
+      var key = RaceFeed.oturumAnahtari ? RaceFeed.oturumAnahtari(K.sezon, y.round, s.anahtar) : K.sezon + "-" + y.round + (s.anahtar === "Sprint" ? "-sprint" : "");
+      var o = RaceFeed.yukle(key).olaylar || [];
       var fd = HaftaState.feedDurumu(o, { anahtar: s.anahtar, baslangic: s.baslangic, bitis: s.bitis, planliBaslangic: s.baslangic }, now);
       return fd && fd.tip ? fd.tip : null;
     }, null);
