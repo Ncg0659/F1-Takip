@@ -4,10 +4,10 @@
 window.DIGER_SERILER = [
   {
     kod: "f2", ad: "Formula 2",
-    durum: "Sezon sürüyor. Takvimde kalan turlar: Lusail (27-29 Kasım), Yas Island (4-6 Aralık). Bir haber sitesi bu iki turun durumunun belirsiz olduğunu yazıyor.",
-    guncelleme: "4 Ekim 2026",
-    kaynak: "racingnews365.com (Bakü Feature Race 2 sonrası, 26 Eylül)",
-    not: "Bakü hafta sonu tamamlandı. Câmara, Tsolov farkını 1 puandan 7 puana çıkardı.",
+    durum: "Sezon sürüyor. Lusail turu bu hafta sonu (27-29 Kasım), son tur Yas Island (4-6 Aralık). Puanlar Bakü sonrası; Lusail yarışlarından sonra değişecek.",
+    guncelleme: "27 Kasım 2026 (puanlar resmî tabloyla kontrol edildi)",
+    kaynak: "fiaformula2.com resmî pilot puan tablosu (ilk 10 sıra 27 Kasım 2026'da kontrol edildi) · racingnews365.com (Bakü sonrası tam liste)",
+    not: "Bakü'den (27 Eylül) bu yana F2 yarışı yapılmadı; bu yüzden puanlar hâlâ günceldir. Câmara, Tsolov'un 7 puan önünde.",
     pilotlar: [
       [1, "Rafael Câmara", "Invicta Racing", 207], [2, "Nikola Tsolov", "Campos Racing", 200],
       [3, "Alex Dunne", "Rodin Motorsport", 189], [4, "Gabriele Minì", "MP Motorsport", 163],
@@ -31,7 +31,7 @@ window.DIGER_SERILER = [
   },
   {
     kod: "f3", ad: "Formula 3",
-    durum: "Sezon bitti. Şampiyon: Ugo Ugochukwu (Campos Racing). Takımlar şampiyonu: Campos Racing.",
+    durum: "Sezon bitti; bu final puan durumudur (değişmez). Şampiyon: Ugo Ugochukwu (Campos Racing). Takımlar şampiyonu: Campos Racing.",
     guncelleme: "4 Ekim 2026",
     kaynak: "pitdebrief.com (Madrid finali sonrası resmî puan durumu)",
     not: "Pilot listesinde ilk 10 var. Takım adı bazı pilotlar için haberlerden eşleştirildi.",

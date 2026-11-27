@@ -169,7 +169,8 @@
              "<div class='tl-ust'><span class='tl-saat'>" + saat + "</span><span class='tl-nokta'>·</span>" +
                "<span class='tl-kat'>" + ikon(k.ikon, 14) + esc(o.category) + "</span>" + rozetler + "</div>" +
              "<div class='tl-metin'>" + esc(o.textTr) + "</div>" +
-             "<div class='tl-alt'>" + tk + "<a href='" + esc(o.sourceUrl) + "' target='_blank' rel='noopener'>" + esc(o.sourceName) + "</a></div>" +
+             "<div class='tl-alt'>" + tk + "<a href='" + esc(o.sourceUrl) + "' target='_blank' rel='noopener'>" + esc(o.sourceName) + "</a>" +
+               (o.ekKaynaklar && o.ekKaynaklar.length ? o.ekKaynaklar.map(function (q) { return " · <a href='" + esc(q.url) + "' target='_blank' rel='noopener' title='Aynı olayı bu kaynak da bildirdi'>" + esc(q.ad) + "</a>"; }).join("") : "") + "</div>" +
            "</div>";
   }
 

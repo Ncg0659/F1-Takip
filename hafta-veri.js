@@ -255,11 +255,24 @@
   async function kaynakYukleTaze(hafta, kaynak) { return kaynakYukle(hafta, kaynak); }
 
   // ---------- Takvim ----------
+  // 3.2.0: takvim alınamazsa (429 / ağ) ve uygulama aynı sezonun takvimini BU OTURUMDA zaten yüklediyse (Güncel Sezon / BUGÜN: sezonYarislar) onu kullan.
+  // Bu eski veri değildir (aynı oturumda aynı kaynaktan alındı); önbellekteki eski kayıttan önce gelir. Hiçbiri yoksa hata çağırana gider (değişmedi).
+  function oturumTakvimi(sezon) {
+    try { var y = typeof sezonYarislar !== "undefined" ? sezonYarislar : null; return y && y.length && String(y[0].season) === String(sezon) ? y : null; } catch (e) { return null; }
+  }
   async function takvimYukle(sezon) {
-    var cevap = await window.JolpicaIstemci.al("f1/" + sezon + "/races/?limit=100", {
-      onbellek: "takvim-" + sezon, omurMs: TAKVIM_OMUR_MS,
-      kaydetKosul: function (v) { return v && v.RaceTable && v.RaceTable.Races && v.RaceTable.Races.length > 0; }
-    });
+    var cevap;
+    try {
+      cevap = await window.JolpicaIstemci.al("f1/" + sezon + "/races/?limit=100", {
+        onbellek: "takvim-" + sezon, omurMs: TAKVIM_OMUR_MS,
+        kaydetKosul: function (v) { return v && v.RaceTable && v.RaceTable.Races && v.RaceTable.Races.length > 0; }
+      });
+    } catch (e) {
+      var ot = oturumTakvimi(sezon);
+      if (ot) { return { yarislar: ot, eski: false, t: Date.now(), oturumdan: true }; }
+      throw e;
+    }
+    if (cevap.eski) { var ot2 = oturumTakvimi(sezon); if (ot2) { return { yarislar: ot2, eski: false, t: Date.now(), oturumdan: true }; } }
     return { yarislar: cevap.veri.RaceTable.Races || [], eski: cevap.eski, t: cevap.t || null };
   }
 
