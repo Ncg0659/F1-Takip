@@ -1,4 +1,4 @@
-/* 3.2.0 — Race Feed artık TÜM seanslarda: FP1, FP2, FP3, Sprint Sıralaması, Sprint, Sıralama, Yarış. Her seansın kendi deposu var (RaceFeed.oturumAnahtari):
+/* 3.3.0 — Race Feed artık TÜM seanslarda: FP1, FP2, FP3, Sprint Sıralaması, Sprint, Sıralama, Yarış. Her seansın kendi deposu var (RaceFeed.oturumAnahtari):
    antrenman notu yarış kartını etkilemez. Antrenman/Sıralama için dar pencere (başlangıç −15 dk → bitiş + doğrulanmış uzatma + 30 dk) ve planlı bitişten
    sonra kısa bir "kapanış" poll payı (uzatma + 20 dk; doğrulanmış kırmızı bayrak/gecikme sürerken en çok +2 saat) vardır. Yeni fetch türü/timer yok.
    A4.5b — Canlı oturum boyunca Race Feed'in TEK sahibi. YENİ endpoint, YENİ ikinci polling döngüsü, YENİ ücretli servis/token YOK.
@@ -48,7 +48,7 @@
   }
 
   // Canlılık: mevcut A1 seans sistemi. canli() = yalnız Sprint ve Race (ESKİ ANLAM: Yarış Günü otomatik açılışı/yarış seçimi bunu kullanır).
-  // canliSeans() = 3.2.0 tüm seanslar (Race Feed poll kararı bunu kullanır).
+  // canliSeans() = 3.3.0 tüm seanslar (Race Feed poll kararı bunu kullanır).
   function canli(simdi) { return canliIc(simdi, true); }
   function canliSeans(simdi) { return canliIc(simdi, false); }
   function canliIc(simdi, sadeceYaris) {
@@ -64,7 +64,7 @@
       if (Y && Number(Y.tur) === Number(h.tur) && Y.seanslar) { h = Y; }    // A1'in çözümlenmiş sonuçları varsa (sonuç yayımlandı) onu kullan
       for (j = 0; j < h.seanslar.length; j++) {
         s = h.seanslar[j];
-        if ((!sadeceYaris || yarisTipi(s.anahtar)) && HV.seansDurumu(s, h, simdi) === "canli") {   // 3.2.0: sadeceYaris=false → tüm seanslar
+        if ((!sadeceYaris || yarisTipi(s.anahtar)) && HV.seansDurumu(s, h, simdi) === "canli") {   // 3.3.0: sadeceYaris=false → tüm seanslar
           return { oturum: s.anahtar, tur: Number(h.tur), ad: h.ad, bas: s.baslangic.getTime(), bit: s.bitis.getTime(),
                    raceKey: anahtarYap(y, s, simdi), yaris: yarisTipi(s.anahtar) };
         }
@@ -93,7 +93,7 @@
       if (Y && Number(Y.tur) === Number(h.tur) && Y.seanslar) { h = Y; }
       for (j = 0; j < h.seanslar.length; j++) {
         s = h.seanslar[j];
-        if (!yarisTipi(s.anahtar)) {                                                         // 3.2.0: Antrenman / Sıralama kapanış payı
+        if (!yarisTipi(s.anahtar)) {                                                         // 3.3.0: Antrenman / Sıralama kapanış payı
           var sk = kapanis(y, h, s, simdi);
           if (sk) { return sk; }
           continue;
@@ -161,7 +161,7 @@
       for (j = 0; j < h.seanslar.length; j++) {
         s = h.seanslar[j];
         var eski = HV.seansDurumu(s, h, simdi);
-        if (!yarisTipi(s.anahtar)) {                                                          // 3.2.0: FP1-3 / Sıralama / Sprint Sıralaması: Race Feed VAR (kendi deposu)
+        if (!yarisTipi(s.anahtar)) {                                                          // 3.3.0: FP1-3 / Sıralama / Sprint Sıralaması: Race Feed VAR (kendi deposu)
           var rk = anahtarYap(y, s, simdi);
           if (eski === "canli") { return { oturum: s.anahtar, tur: Number(h.tur), ad: h.ad, bas: s.baslangic.getTime(), bit: s.bitis.getTime(), raceKey: rk, durum: "canli", feedYok: false }; }
           if (eski === "sonuc-bekleniyor" || eski === "bitti") {                             // planlı bitiş geçti: yalnız DOĞRULANMIŞ uzatma/kırmızı bayrak varsa hâlâ canlı

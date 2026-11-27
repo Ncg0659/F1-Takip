@@ -10,7 +10,7 @@ window.NOTLAR_KAYNAKLAR = [
     priority: "high", trustLevel: "B", enabled: true, liveSource: true
   },
   {
-    // 3.2.0: ikinci canlı kaynak. Doğrulama (27 Kas 2026): did:plc:bmmxdktsmsdklw5arywa36iw, "F1 Journalist" (Autosport, RacingNews365, F1Oversteer imzaları),
+    // 3.3.0: ikinci canlı kaynak. Doğrulama (27 Kas 2026): did:plc:bmmxdktsmsdklw5arywa36iw, "F1 Journalist" (Autosport, RacingNews365, F1Oversteer imzaları),
     // Katar FP1/FP2'de kırmızı bayrak, seans uzatması ve pist olaylarını dakikalar içinde paylaştı. Medland çoğunlukla yalnız yarışları anlatıyor.
     id: "bsky-mitchell", name: "Rory Mitchell", type: "bluesky",
     handle: "rorymitchellf1.bsky.social", did: "did:plc:bmmxdktsmsdklw5arywa36iw",

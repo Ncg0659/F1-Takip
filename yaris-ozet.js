@@ -40,7 +40,7 @@
 
   // Lastik bağlantısı: blok var VE A3.4b'nin mevcut yayımlanma kuralına göre veri alınabilir (ağsız; oturum bitişi önbellekteyse o kullanılır)
   function lastikUygun(tur, y) {
-    if (!document.getElementById("a34b-lastik") || !window.LastikHesap || !y) { return false; }
+    if (!document.getElementById("ls-strateji") || !window.LastikHesap || !y) { return false; }   // 3.2.0: Lastik ve Yarış Stratejisi bölümü
     var bas = baslangic(y); if (bas == null) { return false; }
     var o = bul(function () { return JolpicaIstemci.oku("stints-oturum-" + sezon() + "-r" + tur); }, null);
     var bit = o && o.veri ? o.veri.date_end : null;
@@ -104,10 +104,10 @@
   // ---------- bağlantılar (yalnızca kaydırma; ağ yok) ----------
   function azHareket() { return bul(function () { return window.matchMedia("(prefers-reduced-motion: reduce)").matches; }, false); }
   function lastigeGit() {
-    var d = document.getElementById("a34b-lastik"); if (!d) { return; }            // bloğu AÇMAZ → OpenF1 isteği tetiklenmez
+    var d = document.getElementById("ls-strateji"); if (!d) { return; }            // 3.2.0: strateji bölümüne kaydırır; veri bölüm görünür olunca (bir kez) yüklenir
     bul(function () { d.scrollIntoView({ block: "start", behavior: azHareket() ? "auto" : "smooth" }); });
     d.classList.add("yo-vurgu");
-    var s = d.querySelector("summary"); if (s) { bul(function () { s.focus({ preventScroll: true }); }); }
+    var s = d.querySelector("h2"); if (s) { s.setAttribute("tabindex", "-1"); bul(function () { s.focus({ preventScroll: true }); }); }
     setTimeout(function () { d.classList.remove("yo-vurgu"); }, 2200);
   }
   function akisaGit() {

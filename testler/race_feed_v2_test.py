@@ -1,4 +1,4 @@
-# race_feed_v2_test — 3.2.0 CANLI VERİ VE RACE FEED v2.
+# race_feed_v2_test — 3.3.0 CANLI VERİ VE RACE FEED v2.
 #  A) Merkezi Jolpica kuyruğu: açılış istek sayısı, eşzamanlı birleştirme, aralık (≤4/sn)
 #  B) 429: Retry/backoff ile kendiliğinden düzelme · kalıcı 429 → "YOĞUN" kartı → sınırlı otomatik kurtarma · CORS'suz 429 (ağ hatası) → kart → kurtarma · sonsuz retry yok
 #  C) Gerçek Katar 2026 FP2 verisi (Rory Mitchell; fixture-katar-2026-bsky.json): F2 notu elenir, kırmızı bayrak, 13 dk uzatma, seans sonu, durum zinciri

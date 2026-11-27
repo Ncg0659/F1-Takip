@@ -195,6 +195,7 @@ with sync_playwright() as p:
         k(f"I{w}-1 gerçek uygulamada GHOST LAP paneli yarış sekmesinde, YARIŞ ANALİZİ'nin hemen üstünde (öne çıkan analiz), kapalı", page.evaluate("(()=>{const g=document.getElementById('gl-ghost');return !!g&&!g.open&&!!g.closest('#sekme-yaris')&&g.nextElementSibling===document.getElementById('yv-detay')})()"))
         k(f"I{w}-2 gerçek uygulamada panel kapalıyken car_data/location/laps isteği 0 (tur-analizi laps hariç değil: bu panel çağırmaz)", not [u for u in tel() if "car_data" in u or "location" in u], tel()[:3])
         page.evaluate("document.dispatchEvent(new CustomEvent('f1-yaris-sonuc',{detail:{tur:'17',liste:[['1','VER','Verstappen','max_verstappen'],['44','HAM','Hamilton','hamilton'],['16','LEC','Leclerc','leclerc']].map(x=>({number:x[0],Driver:{code:x[1],familyName:x[2],driverId:x[3]}}))}}))")
+        page.clock.run_for(2000); page.wait_for_timeout(300)   # v3.2.0: görünürdeki Lastik Stratejisi bölümü yarış değişince kendi (tembel) verisini çeker; ölçüm ondan sonra başlar
         n0=len(d.of_cagri)
         page.evaluate("document.getElementById('gl-ghost').open=true"); page.clock.run_for(2000); page.wait_for_timeout(300)
         k(f"I{w}-3 paneli açmak OpenF1 isteği atmaz; seçiciler boş, pilot listesi dolu", len(d.of_cagri)==n0 and page.input_value("[data-gl='A']")=="" and page.locator("[data-gl='A'] option").count()>2, (len(d.of_cagri),n0))

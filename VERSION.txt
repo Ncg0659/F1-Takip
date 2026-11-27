@@ -1,6 +1,10 @@
 F1 TAKİP
-Version: 3.3.0
-Release: Canlı veri ve Race Feed v2
+Version: 3.3.1
+Release: Lastik ve Yarış Stratejisi + Canlı veri ve Race Feed v2 (birleşik)
+
+3.3.1
+- Birleşik sürüm: 3.2.0 (Lastik ve Yarış Stratejisi) + 3.3.0 (Canlı veri ve Race Feed v2). Yeni özellik yok.
+- Sürüm ve Service Worker önbelleği 3.3.1'e taşındı (eski F1-TAKIP-* önbellekleri açılışta silinir).
 
 3.3.0
 - Jolpica: tüm istekler tek merkezi kuyrukta (≈2,9 istek/sn, aynı anda en çok 2; resmî sınır 4/sn, 500/saat). Aynı adrese eşzamanlı istekler tek istekte birleşir,
@@ -20,6 +24,19 @@ Release: Canlı veri ve Race Feed v2
 - Yeni şablonlar: kırmızı/sarı bayrak, seans uzatması, seans başlangıcı, "FP'de en hızlı", pole. Tırnak içindeki takım telsizi ("You see that?") belirsizlik sayılmaz.
 - F2 durum metni ve doğrulama tarihi güncellendi (puanlar resmî tabloyla aynı; Bakü'den beri F2 yarışı yok). F3 final tablosu olarak işaretlendi.
 - kaynak-test.html v2: Jolpica, OpenF1, Chris Medland, Rory Mitchell, F2/F3 — erişim, son veri tarihi, hata türü, yanıt süresi (yalnız düğmeyle, sürekli istek yok).
+
+3.2.0
+- LASTİK STRATEJİSİ (ANALİZ → Yarış Analizi, Yarışın Hikâyesi'nin altında): tamamlanan yarışta yatay stint zaman çizelgesi —
+  pilot başına bir satır, tur ekseni, stint uzunluğuyla orantılı lastik blokları, pit işaretleri, SC / VSC / kırmızı bayrak bantları.
+  Resmî sonuç sırası; DNF satırı tamamlanan turda biter; DNS pilotuna blok çizilmez.
+- Filtreler: TÜMÜ / İLK 10 / PODYUM / FAVORİ / KARŞILAŞTIR — ağ isteği yapmaz. Bloğa dokununca lastik, tur aralığı, başlangıç yaşı, pit bilgisi.
+- İki pilot karşılaştırması: lastik dizilimi, pit sayısı ve turları, en uzun stint, pit lane ve (kaynakta varsa) durağan süre, start → bitiş.
+- Pit stop analizi: pit lane süresi ile durağan süre ayrı; hata iddiası yok.
+- Stint temposu (isteğe bağlı): temiz turların medyanı ve en hızlı tur; 1. tur, pit giriş/çıkış, SC/VSC turları ve %10+ yavaş turlar hariç; < 5 temiz tur → hesaplanmaz.
+- Strateji özeti: en çok 3 deterministik bilgi; "en iyi / yanlış strateji" yorumu yok. Stint ve pit kayıtları tutarsız pilot özette kullanılmaz.
+- İzlerken Öğren: Stint, Compound, Pit lane, Undercut, Overcut, Tyre degradation → mevcut sözlük.
+- Yarışın Hikâyesi pit kartı → "Lastik grafiğinde gör". "Lastik stratejisini gör" bağlantısı artık sekme değiştirmeden bu bölüme götürür.
+- Bölüm görünür olunca yüklenir; Hikâye ile aynı stint/pit/race_control önbelleğini kullanır (ek istek yok).
 
 3.1.1
 - Yarışın Hikâyesi: güvenlik aracı sırasındaki bilgi mesajları ("LAPPED CARS MAY NOW OVERTAKE…", "SAFETY CAR LIGHTS OFF") artık ikinci, bitişsiz bir SC kartı açmaz; SC yalnız açık "DEPLOYED" mesajıyla başlar.
@@ -67,7 +84,7 @@ Release: Canlı veri ve Race Feed v2
 3.0.6
 - Visual Polish + Motion Fixes (giriş animasyonu, pist çizimi/nokta, ticker, kart sistemi, Ghost Lap akıcılığı, tahmin renkleri, mobil pist profili).
 
-Service Worker cache: F1-TAKIP-v3.3.0-PWA1 (yalnız yerel statik dosyalar; API önbelleğe alınmaz)
+Service Worker cache: F1-TAKIP-v3.3.1-PWA1 (yalnız yerel statik dosyalar; API önbelleğe alınmaz)
 Önceki sürüme dönüş: GitHub'da main dalının geçmişi 
 
 Repository:

@@ -3,7 +3,7 @@
    Sonuç yükleme/yeniden deneme mantığı eskisi gibi çalışmaya devam eder (seans planlı bitişinden sonra OpenF1 dakikada bir sorulur).
 
    Durumlar: UPCOMING · DELAYED · LIVE · RED_FLAG · SESSION_STOPPED · RESUMED · RESULT_PENDING · COMPLETED
-   Öncelik:  GERÇEK FEED (Race Feed deposundaki olaylar; 3.2.0: TÜM seanslar, her seans kendi deposu) > FAZ BİLGİSİ (SQ1-3 / Q1-3, saat tabanlı plan) > SAAT TABANLI TAHMİN
+   Öncelik:  GERÇEK FEED (Race Feed deposundaki olaylar; 3.3.0: TÜM seanslar, her seans kendi deposu) > FAZ BİLGİSİ (SQ1-3 / Q1-3, saat tabanlı plan) > SAAT TABANLI TAHMİN
    Fazlar:   Sprint Sıralaması SQ1/SQ2/SQ3, Sıralama Q1/Q2/Q3 (planlı süreler; gerçek faz verisi ücretsiz kaynaklardan gelmez → "tahmini" etiketi korunur)
    Kural:    Seans gerçekten bitmediyse RESULT_PENDING'e geçilmez. Planlı bitiş geçse bile (kırmızı bayrak/gecikme olabilir) kısa bir "uzamış olabilir" payı tanınır. */
 (function (kok) {
@@ -26,7 +26,7 @@
     return null;
   }
   var FEED_SEANS = { FirstPractice: 1, SecondPractice: 1, ThirdPractice: 1, SprintQualifying: 1, SprintShootout: 1, Sprint: 1, Qualifying: 1, Race: 1 };
-  function feedKullanir(anahtar) { return !!FEED_SEANS[anahtar]; }   // 3.2.0: Race Feed tüm seanslarda (önceden yalnız Sprint/Race)
+  function feedKullanir(anahtar) { return !!FEED_SEANS[anahtar]; }   // 3.3.0: Race Feed tüm seanslarda (önceden yalnız Sprint/Race)
   function yarisTipi(anahtar) { return anahtar === "Sprint" || anahtar === "Race"; }
 
   // ---------- Faz hesabı (saat tabanlı plan) ----------
@@ -46,10 +46,10 @@
 
   // ---------- Feed olaylarını okuma (Race Feed deposu; yalnızca okunur) ----------
   var RE_BITTI = /\b(chequered flag|checkered flag|wins the (sprint|race|grand prix)\b(?! start| to)|takes the (sprint |race )?(win|victory)|(sprint|race) (is )?over|final classification)/i;
-  // 3.2.0 Antrenman/Sıralama bitiş işaretleri ("Antonelli is quickest in FP1", "X tops FP2/Friday", "end of FP3", "X takes pole"). "so far / currently" ara durumdur.
+  // 3.3.0 Antrenman/Sıralama bitiş işaretleri ("Antonelli is quickest in FP1", "X tops FP2/Friday", "end of FP3", "X takes pole"). "so far / currently" ara durumdur.
   var RE_BITTI_SEANS = /\b(?:is|was|ends up|ended up|finishes|finished)\s+(?:the )?(?:quickest|fastest)\s+in\s+FP[123]\b|\btops\s+(?:FP[123]|Friday|Saturday|practice)\b|\bend of (?:FP[123]|practice|qualifying|the session)\b|\b(?:FP[123]|practice|qualifying|the session)\s+(?:is\s+|has\s+)?(?:over|done|finished|ended)\b|\b(?:takes|took|claims|claimed|grabs|seals|secures|secured)\s+(?:the )?(?:sprint )?pole\b/i;
   var RE_ARA_DURUM = /\b(so far|currently|at the moment|early on|for now|at this stage|provisional\w*|halfway)\b/i;
-  // 3.2.0 Doğrulanmış seans uzatması ("Race Control has extended the session by 13 minutes")
+  // 3.3.0 Doğrulanmış seans uzatması ("Race Control has extended the session by 13 minutes")
   var RE_UZATMA = /\bextended (?:the session )?by (\d{1,2})\s*min|\b(?:session|it|qualifying|practice|FP[123]|Q[123]|SQ[123])\s+(?:has been |is |was |will be )?extended by (\d{1,2})\s*min/i;
   var RE_BITTI_GELECEK = /\b(before|until|ahead of|approaching|towards?|heading (for|to)|about to|to|will)\s+(take |see |receive |get |wave |bring out )?(the |a )?(chequered|checkered) flag|\b(chequered|checkered) flag\s+(in|is coming|will|soon)\b/i;
   // KIRMIZI BAYRAK: metinde "red flag" geçmesi tek başına durum değildir (restart/geçmiş/olumsuz bağlam). Yalnızca ETKİN bildirim sayılır.
@@ -210,7 +210,7 @@
 
     var fd = feedDurumu(g.olaylar, s, simdi);
     if (fd && fd.chip) { cikti.chip = fd.chip; }
-    var uzMs = fd && fd.uzatmaDk ? fd.uzatmaDk * DK : 0;          // 3.2.0: doğrulanmış seans uzatması → efektif bitiş
+    var uzMs = fd && fd.uzatmaDk ? fd.uzatmaDk * DK : 0;          // 3.3.0: doğrulanmış seans uzatması → efektif bitiş
     if (uzMs) { bit += uzMs; cikti.uzatmaDk = fd.uzatmaDk; }
 
     // ---- Başlamadan önce ----
@@ -267,7 +267,7 @@
       cikti.ozet = uzMs && simdi >= bit - uzMs ? "Seans " + fd.uzatmaDk + " dakika uzatıldı (Race Feed); uzatılmış süreye göre sürüyor olmalı." : "Seans saat hesabına göre sürüyor olmalı.";
       return cikti;
     }
-    // 3.2.0: Antrenmanda planlı bitiş geçti ama muhabirler bu seans için yazmaya devam ediyor ve "bitti" işareti yok → kesin bitiş ilan edilmez (kısa pay)
+    // 3.3.0: Antrenmanda planlı bitiş geçti ama muhabirler bu seans için yazmaya devam ediyor ve "bitti" işareti yok → kesin bitiş ilan edilmez (kısa pay)
     if (!yarisTipi(s.anahtar) && fd && fd.notSayisi && fd.tip !== "ENDED" && simdi < bit + UZAMA_DK * DK) {
       cikti.durum = "LIVE"; cikti.kaynak = "saat"; cikti.uzamis = true;
       cikti.ozet = "Planlı bitiş geçti; seans uzamış olabilir. Sonuç gelince otomatik güncellenir."; return cikti;

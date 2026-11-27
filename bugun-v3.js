@@ -45,7 +45,7 @@
   var FEED_KISA = 5, FEED_UZUN = 40;
   function feedNotlari(K, y, hBas, hepsi) {
     var out = [];
-    // 3.2.0: hafta sonunun TÜM seans depoları (FP1-3, SQ, Sprint, Q, Yarış); kimlik ve metin tekrarı aşağıda elenir
+    // 3.3.0: hafta sonunun TÜM seans depoları (FP1-3, SQ, Sprint, Q, Yarış); kimlik ve metin tekrarı aşağıda elenir
     var ekler = ["", "-sprint", "-fp1", "-fp2", "-fp3", "-sq", "-q"];
     ekler.forEach(function (ek) {
       var o = bul(function () { return RaceFeed.yukle(K.sezon + "-" + y.round + ek).olaylar; }, []) || [];

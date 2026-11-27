@@ -91,7 +91,7 @@
   function bul(f, d) { try { return f(); } catch (e) { return d; } }
   function esc(x) { return String(x == null ? "" : x).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c]; }); }
 
-  // Canlılık: FeedCanli.tickerOturum (3.2.0: tüm seanslar, her seans kendi Race Feed deposu). Race Feed sorgusunun sahibi de FeedCanli'dir.
+  // Canlılık: FeedCanli.tickerOturum (3.3.0: tüm seanslar, her seans kendi Race Feed deposu). Race Feed sorgusunun sahibi de FeedCanli'dir.
   // Program override (ertelendi / gecikti / yeni saat / iptal) ve COMPLETED önceliği FeedCanli.tickerOturum'dadır; eski tanım yedek.
   function canliOturum(simdi) {
     if (!kok.FeedCanli) { return null; }
@@ -121,7 +121,7 @@
       return HaftaState.feedDurumu(olaylar || [], { anahtar: o.oturum, baslangic: new Date(o.bas), bitis: new Date(o.bit), planliBaslangic: new Date(o.bas) }, simdi);
     }, null), tip = fd && fd.tip ? fd.tip : null;
     if (fd && fd.pistSonra != null && o.oturum !== "Race" && o.oturum !== "Sprint") { return { ad: "LIVE TAHMİNİ", ton: "tahmin", fd: fd }; }   // kırmızı bayrak sonrası pist olayı: büyük olasılıkla devam (HaftaState ile aynı kural)
-    if ((o.oturum === "Race" || (o.oturum !== "Sprint" && kok.RaceFeed && RaceFeed.yarisTipiMi && !RaceFeed.yarisTipiMi(o.oturum))) && fd) {   // Sprint'te hero yalnız LIVE/LIVE TAHMİNİ der; 3.2.0: antrenman/sıralama da kırmızı bayrağı açıkça gösterir
+    if ((o.oturum === "Race" || (o.oturum !== "Sprint" && kok.RaceFeed && RaceFeed.yarisTipiMi && !RaceFeed.yarisTipiMi(o.oturum))) && fd) {   // Sprint'te hero yalnız LIVE/LIVE TAHMİNİ der; 3.3.0: antrenman/sıralama da kırmızı bayrağı açıkça gösterir
       if ((tip === "RED_FLAG" || tip === "SESSION_STOPPED") && fd.restartAciklandi) { return { ad: "YENİDEN BAŞLAMA AÇIKLANDI", ton: "bekle", fd: fd }; }   // yarış hâlâ durmuş
       if (tip === "RED_FLAG") { return { ad: "RED FLAG", ton: "kirmizi", fd: fd }; }
       if (tip === "SESSION_STOPPED") { return { ad: "STOPPED", ton: "bekle", fd: fd }; }
@@ -176,7 +176,7 @@
   function durumMetni(m) {
     if (m.feedYok) { return "Seans sürüyor · saat tahmini (bu seans için canlı akış yok)"; }
     if (m.hata && m.oturumOlay === 0) { return "Canlı akışa şu an ulaşılamıyor"; }
-    if (m.oturumOlay === 0 && m.oturum !== "Race" && m.oturum !== "Sprint") { return "Muhabirlerden bu seans için henüz paylaşım yok"; }   // 3.2.0
+    if (m.oturumOlay === 0 && m.oturum !== "Race" && m.oturum !== "Sprint") { return "Muhabirlerden bu seans için henüz paylaşım yok"; }   // 3.3.0
     if (m.oturumOlay === 0) { return "Canlı akış bekleniyor…"; }
     return "Son 15 dakikada kritik gelişme yok";
   }

@@ -4,7 +4,7 @@
 (function (kok) {
   "use strict";
 
-  const MOTOR_SURUM = 4;   // her çeviri/şablon değişikliğinde artır: saklı olaylar özgün metinden yeniden çevrilir (4: 3.2.0 tüm seanslar + FP/Q şablonları)
+  const MOTOR_SURUM = 4;   // her çeviri/şablon değişikliğinde artır: saklı olaylar özgün metinden yeniden çevrilir (4: 3.3.0 tüm seanslar + FP/Q şablonları)
 
   function ayar() {
     return Object.assign({ pollSaniye: 30, oncePencereDk: 60, sonraPencereDk: 60, maxYarisSaat: 4, maxOlay: 200, seansOnceDk: 15, seansSonraDk: 30, kaynakZamanAsimiMs: 8000 }, kok.NOTLAR_AYAR || {});
@@ -154,7 +154,7 @@
   function T(o) { return o; }
   const FP_BUL = { FP1: "FP1'de", FP2: "FP2'de", FP3: "FP3'te" };
   const SABLONLAR = [
-    // --- 3.2.0 Antrenman / Sıralama seans olayları ---
+    // --- 3.3.0 Antrenman / Sıralama seans olayları ---
     T({ cat: "RED_FLAG", kalip: "^\\W*red[- ]flags?\\b", kosul: function (t) { return !/\b(expected|likely|possible|could|would|after|before|since|following)\b/i.test(t); },
         yap: function () { return "Kırmızı bayrak çıktı; seans durduruldu."; } }),
     T({ cat: "INCIDENT", kalip: "^\\W*(double )?yellow flags?\\b|\\b(double )?yellow flags? (?:is |are )?(?:out|shown|waved)\\b",
@@ -482,7 +482,7 @@
   // yoktu ve elendiği için canlı durum kartı (hafta-state.js) bu bilgiyi hiç göremiyordu. Yalnızca "ilgili mi?" kararını genişletir; çeviri/kategori/tekrar mantığı değişmedi.
   const DURUM_ILGILI = /\b(delay\w*|postpone\w*|inspect\w*|medical car|standing water|aquaplan\w*|(?:isn'?t|aren'?t|won'?t|not)\s+(?:be\s+)?(?:start\w*|begin\w*)|resum\w*|suspend\w*|green flag|at least \d+\s*(?:more\s+)?min\w*)\b/i;
 
-  // 3.2.0: Başka yarış serisi notları F1 seansına KARIŞMAZ. Muhabirler F2/F3 notlarını da #F1 etiketiyle paylaşabiliyor
+  // 3.3.0: Başka yarış serisi notları F1 seansına KARIŞMAZ. Muhabirler F2/F3 notlarını da #F1 etiketiyle paylaşabiliyor
   // (ör. "F3 champion … takes pole position on his F2 debut" → F1 pole olayı üretmemeli). Temkinli: seri adı geçen not F1 akışına alınmaz.
   const DIGER_SERI = /\b(F2|F3|Formula (?:2|3|Two|Three|E)|F1 Academy|MotoGP|Moto2|Moto3|IndyCar|WEC|Le Mans|NASCAR|WRC|DTM|Super Formula|GT World(?: Cup)?|feature race)\b|#(?:F2|F3|FIAF2|FIAF3|F1Academy|MotoGP|IndyCar|WEC)\b/i;
   function digerSeriMi(metin) { return DIGER_SERI.test(String(metin || "")); }
@@ -525,7 +525,7 @@
     const rkey = String(post.uri || "").split("/").pop();
     const seviye = kaynak.trustLevel || "C";
     const simdi = new Date().toISOString();
-    // 3.2.0: tırnak içi konuşma (takım telsizi: "You see that?") muhabirin belirsizliği değildir → belirsizlik testi tırnak dışı metinle yapılır
+    // 3.3.0: tırnak içi konuşma (takım telsizi: "You see that?") muhabirin belirsizliği değildir → belirsizlik testi tırnak dışı metinle yapılır
     const globalBelirsiz = BELIRSIZ.test(gorunen.replace(/"[^"]{0,200}"/g, " "));
     let tasLar;
     if (grup.length) {
@@ -573,11 +573,11 @@
       const e = mevcut[i];
       if (e.postId && e.postId === yeni.postId) { continue; }   // aynı postun kendi olayları birbirinin kopyası sayılmaz
       const fark = Math.abs(new Date(e.timestamp).getTime() - tYeni);
-      // 3.2.0: bayrak/durum olayları (aynı Türkçe metinle) art arda gerçekten tekrar edebilir ("Red flag" 17:29, "Red flag again!" 17:38) → yalnız 3 dk içinde aynı sayılır
+      // 3.3.0: bayrak/durum olayları (aynı Türkçe metinle) art arda gerçekten tekrar edebilir ("Red flag" 17:29, "Red flag again!" 17:38) → yalnız 3 dk içinde aynı sayılır
       const durumKat = ["RED_FLAG", "SAFETY_CAR", "VSC", "RESTART"].indexOf(yeni.category) >= 0;
       if (fark < (durumKat ? 3 : 10) * 60000 && normMetin(e.textTr) === nt) { return e; }
       if (fark < 3 * 60000 && e.fingerprint === yeni.fingerprint && KRITIK.indexOf(yeni.category) >= 0 && yeni.drivers.length > 0) { return e; }
-      // 3.2.0: iki FARKLI muhabir aynı pilot olayını (pist dışı, spin, kaza…) farklı cümleyle yazabilir → tek kart (kaynaklar birleşir)
+      // 3.3.0: iki FARKLI muhabir aynı pilot olayını (pist dışı, spin, kaza…) farklı cümleyle yazabilir → tek kart (kaynaklar birleşir)
       if (fark < 3 * 60000 && e.sourceName && yeni.sourceName && e.sourceName !== yeni.sourceName && e.fingerprint === yeni.fingerprint &&
           ["INCIDENT", "START"].indexOf(yeni.category) >= 0 && (yeni.drivers.length > 0 || yeni.category === "START")) { return e; }
       if (fark < 3 * 60000 && e.category === yeni.category && yeni.drivers.length === 0 && ["SAFETY_CAR", "VSC", "RED_FLAG", "RESTART"].indexOf(yeni.category) >= 0 &&
@@ -628,7 +628,7 @@
                   pencere: { bas: pen.bas.toISOString(), bit: pen.bit.toISOString(), aktif: pen.aktif }, testMode: !!opts.testMode };
 
     ist.healed = yenidenCevir(durum, ctx, opts.kaynaklar || kok.NOTLAR_KAYNAKLAR || []);
-    // 3.2.0: kaynaklar PARALEL ve birbirinden bağımsız çekilir; her biri en çok kaynakZamanAsimiMs bekler. Biri kapalı/yavaşsa diğeri çalışmaya devam eder.
+    // 3.3.0: kaynaklar PARALEL ve birbirinden bağımsız çekilir; her biri en çok kaynakZamanAsimiMs bekler. Biri kapalı/yavaşsa diğeri çalışmaya devam eder.
     function cek(kaynak) {
       if (!getir) { return Promise.resolve({ hata: "fetch yok" }); }
       const url = "https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=" + encodeURIComponent(kaynak.did || kaynak.handle) + "&limit=30";

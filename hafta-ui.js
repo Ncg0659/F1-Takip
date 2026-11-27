@@ -27,7 +27,7 @@
     return Math.max(m, 1) + " dk";
   }
   // ---------- Canlı seans durumu (hafta-state.js): Race Feed deposu → faz → saat tahmini. Sonuç motoruna dokunmaz. ----------
-  function feedAnahtari(h, s) {          // 3.2.0: her seansın kendi deposu (tek tanım: RaceFeed.oturumAnahtari)
+  function feedAnahtari(h, s) {          // 3.3.0: her seansın kendi deposu (tek tanım: RaceFeed.oturumAnahtari)
     if (window.RaceFeed && RaceFeed.oturumAnahtari) { return RaceFeed.oturumAnahtari(h.sezon, h.tur, s.anahtar); }
     return h.sezon + "-" + h.tur + (s.anahtar === "Sprint" ? "-sprint" : "");
   }
@@ -293,7 +293,7 @@
     var bas = s.baslangic.getTime() - (yaris ? 90 : 20) * 60000;
     ol = ol.filter(function (o) { var t = Date.parse(o.timestamp); return isFinite(t) && t >= bas; }).sort(function (a, b) { return Date.parse(b.timestamp) - Date.parse(a.timestamp); });
     if (!ol.length) {
-      // 3.2.0: seans canlıyken (veya kapanış payındayken) muhabir paylaşımı yoksa bunu açıkça söyle; seans dışında boş panel çizilmez
+      // 3.3.0: seans canlıyken (veya kapanış payındayken) muhabir paylaşımı yoksa bunu açıkça söyle; seans dışında boş panel çizilmez
       var oc = null; try { oc = window.FeedCanli ? FeedCanli.pollOturumu() : null; } catch (e) { oc = null; }
       if (oc && oc.raceKey === feedAnahtari(h, s)) {
         return "<section class='v3-feed' aria-label='Race Feed'><div class='v3-feed-ust'><b>RACE FEED</b><span>0 not</span></div>" +

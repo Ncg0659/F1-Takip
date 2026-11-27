@@ -255,7 +255,7 @@
   async function kaynakYukleTaze(hafta, kaynak) { return kaynakYukle(hafta, kaynak); }
 
   // ---------- Takvim ----------
-  // 3.2.0: takvim alınamazsa (429 / ağ) ve uygulama aynı sezonun takvimini BU OTURUMDA zaten yüklediyse (Güncel Sezon / BUGÜN: sezonYarislar) onu kullan.
+  // 3.3.0: takvim alınamazsa (429 / ağ) ve uygulama aynı sezonun takvimini BU OTURUMDA zaten yüklediyse (Güncel Sezon / BUGÜN: sezonYarislar) onu kullan.
   // Bu eski veri değildir (aynı oturumda aynı kaynaktan alındı); önbellekteki eski kayıttan önce gelir. Hiçbiri yoksa hata çağırana gider (değişmedi).
   function oturumTakvimi(sezon) {
     try { var y = typeof sezonYarislar !== "undefined" ? sezonYarislar : null; return y && y.length && String(y[0].season) === String(sezon) ? y : null; } catch (e) { return null; }

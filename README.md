@@ -30,7 +30,7 @@ F1 TAKİP, açık F1 veri kaynaklarını kişisel ve sade bir arayüzde toplayan
 - **Race Feed:** Güvenilir F1 muhabirlerinin herkese açık notları Türkçeye çevrilerek özetlenir. Son 5 önemli not gösterilir, "TÜMÜNÜ GÖSTER" ile hepsi açılır; çevirisi bulunamayan not **EN** etiketiyle gösterilir.
 - **HAFTA SONU:** Antrenman, sıralama, sprint ve yarış seansları Türkiye saatiyle, tamamlanan seansların sonuçlarıyla birlikte.
 - **SEZON:** Takvim (pist silüetleriyle), pilot ve takım puan durumu, şampiyonluk hesaplayıcı, geçmiş şampiyonlar.
-- **ANALİZ:** Şampiyona puan gelişimi, son 5 yarış formu, start/bitiş, pole → galibiyet, takım puanları, DNF ve pist türü performansı.
+- **ANALİZ:** Yarışın hikâyesi, lastik ve yarış stratejisi, şampiyona puan gelişimi, son 5 yarış formu, start/bitiş, pole → galibiyet, takım puanları, DNF ve pist türü performansı.
 - **Favori pilot:** Seçtiğin pilot ekranlarda nötr bir vurguyla öne çıkar.
 - **Sezon arası:** Yeni sezonun takvimi henüz yayınlanmadıysa hata yerine "SEZON ARASI" bilgisi gösterilir. Geçen yılın puanları yeni yılınki gibi gösterilmez.
 
@@ -45,6 +45,15 @@ Tahmin hafta sonu öncesinde bir kez, sıralamadan sonra da grid hesaba katılar
 
 ### Analiz merkezi
 <img src="docs/media/analiz-puan-gelisimi.png" alt="Şampiyona puan gelişimi grafiği" width="720">
+
+### Lastik ve yarış stratejisi
+Tamamlanan her yarışta pilotların hangi lastiği kaç tur kullandığı tek bir zaman çizelgesinde görülür: her satır bir pilot, her blok bir stint, geçişlerde pit işareti, arka planda Safety Car / VSC / kırmızı bayrak bantları. İlk 10, podyum, favori ve iki pilot karşılaştırması (lastik dizilimi, pit turları, pit lane ve durağan süre, start → bitiş) ağ isteği yapmadan değişir. İstenirse stint temposu temiz turların medyanıyla gösterilir; pit giriş/çıkış ve SC turları hesaba katılmaz.
+
+Veri OpenF1 stint/pit kayıtlarından olduğu gibi gelir: eksik stint üretilmez, lastik tahmin edilmez, pit lane süresi lastik değişim süresi gibi gösterilmez. "En iyi strateji" ya da "undercut oldu" gibi yorum yapılmaz; Stint, Undercut ve benzeri terimler İzlerken Öğren sözlüğünde öğretilir.
+
+| Mobil (2026 Las Vegas GP) | Masaüstü karşılaştırma |
+|---|---|
+| <img src="docs/media/strateji-mobil.png" alt="Lastik stratejisi zaman çizelgesi: ilk 10 pilotun SOFT ve MEDIUM stintleri, Safety Car bandı" width="300"> | <img src="docs/media/strateji-karsilastirma.png" alt="İki pilot strateji karşılaştırması: Verstappen ve Hamilton" width="520"> |
 
 ### Ghost Lap
 İki pilotun en hızlı turu yan yana karşılaştırılır: tur süreleri, sektör farkları, delta, hız ve gaz/fren grafikleri, pist üzerinde konum oynatma (0.5× / 1× / 2×, kaydırma). Konumlar OpenF1'in ölçtüğü gerçek x/y noktalarıdır. Ölçüm boşluğunda veri uydurulmaz; işaretçi gizlenir.

@@ -1,4 +1,4 @@
-/* KAYNAK DURUMU + MERKEZİ JOLPICA KUYRUĞU (3.0.10 → 3.2.0)
+/* KAYNAK DURUMU + MERKEZİ JOLPICA KUYRUĞU (3.0.10 → 3.3.0)
    Uygulamadaki TÜM api.jolpi.ca istekleri (index.html jsonAl, JolpicaIstemci, detay paneli, tahmin ekranı…) bu sarmalayıcıdan geçer; çağıran modüller değişmez.
    • Tek kuyruk: istek başlangıçları arasında en az 350 ms (≈2,9 istek/sn; resmî sınır 4/sn), aynı anda en çok 2 istek. Son 1 saatte 300'ü aşan
      istek sayısında aralık 1 sn'ye çıkar (resmî sınır 500/saat). Sayaç cihazda tutulur (yeniden açılışlar da sayılır).
