@@ -52,7 +52,7 @@ with sync_playwright() as p:
             kontrol("Y1 varsayılan düzen v3 (yayın değişmedi)", pg.evaluate("document.documentElement.getAttribute('data-nav')") == "v3")
             kontrol("Y2 ana menü 5 sekme, aynı sıra", pg.evaluate("[...document.querySelectorAll('#nav-v3 button')].map(b=>b.id)") == ["nav-bugun", "nav-haftasonu", "nav-sezon", "nav-analiz", "nav-kesfet"])
             kontrol("Y3 sürüm etiketi ile sw.js sürümü eşleşiyor", (lambda v: ('F1-TAKIP-v%s-PWA1' % v) in open(KOK + "sw.js", encoding="utf-8").read())(pg.evaluate("document.querySelector('meta[name=app-version]').content")))
-            kontrol("Y4 henüz v4 düzeni yok (data-nav=v4 hiçbir yolla açılmıyor)", pg.evaluate("!document.querySelector('[data-nav=v4]')"))
+            kontrol("Y4 v4 önizlemesi varsayılan olarak KAPALI (data-v4 yok, v4 menüsü görünmüyor)", pg.evaluate("!document.documentElement.hasAttribute('data-v4') && !document.querySelector('[data-nav=v4]') && !(document.getElementById('nav-v4')||{checkVisibility:()=>false}).checkVisibility()"))
         # ---- E + O) her ekran açılır, her özellik yerinde
         acilmayan = [a for a in EKRANLAR if not ekran_ac(pg, a)]
         kontrol("E1 %d: tüm eski ekranlar sekmeAc ile açılıyor" % gen, not acilmayan, acilmayan)

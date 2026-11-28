@@ -1,0 +1,74 @@
+/* UI v4 — NAVİGASYON KABUĞU (v4.0 Aşama 1). Yalnız html[data-v4="1"] (gizli önizleme) ile etkin; bayrak yoksa hiçbir görsel etki yok.
+   Premium %70 / Race Control %30: aktif sekme NÖTR vurgulu (kırmızı yalnız doğrulanmış LIVE, amber yalnız LIVE TAHMİNİ).
+   Masaüstü: TOP BAR → ANA MENÜ → ALT MENÜ → (geçiş seçicisi) → İÇERİK.  Mobil (≤600px): TOP BAR → ALT MENÜ → İÇERİK → ALT SEKME ÇUBUĞU (tek el). */
+#nav-v4, #ctx-v4, #seg-v4, #nv4-onizleme { display:none; }
+
+/* v3 kabuğu önizlemede görünmez (DOM'da kalır; nav-v3.js top bar yerleşimini sürdürür) */
+html[data-v4="1"] #nav-v3, html[data-v4="1"] #ctx-v3 { display:none !important; }
+
+/* ---- LOGO = ANA SAYFA ---- */
+html[data-v4="1"] #rc-bar .rc-sol[data-nv4-logo] { cursor:pointer; border-radius:4px; }
+html[data-v4="1"] #rc-bar .rc-sol[data-nv4-logo]:focus-visible { outline:2px solid var(--yazi); outline-offset:3px; }
+html[data-v4="1"] #nv4-onizleme { display:inline-flex; align-items:center; flex:0 0 auto; height:22px; margin:0 8px; padding:0 8px; font-family:var(--f-sayi); font-size:.6rem; font-weight:700; letter-spacing:.1em; white-space:nowrap; color:var(--soluk); text-decoration:none; border:1px dashed var(--cizgi); border-radius:4px; }
+html[data-v4="1"] #nv4-onizleme:hover, html[data-v4="1"] #nv4-onizleme:focus-visible { color:var(--yazi); border-color:var(--soluk); }
+
+/* ---- ANA MENÜ (masaüstü) ---- */
+html[data-v4="1"] #nav-v4 { display:flex; align-items:stretch; gap:2px; margin:0 0 8px; padding:2px; background:var(--kart2); border:1px solid var(--cizgi); border-radius:6px; }
+html[data-v4="1"] #nav-v4 button { position:relative; flex:1 1 0; min-width:0; display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:42px; margin:0; padding:0 12px;
+  font-family:var(--f-sayi); font-size:.76rem; font-weight:700; letter-spacing:.12em; white-space:nowrap; color:var(--soluk); background:transparent; border:0; border-bottom:2px solid transparent; border-radius:4px; cursor:pointer; transition:none; text-transform:none; box-shadow:none; }
+html[data-v4="1"] #nav-v4 button:hover { color:var(--yazi); background:rgba(127,140,160,.10); }
+html[data-v4="1"] #nav-v4 button[aria-current="page"] { color:var(--yazi); background:var(--kart); border-bottom-color:var(--yazi); }
+html[data-v4="1"] #nav-v4 button:focus-visible, html[data-v4="1"] #ctx-v4 button:focus-visible, html[data-v4="1"] #seg-v4 button:focus-visible { outline:2px solid var(--yazi); outline-offset:-2px; }
+html[data-v4="1"] .nv4-ik, html[data-v4="1"] .nv4-k { display:none; }
+:root[data-tema="acik"][data-v4="1"] #nav-v4 { background:transparent; border-left:0; border-right:0; border-radius:0; }
+
+/* ---- CANLI DURUM GÖSTERGESİ (YARIŞ HAFTASI) ---- */
+html[data-v4="1"] .nv4-durum:not([hidden]) { display:inline-flex; align-items:center; gap:5px; height:18px; padding:0 6px; font-size:.58rem; font-weight:800; letter-spacing:.08em; border-radius:3px; border:1px solid currentColor; }
+html[data-v4="1"] .nv4-durum.nv4-live { color:#fff; background:var(--vurgu); border-color:var(--vurgu); }
+html[data-v4="1"] .nv4-durum.nv4-live::before { content:""; width:6px; height:6px; border-radius:50%; background:#fff; }
+html[data-v4="1"] .nv4-durum.nv4-tahmin { color:#b45309; background:transparent; }
+:root[data-tema="koyu"][data-v4="1"] .nv4-durum.nv4-tahmin { color:#f59e0b; }
+html[data-v4="1"] .nv4-durum.nv4-tahmin::before { content:""; width:6px; height:6px; border-radius:50%; border:1.5px solid currentColor; box-sizing:border-box; }
+
+/* ---- ALT MENÜ ---- */
+html[data-v4="1"] #ctx-v4:not([hidden]) { display:flex; gap:6px; margin:0 0 10px; padding:0; overflow-x:auto; scrollbar-width:none; }
+html[data-v4="1"] #ctx-v4::-webkit-scrollbar { display:none; }
+html[data-v4="1"] #ctx-v4 button { flex:0 0 auto; min-height:38px; margin:0; padding:0 13px; font-family:var(--f-sayi); font-size:.7rem; font-weight:700; letter-spacing:.1em; white-space:nowrap; color:var(--soluk); background:transparent; border:1px solid var(--cizgi); border-radius:4px; cursor:pointer; text-transform:none; box-shadow:none; }
+html[data-v4="1"] #ctx-v4 button:hover { color:var(--yazi); }
+html[data-v4="1"] #ctx-v4 button[aria-current="page"] { color:var(--yazi); background:var(--kart); border-color:var(--soluk); box-shadow:inset 0 -2px 0 var(--yazi); }
+
+/* ---- GEÇİŞ SEÇİCİSİ (Aşama 2/4'e kadar: BUGÜN·SEZON, PROFİLLER·ŞAMPİYONLAR) ---- */
+html[data-v4="1"] #seg-v4:not([hidden]) { display:inline-flex; gap:0; margin:0 0 12px; padding:2px; background:var(--kart2); border:1px solid var(--cizgi); border-radius:6px; }
+html[data-v4="1"] #seg-v4 button { min-height:32px; margin:0; padding:0 14px; font-family:var(--f-sayi); font-size:.66rem; font-weight:700; letter-spacing:.1em; color:var(--soluk); background:transparent; border:0; border-radius:4px; cursor:pointer; text-transform:none; box-shadow:none; }
+html[data-v4="1"] #seg-v4 button[aria-pressed="true"] { color:var(--yazi); background:var(--kart); box-shadow:0 0 0 1px var(--cizgi); }
+:root[data-tema="acik"][data-v4="1"] #seg-v4 { background:var(--zemin2); }
+
+/* ---- MOBİL: ana menü ALTTA (tek el), alt menü üstte kaydırılabilir ---- */
+@media (max-width:600px) {
+  html[data-v4="1"] body { padding-bottom:calc(72px + env(safe-area-inset-bottom, 0px)); }
+  html[data-v4="1"] #nav-v4, :root[data-tema="acik"][data-v4="1"] #nav-v4 { position:fixed; left:0; right:0; bottom:0; z-index:40; gap:0; margin:0; padding:4px 6px calc(4px + env(safe-area-inset-bottom, 0px)); background:var(--kart); border:0; border-top:1px solid var(--cizgi); border-radius:0; }
+  html[data-v4="1"] #nav-v4 button { flex-direction:column; gap:3px; min-height:58px; padding:6px 2px 4px; font-size:.6rem; letter-spacing:.04em; border-bottom:0; border-radius:0; }
+  html[data-v4="1"] #nav-v4 button[aria-current="page"] { background:transparent; }
+  html[data-v4="1"] #nav-v4 button[aria-current="page"]::after { content:""; position:absolute; top:0; left:50%; width:28px; height:2px; margin-left:-14px; background:var(--yazi); border-radius:0 0 2px 2px; }
+  html[data-v4="1"] .nv4-ik { display:block; }
+  html[data-v4="1"] .nv4-u { display:none; }
+  html[data-v4="1"] .nv4-k { display:inline; }
+  /* canlı gösterge: ikonun sağ üstünde nokta (metin ekran okuyucuda aria-label ile) */
+  html[data-v4="1"] #nav-v4 .nv4-durum:not([hidden]) { position:absolute; top:6px; left:calc(50% + 6px); width:10px; height:10px; padding:0; font-size:0; border-radius:50%; gap:0; }
+  html[data-v4="1"] #nav-v4 .nv4-durum::before { display:none; }
+  html[data-v4="1"] #nav-v4 .nv4-durum.nv4-tahmin { border-width:2px; background:var(--kart); }
+  html[data-v4="1"] #ctx-v4:not([hidden]) { margin:0 -16px 10px; padding:0 16px; }
+  html[data-v4="1"] #ctx-v4 button { min-height:40px; padding:0 12px; }
+  html[data-v4="1"] #seg-v4:not([hidden]) { display:flex; }
+  html[data-v4="1"] #seg-v4 button { flex:1 1 0; min-height:36px; }
+  html[data-v4="1"] #nv4-onizleme { margin:0 4px; padding:0 6px; font-size:.54rem; letter-spacing:.06em; }
+  html[data-v4="1"] #rc-bar .rc-alt, html[data-v4="1"] #rc-bar .rc-ayrac { display:none; }
+}
+@media (prefers-reduced-motion:reduce) { html[data-v4="1"] #nav-v4 button { transition:none; } }
+@media (max-width:600px) { html[data-v4="1"] .nv4-oz-u { display:none; } }
+#nv4-cikis { display:none; }
+@media (max-width:600px) {
+  html[data-v4="1"] #nv4-onizleme { display:none; }
+  html[data-v4="1"] #nv4-cikis { display:block; margin:24px 0 8px; font-family:var(--f-sayi); font-size:.66rem; letter-spacing:.06em; text-align:center; color:var(--soluk); }
+  html[data-v4="1"] #nv4-cikis a { color:var(--yazi); }
+}
