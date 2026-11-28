@@ -222,7 +222,7 @@
       (elenen ? "<p class='tp-alt'>Matematiksel olarak şampiyonluk dışında: " + elenen + " pilot</p>" : "") + "</section>";   // şampiyonlukta güven seviyesi gösterilmez (yalnız olasılık)
   }
 
-  // Kısa kartın bulunduğu ekran: v3'te #sekme-bugun (davranış aynı); v4 önizlemesinde kart ana sayfaya (#sekme-sezon) taşınır.
+  // Kısa kartın bulunduğu ekran: v3'te #sekme-bugun (davranış aynı); v4 önizlemesinde PROGRAM'ın ek kabına (#sekme-hafta-v4, data-sekme="hafta") taşınır.
   function kbSekme() { var kb = $("tp-bugun"), s = kb && kb.closest ? kb.closest("[id^='sekme-']") : null; return s || $("sekme-bugun"); }
   function yaz(kap, anah, html) { if (!kap) { return; } if (S.html[anah] !== html) { S.html[anah] = html; kap.innerHTML = html; } }
   function ciz() {
@@ -248,7 +248,7 @@
   }
 
   document.addEventListener("f1-sekme", function (e) {
-    var kbs = kbSekme(), kbAd = kbs ? kbs.id.slice(6) : "bugun";
+    var kbs = kbSekme(), kbAd = kbs ? (kbs.getAttribute("data-sekme") || kbs.id.slice(6)) : "bugun";
     if (e.detail !== kbAd && e.detail !== "grafik") { return; }
     saatGozle(); ciz(); tetikle(e.detail === "grafik");
   });

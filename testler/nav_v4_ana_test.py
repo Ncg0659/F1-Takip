@@ -12,7 +12,7 @@ OUT = "/tmp/f1-ekran/"
 URL = "file:///home/claude/f1-takip/index.html"
 def ev(id, ts, cat, tr): return {"id": id, "timestamp": ts, "category": cat, "priority": "high", "textTr": tr, "sourceUrl": "https://x", "sourceName": "Chris Medland", "sourceLevel": "B", "status": "confirmed", "drivers": []}
 LV = [dict(ev("r0", "2026-10-11T12:02:00Z", "RESTART", "Yarış başladı."), originalText="Lights out and away we go. The race has started.")]
-def sekme(pg): return pg.evaluate("[...document.querySelectorAll('[id^=sekme-]')].filter(e=>!e.hidden).map(e=>e.id.slice(6))")
+def sekme(pg): return pg.evaluate("[...document.querySelectorAll('[id^=sekme-]')].filter(e=>!e.hidden && !/-v4$/.test(e.id)).map(e=>e.id.slice(6))")  # v4 ek kapları (sekme-*-v4) ekran sayılmaz
 def ana(pg): return pg.evaluate("[...document.querySelectorAll('#nav-v4 [aria-current]')].map(b=>b.dataset.nv4)")
 def mod(pg): return pg.evaluate("(document.getElementById('av4')||{dataset:{}}).dataset.av4Mod")
 def tasma(pg): return pg.evaluate("document.documentElement.scrollWidth-innerWidth")
@@ -97,7 +97,7 @@ with sync_playwright() as p:
             kontrol("I5b 390 'GEÇMİŞ YARIŞLARI DA GÖSTER' → tüm takvim (%d kart)" % ge2, ge2 > len(ge) and pg.get_attribute("#av4-takvim-ac", "aria-expanded") == "true")
         else:
             kontrol("I5 1100 TAKVİM tam ızgara (kısaltma düğmesi yok)", not vis(pg, "#av4-takvim-ac") and pg.evaluate("[...document.querySelectorAll('#av4-takvim .st-ay-kart')].filter(b=>b.checkVisibility()).length") >= 20)
-        kontrol("I6 %d kısa yarış tahmini kutusu ana sayfada (Aşama 3'te PROGRAM'a gider)" % w, pg.evaluate("document.getElementById('tp-bugun').closest('[id^=sekme-]').id==='sekme-sezon'"))
+        kontrol("I6 %d kısa yarış tahmini kutusu ana sayfada değil, PROGRAM'da (Aşama 3)" % w, pg.evaluate("document.getElementById('tp-bugun').closest('[id^=sekme-]').id==='sekme-hafta-v4' && !document.querySelector('#sekme-sezon #tp-bugun')"))
         tik(pg, "#av4-son-kart [data-av4-git=yaris]", 8)
         kontrol("G1 %d SON YARIŞ → ANALİZ › YARIŞ" % w, sekme(pg) == ["yaris"] and ana(pg) == ["analiz"])
         tik(pg, "#rc-bar .rc-sol", 6)

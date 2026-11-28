@@ -17,7 +17,7 @@ CANLI = "2026-10-11T12:30:00Z"       # tur 17 yarışı sürüyor
 def ev(id, ts, cat, tr): return {"id": id, "timestamp": ts, "category": cat, "priority": "high", "textTr": tr, "sourceUrl": "https://x", "sourceName": "Chris Medland", "sourceLevel": "B", "status": "confirmed", "drivers": []}
 LV = [dict(ev("r0", "2026-10-11T12:02:00Z", "RESTART", "Yarış başladı."), originalText="Lights out and away we go. The race has started.")]
 
-def sekme(pg): return pg.evaluate("[...document.querySelectorAll('[id^=sekme-]')].filter(e=>!e.hidden).map(e=>e.id.slice(6))")
+def sekme(pg): return pg.evaluate("[...document.querySelectorAll('[id^=sekme-]')].filter(e=>!e.hidden && !/-v4$/.test(e.id)).map(e=>e.id.slice(6))")  # v4 ek kapları (sekme-*-v4) ekran sayılmaz
 def ana(pg): return pg.evaluate("[...document.querySelectorAll('#nav-v4 [aria-current]')].map(b=>b.dataset.nv4)")
 def ctx(pg): return pg.evaluate("[...document.querySelectorAll('#ctx-v4 button')].map(b=>b.textContent)")
 def ctxa(pg): return pg.evaluate("[...document.querySelectorAll('#ctx-v4 [aria-current]')].map(b=>b.dataset.cx4)")
