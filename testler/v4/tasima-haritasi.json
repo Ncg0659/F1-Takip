@@ -1,5 +1,5 @@
 {
- "surum": "v4.0 Aşama 1",
+ "surum": "v4.0 Aşama 2",
  "aciklama": "Mevcut her özelliğin eski konumu (v3.3.1, yayındaki düzen) ve v4.0'daki planlanan yeni konumu. nav_v4_guvenlik_test.py bu dosyayı okur: 'eski_ekran' + 'secici' her aşamada var olmalı; 'kuresel' adı verilen modül yüklü olmalı. Bir özellik taşındığında yalnız 'yeni_*' alanları ve ilgili aşamanın testi güncellenir; kayıt SİLİNMEZ.",
  "yeni_ana_sekmeler": [
   "ANA SAYFA",
@@ -34,7 +34,8 @@
    "secici": "#bg-kok",
    "kuresel": "BugunV3",
    "yeni_yol": "ANA SAYFA › üst durum kartı",
-   "asama": 2
+   "asama": 2,
+   "not": "Aşama 2 (önizleme): ana sayfanın üst durum kartı (#av4-durum); 5 durum korunur, içerik önceliği duruma göre değişir."
   },
   {
    "id": "bugun-tahmin",
@@ -44,7 +45,8 @@
    "secici": "#tp-bugun",
    "kuresel": "TahminUI",
    "yeni_yol": "YARIŞ HAFTASI › PROGRAM",
-   "asama": 3
+   "asama": 3,
+   "not": "Aşama 2 (önizleme): geçici olarak ana sayfada durum kartının altında; Aşama 3'te PROGRAM'a."
   },
   {
    "id": "bugun-gecmis-sampiyon",
@@ -53,7 +55,8 @@
    "eski_yol": "BUGÜN (sezon arası modu)",
    "secici": "#bg-kok",
    "yeni_yol": "ANA SAYFA › sezon arası kartı",
-   "asama": 2
+   "asama": 2,
+   "not": "Aşama 2 (önizleme): sezon arası durum kartında."
   },
   {
    "id": "sezon-baslik",
@@ -72,7 +75,8 @@
    "secici": "#a2-takvim",
    "kuresel": "SezonTakvim",
    "yeni_yol": "ANA SAYFA › Takvim",
-   "asama": 2
+   "asama": 2,
+   "not": "Aşama 2 (önizleme): ANA SAYFA › TAKVİM; mobilde ilk görünüm sıradaki + gelecek yarışlar. Takvimin SIRADAKİ sayaç kartı v4'te gizli (durum kartında)."
   },
   {
    "id": "sezon-eski-takvim",
@@ -90,7 +94,8 @@
    "eski_yol": "SEZON",
    "secici": "#hesap-sonuc",
    "yeni_yol": "ANA SAYFA › Puan durumu › SENARYO (şampiyonluk kesinleşince gizlenir)",
-   "asama": 2
+   "asama": 2,
+   "not": "Aşama 2 (önizleme): ANA SAYFA › SENARYO; SampiyonlukDurumu 'belli' iken gizlenir."
   },
   {
    "id": "puan-pilot",
@@ -99,7 +104,8 @@
    "eski_yol": "SEZON",
    "secici": "#pilot-govde",
    "yeni_yol": "ANA SAYFA › Puan durumu",
-   "asama": 2
+   "asama": 2,
+   "not": "Aşama 2 (önizleme): ANA SAYFA › puan durumu (masaüstünde takımlarla yan yana)."
   },
   {
    "id": "puan-takim",
@@ -108,7 +114,8 @@
    "eski_yol": "SEZON",
    "secici": "#takim-govde",
    "yeni_yol": "ANA SAYFA › Puan durumu",
-   "asama": 2
+   "asama": 2,
+   "not": "Aşama 2 (önizleme): ANA SAYFA › puan durumu."
   },
   {
    "id": "hafta-program",
@@ -378,7 +385,7 @@
    "secici": "#seri-bilgi",
    "yeni_yol": "KEŞFET › SERİLER (F2, F3; F4 ve F1 Academy veri hakkı doğrulanınca). Kısayollar: ANA SAYFA, ANALİZ",
    "asama": 5,
-   "not": "Formula E yeni kapsamdan çıkar. Haklar doğrulanmadan yeni seri verisi yayınlanmaz."
+   "not": "Aşama 2 (önizleme): ANA SAYFA › SERİLER kısayol kartları (yalnız F2, F3)."
   },
   {
    "id": "ogren",
@@ -532,8 +539,8 @@
  ],
  "asama1_v4_erisim": {
   "aciklama": "Aşama 1 (yalnız ?nav=v4 önizlemesi): içerik taşınmadı; her eski ekrana v4 menüsünden erişim yolu. Geçiş seçicisi (#seg-v4) Aşama 2/4'te içerik birleşince kalkar.",
-  "bugun": "ANA SAYFA (seçici: BUGÜN) · logo",
-  "sezon": "ANA SAYFA › seçici: SEZON",
+  "bugun": "Aşama 2: ANA SAYFA üst durum kartı (ayrı ekran yok) · logo",
+  "sezon": "Aşama 2: ANA SAYFA",
   "hafta": "YARIŞ HAFTASI › PROGRAM",
   "sprint": "YARIŞ HAFTASI › SPRINT (yalnız sprint haftası)",
   "gun": "YARIŞ HAFTASI › CANLI (canlı seansta sekmeye tek dokunuş)",

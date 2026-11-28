@@ -2,8 +2,8 @@
    • Yayındaki v3 düzeni DEĞİŞMEZ: bayrak yoksa bu dosya hiçbir DOM/stil değişikliği yapmaz (yalnız olay dinleyicisi kurar ve döner).
    • İçerik TAŞINMAZ (Aşama 2+). Her düğme mevcut window.sekmeAc(ad)'ı çağırır; ekranların kimlikleri ve yan etkileri aynen kalır.
    • 4 ana sekme: ANA SAYFA · YARIŞ HAFTASI · ANALİZ · KEŞFET. Alt menüler kullanıcı onaylı listedir.
-   • Geçiş dönemi seçicisi (#seg-v4): içerik Aşama 2/4'te birleşene kadar erişim kaybolmasın diye
-       ANA SAYFA → BUGÜN · SEZON,  ANALİZ › PİLOTLAR & TAKIMLAR → PROFİLLER · ŞAMPİYONLAR.
+   • ANA SAYFA (Aşama 2) = #sekme-sezon + akıllı durum kartı (ana-v4.js). v4'te "bugun" ekranı açılmaz; sekmeAc("bugun") ana sayfaya yönlenir.
+   • Geçiş dönemi seçicisi (#seg-v4): içerik Aşama 4'te birleşene kadar ANALİZ › PİLOTLAR & TAKIMLAR → PROFİLLER · ŞAMPİYONLAR.
    • Canlı durum: YENİ HESAP YOK — BugunV3.modBelirle() okunur. canli + gercek (Race Feed doğrulaması) → kırmızı LIVE;
      canli ama doğrulanmamış → amber LIVE TAHMİNİ. Canlıyken YARIŞ HAFTASI tek dokunuşla CANLI (sekme-gun) açar.
    • Yeni fetch / zamanlayıcı / polling / depolama anahtarı YOK (bayrak f1-nav4 index.html başlığında yazılır). Yeniden değerlendirme:
@@ -16,8 +16,7 @@
     analiz: [["yaris", "YARIŞ"], ["pilotlar", "PİLOTLAR & TAKIMLAR"], ["pistler", "PİSTLER"], ["grafikler", "GRAFİKLER"], ["tahmin", "TAHMİN"]],
     kesfet: [["ogren", "ÖĞREN"], ["seriler", "SERİLER"]]
   };
-  var SEG = {
-    ana: [["bugun", "BUGÜN"], ["sezon", "SEZON"]],
+  var SEG = {                                         // Aşama 2: ANA SAYFA seçicisi kalktı (BUGÜN özeti ana sayfanın üst kartı)
     pilotlar: [["profil", "PROFİLLER"], ["sampiyonlar", "ŞAMPİYONLAR"]]
   };
   var HEDEF = { program: "hafta", sprint: "sprint", canli: "gun", yaris: "yaris", pilotlar: "profil", pistler: "profil", grafikler: "grafik", tahmin: "grafik", seriler: "diger" };
@@ -67,7 +66,7 @@
   function logoKur() {
     var sol = document.querySelector("#rc-bar .rc-sol"); if (!sol || sol.getAttribute("data-nv4-logo")) { return; }
     sol.setAttribute("data-nv4-logo", "1"); sol.setAttribute("role", "button"); sol.setAttribute("tabindex", "0"); sol.setAttribute("aria-label", "F1 TAKİP — ana sayfa");
-    var cip = document.createElement("a"); cip.id = "nv4-onizleme"; cip.href = "?nav=v3"; cip.className = "nv4-onizleme"; cip.innerHTML = "v4<span class='nv4-oz-u'> ÖNİZLEME</span> · ÇIK";
+    var cip = document.createElement("a"); cip.id = "nv4-onizleme"; cip.href = "?nav=v3"; cip.className = "nv4-onizleme"; cip.innerHTML = "<span>v4</span><span class='nv4-oz-u'>ÖNİZLEME</span><span>· ÇIK</span>";
     cip.title = "Yayındaki görünüme dön"; sol.parentNode.insertBefore(cip, sol.nextSibling);
     if (!$("nv4-cikis")) {                         // mobil: üst çubuk dar → çıkış bağlantısı sayfa sonunda
       var alt = document.createElement("p"); alt.id = "nv4-cikis"; alt.className = "nv4-cikis";
@@ -85,9 +84,13 @@
   }
   function render(ad) {
     if (!v4() || !kur()) { return; }
+    if (ad === "bugun") {                                       // v4: BUGÜN özeti ana sayfanın içinde → ana sayfaya yönlen
+      try { if (window.AnaV4 && AnaV4.kur) { AnaV4.kur(); } } catch (e) {}
+      git("sezon"); return;
+    }
     S.sekme = ad; var ana = ANA[ad] || null;
     S.ctx = ctxVarsayilan(ad);
-    S.seg = ana === "ana" ? ad : (S.ctx === "pilotlar" ? (ad === "sampiyonlar" ? "sampiyonlar" : "profil") : null);
+    S.seg = S.ctx === "pilotlar" ? (ad === "sampiyonlar" ? "sampiyonlar" : "profil") : null;
     if (ana === "hafta") { S.haftaSon = S.ctx; }
     ["ana", "hafta", "analiz", "kesfet"].forEach(function (k) {
       var b = $("nv4-" + k); if (!b) { return; }
@@ -102,7 +105,7 @@
       if (x[0] === "tahmin") { return tahminVar(); }
       return true;
     });
-    var sl = S.ctx === "pilotlar" ? SEG.pilotlar : (ana === "ana" ? SEG.ana : []);
+    var sl = S.ctx === "pilotlar" ? SEG.pilotlar : [];
     var imza = [ana, S.ctx, S.seg, liste.map(function (x) { return x[0]; }).join(",")].join("|");
     if (imza === S.imza) { return; }
     S.imza = imza;
@@ -145,11 +148,11 @@
     if (!v4()) { return; }
     var t = e.target;
     var lg = t.closest && t.closest("#rc-bar .rc-sol[data-nv4-logo]");
-    if (lg) { git("bugun"); window.scrollTo(0, 0); return; }
+    if (lg) { git("sezon"); window.scrollTo(0, 0); return; }
     var n = t.closest && t.closest("#nav-v4 [data-nv4]");
     if (n) {
       var k = n.getAttribute("data-nv4");
-      if (k === "ana") { git(S.seg === "sezon" && ANA[S.sekme] === "ana" ? "sezon" : "bugun"); }
+      if (k === "ana") { git("sezon"); }
       else if (k === "hafta") {
         if (canliOku()) { git("gun"); }                                   // canlıyken tek dokunuş: CANLI
         else { var h = S.haftaSon === "sprint" && !sprintVar() ? "program" : S.haftaSon; git(HEDEF[h] || "hafta"); }
@@ -173,7 +176,7 @@
   document.addEventListener("keydown", function (e) {
     if (!v4() || (e.key !== "Enter" && e.key !== " ")) { return; }
     var lg = e.target && e.target.closest && e.target.closest("#rc-bar .rc-sol[data-nv4-logo]");
-    if (lg) { e.preventDefault(); git("bugun"); }
+    if (lg) { e.preventDefault(); git("sezon"); }
   });
 
   function gorunen() {

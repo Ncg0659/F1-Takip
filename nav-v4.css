@@ -9,7 +9,7 @@ html[data-v4="1"] #nav-v3, html[data-v4="1"] #ctx-v3 { display:none !important; 
 /* ---- LOGO = ANA SAYFA ---- */
 html[data-v4="1"] #rc-bar .rc-sol[data-nv4-logo] { cursor:pointer; border-radius:4px; }
 html[data-v4="1"] #rc-bar .rc-sol[data-nv4-logo]:focus-visible { outline:2px solid var(--yazi); outline-offset:3px; }
-html[data-v4="1"] #nv4-onizleme { display:inline-flex; align-items:center; flex:0 0 auto; height:22px; margin:0 8px; padding:0 8px; font-family:var(--f-sayi); font-size:.6rem; font-weight:700; letter-spacing:.1em; white-space:nowrap; color:var(--soluk); text-decoration:none; border:1px dashed var(--cizgi); border-radius:4px; }
+html[data-v4="1"] #nv4-onizleme { display:inline-flex; align-items:center; gap:5px; flex:0 0 auto; height:22px; margin:0 8px; padding:0 8px; font-family:var(--f-sayi); font-size:.6rem; font-weight:700; letter-spacing:.1em; white-space:nowrap; color:var(--soluk); text-decoration:none; border:1px dashed var(--cizgi); border-radius:4px; }
 html[data-v4="1"] #nv4-onizleme:hover, html[data-v4="1"] #nv4-onizleme:focus-visible { color:var(--yazi); border-color:var(--soluk); }
 
 /* ---- ANA MENÜ (masaüstü) ---- */

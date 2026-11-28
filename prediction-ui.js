@@ -222,9 +222,11 @@
       (elenen ? "<p class='tp-alt'>Matematiksel olarak şampiyonluk dışında: " + elenen + " pilot</p>" : "") + "</section>";   // şampiyonlukta güven seviyesi gösterilmez (yalnız olasılık)
   }
 
+  // Kısa kartın bulunduğu ekran: v3'te #sekme-bugun (davranış aynı); v4 önizlemesinde kart ana sayfaya (#sekme-sezon) taşınır.
+  function kbSekme() { var kb = $("tp-bugun"), s = kb && kb.closest ? kb.closest("[id^='sekme-']") : null; return s || $("sekme-bugun"); }
   function yaz(kap, anah, html) { if (!kap) { return; } if (S.html[anah] !== html) { S.html[anah] = html; kap.innerHTML = html; } }
   function ciz() {
-    var kb = $("tp-bugun"), ka = $("tp-analiz"), sb = $("sekme-bugun"), sg = $("sekme-grafik"), now = Date.now();
+    var kb = $("tp-bugun"), ka = $("tp-analiz"), sb = kbSekme(), sg = $("sekme-grafik"), now = Date.now();
     try {
       if (kb && sb && !sb.hidden) {
         var t = hedefBul(now, true), st = t && !t.gizle ? S.sonuc[anahtar(t)] : null;
@@ -238,7 +240,7 @@
     } catch (e) { if (window.console) { console.warn("[tahmin] çizilemedi", e); } }
   }
   function tetikle(acil) {
-    var sb = $("sekme-bugun"), sg = $("sekme-grafik"), g = (sb && !sb.hidden) || (sg && !sg.hidden); if (!g) { return; }
+    var sb = kbSekme(), sg = $("sekme-grafik"), g = (sb && !sb.hidden) || (sg && !sg.hidden); if (!g) { return; }
     var t = hedefBul(Date.now(), !(sg && !sg.hidden));
     if (t && t.gizle) { return; }
     if (!t && sg && !sg.hidden) { return; }
@@ -246,7 +248,8 @@
   }
 
   document.addEventListener("f1-sekme", function (e) {
-    if (e.detail !== "bugun" && e.detail !== "grafik") { return; }
+    var kbs = kbSekme(), kbAd = kbs ? kbs.id.slice(6) : "bugun";
+    if (e.detail !== kbAd && e.detail !== "grafik") { return; }
     saatGozle(); ciz(); tetikle(e.detail === "grafik");
   });
   document.addEventListener("click", function (e) {

@@ -60,8 +60,8 @@ with sync_playwright() as p:
         pg, errs, c, b = onizleme(p, NORMAL, w=w, tema=tema)
         T.append(tasma(pg))
         kontrol("N1 %s 4 ana sekme sıralı" % e, pg.evaluate("[...document.querySelectorAll('#nav-v4 button')].map(b=>b.getAttribute('aria-label'))") == ["ANA SAYFA", "YARIŞ HAFTASI", "ANALİZ", "KEŞFET"])
-        kontrol("N2 %s açılış: ANA SAYFA aktif, BUGÜN ekranı, seçici BUGÜN·SEZON" % e, ana(pg) == ["ana"] and sekme(pg) == ["bugun"] and seg(pg) == ["BUGÜN*", "SEZON"], (ana(pg), sekme(pg), seg(pg)))
-        gezilen.add("bugun")
+        kontrol("N2 %s açılış: ANA SAYFA aktif, ana sayfa (sekme-sezon + durum kartı), geçiş seçicisi YOK (Aşama 2)" % e, ana(pg) == ["ana"] and sekme(pg) == ["sezon"] and seg(pg) is None and pg.evaluate("!!document.querySelector('#sekme-sezon #bg-kok')"), (ana(pg), sekme(pg), seg(pg)))
+        gezilen.update(["bugun", "sezon"])
         if w == 390:
             r = pg.evaluate("(()=>{const n=document.getElementById('nav-v4').getBoundingClientRect();return {b:Math.round(innerHeight-n.bottom),h:n.height,pos:getComputedStyle(document.getElementById('nav-v4')).position}})()")
             kontrol("N3 %s mobil: ana menü ekranın altına sabit (tek el), yükseklik ≥ 56" % e, r["pos"] == "fixed" and r["b"] == 0 and r["h"] >= 56, r)
@@ -75,21 +75,26 @@ with sync_playwright() as p:
             return {ac:a.color,pc:p.color,ab:a.borderBottomColor,aft:getComputedStyle(document.querySelector('#nav-v4 [aria-current]'),'::after').backgroundColor,red:red}})()""")
         kontrol("N4 %s aktif sekme pasiften farklı renkte" % e, st["ac"] != st["pc"], st)
         kontrol("N4b %s aktif gösterge kırmızı değil (kırmızı yalnız LIVE)" % e, "225, 6, 0" not in st["ab"] + st["aft"] and "212, 22, 28" not in st["ab"] + st["aft"], st)
-        tik(pg, "#sg4-sezon")
-        kontrol("N5 %s SEZON seçici → sekme-sezon, ANA SAYFA aktif kalır" % e, sekme(pg) == ["sezon"] and ana(pg) == ["ana"] and seg(pg) == ["BUGÜN", "SEZON*"], (sekme(pg), seg(pg)))
-        gezilen.add("sezon"); T.append(tasma(pg))
-        pp = pg.locator("#a2-takvim button[data-pist]").first
+        pg.evaluate("sekmeAc('bugun')"); ilerle(pg, 6)
+        kontrol("N5 %s v4'te sekmeAc('bugun') → ana sayfaya yönlenir (ayrı BUGÜN ekranı yok)" % e, sekme(pg) == ["sezon"] and ana(pg) == ["ana"], (sekme(pg), ana(pg)))
+        T.append(tasma(pg))
+        if not pg.locator("#a2-takvim button[data-pist]:visible").count():     # v4: SIRADAKİ kartı gizli → "Ayrıntılı yarışlar" açılır
+            pg.locator("#a2-takvim details > summary").first.click(); ilerle(pg, 3)
+        pp = pg.locator("#a2-takvim button[data-pist]:visible").first
         if pp.count():
             pp.click(); ilerle(pg, 6)
-            kontrol("N6 %s takvim pist kısayolu pist profilini açar (masaüstü panel / mobil kart içi — v3 ile aynı)" % e, pg.evaluate("!!document.querySelector('#dp-panel[open]') || document.querySelector('#a2-takvim button[data-pist]').getAttribute('aria-expanded')==='true'"))
+            kontrol("N6 %s takvim pist kısayolu pist profilini açar (masaüstü panel / mobil kart içi — v3 ile aynı)" % e, pg.evaluate("!!document.querySelector('#dp-panel[open]') || [...document.querySelectorAll('#a2-takvim button[data-pist]')].some(b=>b.getAttribute('aria-expanded')==='true')"))
             pg.keyboard.press("Escape"); ilerle(pg, 3)
-        else:
-            kontrol("N6 %s takvimde pist profili düğmesi var" % e, False)
-        sg = pg.locator("#a2-takvim .st-git[data-git=hafta]").first
+        else:   # mobil v4: takvimin pist düğmesi yalnız gizlenen SIRADAKİ kartındaydı → pist profili ANALİZ › PİSTLER'den açılır
+            pg.click("#nv4-analiz"); ilerle(pg, 6); pg.click("#cx4-pistler"); ilerle(pg, 6)
+            pg.locator("#pist-govde button[data-pist]:visible").first.click(); ilerle(pg, 4)
+            kontrol("N6 %s pist profili ANALİZ › PİSTLER'den açılıyor (mobil takvimde SIRADAKİ kartı gizli)" % e, pg.evaluate("!!document.querySelector('#dp-panel[open]') || [...document.querySelectorAll('#pist-govde button[data-pist]')].some(b=>b.getAttribute('aria-expanded')==='true')"))
+            tik(pg, "#nv4-ana", 6)
+        sg = pg.locator("#a2-takvim .st-git[data-git=hafta]:visible, #a2-takvim .st-ay-kart.st-ay-siradaki").first
         if sg.count():
             sg.click(); ilerle(pg, 8)
-            kontrol("N6b %s takvim 'Yarış Haftası'na git' → PROGRAM, v4 vurgusu YARIŞ HAFTASI" % e, sekme(pg) == ["hafta"] and ana(pg) == ["hafta"] and ctxa(pg) == ["program"], (sekme(pg), ana(pg), ctxa(pg)))
-            tik(pg, "#nv4-ana", 4); tik(pg, "#sg4-sezon", 6)
+            kontrol("N6b %s takvim kısayolu (sıradaki yarış) → PROGRAM, v4 vurgusu YARIŞ HAFTASI" % e, sekme(pg) == ["hafta"] and ana(pg) == ["hafta"] and ctxa(pg) == ["program"], (sekme(pg), ana(pg), ctxa(pg)))
+            tik(pg, "#nv4-ana", 6)
         else:
             kontrol("N6b %s takvimde 'Yarış Haftası'na git' kısayolu var" % e, False)
         # YARIŞ HAFTASI
@@ -130,9 +135,9 @@ with sync_playwright() as p:
         tik(pg, "#nv4-hafta", 8)
         kontrol("N18 %s YARIŞ HAFTASI son alt sekmeyi (CANLI) hatırlar" % e, sekme(pg) == ["gun"] and ctxa(pg) == ["canli"], (sekme(pg), ctxa(pg)))
         tik(pg, "#rc-bar .rc-sol", 6)
-        kontrol("N19 %s F1 TAKİP logosu → ANA SAYFA (BUGÜN)" % e, sekme(pg) == ["bugun"] and ana(pg) == ["ana"])
+        kontrol("N19 %s F1 TAKİP logosu → ANA SAYFA" % e, sekme(pg) == ["sezon"] and ana(pg) == ["ana"])
         pg.focus("#rc-bar .rc-sol"); pg.evaluate("sekmeAc('yaris')"); ilerle(pg, 4); pg.focus("#rc-bar .rc-sol"); pg.keyboard.press("Enter"); ilerle(pg, 6)
-        kontrol("N19b %s logo klavyeyle (Enter) de çalışır" % e, sekme(pg) == ["bugun"])
+        kontrol("N19b %s logo klavyeyle (Enter) de çalışır" % e, sekme(pg) == ["sezon"])
         # harici çağrılar
         pg.evaluate("sekmeAc('grafik')"); ilerle(pg, 6)
         kontrol("N20 %s harici sekmeAc('grafik') → ANALİZ/GRAFİKLER vurgusu" % e, ana(pg) == ["analiz"] and ctxa(pg) == ["grafikler"], (ana(pg), ctxa(pg)))
@@ -143,9 +148,9 @@ with sync_playwright() as p:
             kontrol("N21 %s arama düğmesi görünür" % e, False)
         kontrol("N22 %s yatay taşma 0 (gezilen tüm ekranlarda)" % e, max(T) == 0, T)
         kontrol("N23 %s konsol / sayfa hatası yok" % e, not errs, errs[:3])
-        if w == 390: pg.evaluate("sekmeAc('bugun')"); ilerle(pg, 4); pg.screenshot(path=OUT + "nav4-%s.png" % e)
+        if w == 390: pg.evaluate("sekmeAc('sezon')"); ilerle(pg, 4); pg.screenshot(path=OUT + "nav4-%s.png" % e)
         b.close()
-    kontrol("E1 10 eski ekranın hepsine v4 menüsünden ulaşıldı", sorted(gezilen) == sorted(["bugun", "sezon", "hafta", "sprint", "gun", "yaris", "profil", "sampiyonlar", "grafik", "diger"]), sorted(gezilen))
+    kontrol("E1 10 eski ekranın hepsine v4 menüsünden ulaşıldı (BUGÜN özeti ana sayfanın içinde)", sorted(gezilen) == sorted(["bugun", "sezon", "hafta", "sprint", "gun", "yaris", "profil", "sampiyonlar", "grafik", "diger"]), sorted(gezilen))
 
     # ===== S) normal (sprintsiz) hafta sonu =====
     for w in (390, 1100):
