@@ -97,3 +97,5 @@
   #av4-takvim[data-kisa="1"]:has(.st-ay-siradaki, .st-ay-gelecek) .st-ay:not(:has(.st-ay-siradaki, .st-ay-gelecek)) { display:none; }
   #av4-takvim:has(.st-ay-gecmis):has(.st-ay-siradaki, .st-ay-gelecek) .av4-takvim-ac { display:flex; width:100%; justify-content:center; min-height:44px; margin-top:12px; }
 }
+/* eski "sıradaki yarış" kutusu (takvim kartları yüklenene kadar görünen yedek) durum kartını tekrarlar → v4'te gizli */
+html[data-v4="1"] #sekme-sezon > #sonraki { display:none !important; }
