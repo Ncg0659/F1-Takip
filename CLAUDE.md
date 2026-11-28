@@ -28,7 +28,7 @@ Premium %70 / race-control %30, koyu-teknik-temiz. Kırmızı yalnız gerçek LI
 - Native iOS (`f1-ios`) bu repoda değil.
 
 ## v4.0 geçişi
-- Yeni düzen yalnız gizli önizleme görünümünde geliştirilir (aç: `?nav=v4`, kapat: `?nav=v3`; `html[data-v4="1"]`, `nav-v4.js` / `nav-v4.css`; kabuk testi: `nav_v4_kabuk_test`); yayındaki düzen Aşama 6'ya (varsayılan geçiş) kadar değişmez. Her aşama ayrı dal, test, PR ve kullanıcı onayıyla ilerler.
+- Yeni düzen yalnız gizli önizleme görünümünde geliştirilir (aç: `?nav=v4`, kapat: `?nav=v3`; `html[data-v4="1"]`, `nav-v4.js` / `nav-v4.css`; kabuk testi: `nav_v4_kabuk_test`; ana sayfa: `ana-v4.js` / `ana-v4.css`, testi `nav_v4_ana_test`); yayındaki düzen Aşama 6'ya (varsayılan geçiş) kadar değişmez. Her aşama ayrı dal, test, PR ve kullanıcı onayıyla ilerler.
 - Taşıma haritası: `testler/v4/tasima-haritasi.json` (özellik → eski konum → yeni konum). Kayıt silinmez; taşınan özelliğin yalnız `yeni_*` alanı güncellenir. Güvenlik testi: `nav_v4_guvenlik_test`. Referans görüntüler: `testler/v4/referans/` (yeniden üretmek için `REFERANS=1`).
 - Yeni seri verisi (F4, F1 Academy vb.) kullanım hakkı doğrulanmadan yayınlanmaz. Formula E kapsam dışı.
 

@@ -285,14 +285,16 @@
     });
     return gec;
   }
+  // Özetin bulunduğu ekran: v3'te #sekme-bugun (davranış aynı); v4 önizlemesinde #bg-kok ana sayfaya (#sekme-sezon) taşınır.
+  function kokSekme() { var k = $("bg-kok"), s = k && k.closest ? k.closest("[id^='sekme-']") : null; return s || $("sekme-bugun"); }
   function ciz() {
-    var kok = $("bg-kok"), sekme = $("sekme-bugun"); if (!kok || !sekme || sekme.hidden) { return; }
+    var kok = $("bg-kok"), sekme = kokSekme(); if (!kok || !sekme || sekme.hidden) { return; }
     var h = olustur(Date.now());
     if (S.html !== h) { S.html = h; kok.innerHTML = h; }
     sayacYaz();
   }
   function tikSaat() {                    // mevcut saat çubuğunun saniyelik güncellemesi: sayaç her sn, tam yeniden değerlendirme seyrek
-    var sekme = $("sekme-bugun"); if (!sekme || sekme.hidden) { return; }
+    var sekme = kokSekme(); if (!sekme || sekme.hidden) { return; }
     S.tick++;
     var beklemede = !S.model || S.model.mod === "bos" || S.model.mod === "hata" || (S.model.mod === "C" && /SONUÇLAR BEKLENİYOR/.test(S.html || ""));
     if (beklemede || S.tick % 5 === 0 || sayacYaz()) { ciz(); }
@@ -309,7 +311,7 @@
     var b = e.target.closest && e.target.closest("#bg-kok [data-git]"); if (!b) { return; }
     var h = b.getAttribute("data-git"); if (typeof window.sekmeAc === "function") { window.sekmeAc(h); }
   });
-  document.addEventListener("f1-sekme", function (e) { if (e.detail === "bugun") { S.tick = 0; saatGozle(); ciz(); } });
+  document.addEventListener("f1-sekme", function (e) { var ks = kokSekme(); if (e.detail === (ks ? ks.id.slice(6) : "bugun")) { S.tick = 0; saatGozle(); ciz(); } });
   document.addEventListener("f1-feed-guncel", function () { ciz(); });
   document.addEventListener("f1-sezon-durumu", function () { ciz(); });   // yalnız içerik değiştiyse DOM yenilenir (odak korunur)
   document.addEventListener("f1-kaynak-durum", function () { if (S.model && S.model.mod && S.model.mod !== "hata" && S.model.mod !== "bos") { return; } S.html = null; ciz(); });
