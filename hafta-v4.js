@@ -174,7 +174,8 @@
     var bas = "<div class='hv-vit-ust'><p class='hv-ses'><b>" + esc(String(s.ad).toLocaleUpperCase("tr").replace(/SPRİNT/g, "SPRINT")) + "</b><span>" + esc(zaman) + " <small>TR</small></span>" +
       (r.canli ? "<span class='hv-canli'>SEANS SÜRÜYOR</span>" : "") + "</p>" + etiket(r) + "</div>";
     if (!d) {
-      var neden = r.bitti ? "Bu seans için ölçülen hava verisi yüklenmedi; tahmin de yok." : "Bu seans için henüz hava tahmini yok (tahmin en fazla ~2 hafta öncesinden yayımlanır).";
+      var neden = S.servis === "hata" ? "Tahmin servisine şu an ulaşılamıyor; hava değeri gösterilmiyor." :
+        (r.bitti ? "Bu seans için ölçülen hava verisi yüklenmedi; tahmin de yok." : "Bu seans için henüz hava tahmini yok (tahmin en fazla ~2 hafta öncesinden yayımlanır).");
       return bas + "<p class='hv-yok'>" + esc(neden) + "</p>" + olcumDugme(h, r);
     }
     var y = HV.yon8(d.ruzgarYon), ruz = d.ruzgar != null ? yuvar(d.ruzgar) + " km/sa" : null;
@@ -216,7 +217,8 @@
   function ciz(kapId, kisa) {
     var kap = $(kapId), h = hafta(); if (!kap) { return; }
     if (!h || !h.seanslar || !h.seanslar.length) { yaz(kapId, kap, "<p class='hv-yok'>Hafta programı yüklenince hava bilgisi gösterilir.</p>"); return; }
-    var now = Date.now(), t = S.son && S.son.tur === h.tur ? S.son.t : null, m = model(h, t, now), sec = kisa ? (m.filter(function (r) { return r.canli; })[0] || m.filter(function (r) { return !r.bitti; })[0] || m[m.length - 1]) : seciliBul(m);
+    var now = Date.now(), t = S.son && S.son.tur === h.tur ? S.son.t : null; S.servis = t ? t.durum : null;
+    var m = model(h, t, now), sec = kisa ? (m.filter(function (r) { return r.canli; })[0] || m.filter(function (r) { return !r.bitti; })[0] || m[m.length - 1]) : seciliBul(m);
     var kaynakNot = "<p class='hv-kaynak'><span class='hv-et hv-et-tahmin'>TAHMİN</span> Open-Meteo model tahmini, seans başlangıç saatine göre · <span class='hv-et hv-et-olcum'>ÖLÇÜLEN</span> OpenF1 seans ölçümü (seans bitince yayımlanır)" +
       (t && t.durum === "hata" ? " · <b>Tahmin servisine şu an ulaşılamıyor.</b>" : "") + "</p>";
     var html = "<div class='hv-vitrin" + (sec && sec.canli ? " hv-vit-canli" : "") + "'>" + vitrin(h, sec, kisa) + "</div>" + (kisa ? "" : serit(m, sec)) + kaynakNot;

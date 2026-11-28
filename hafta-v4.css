@@ -126,3 +126,6 @@ html[data-v4="1"] #gun-notlar-bolum li, html[data-v4="1"] #gun-notlar-bolum .not
   .hv4 .hv-ruz { display:grid; grid-template-columns:minmax(0,1fr); }
   .hv4 .hv-pist { max-width:100%; }
 }
+/* CANLI sırası: durum özeti → hava → Race Feed (masaüstü); mobilde v3 gibi sonuç bölümünün ardından */
+html[data-v4="1"] #sekme-gun > #hv4-canli { order:4; }
+@media (max-width:760px) { html[data-v4="1"] #sekme-gun > #hv4-canli { order:7; } }
