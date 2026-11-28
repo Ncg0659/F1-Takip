@@ -224,6 +224,14 @@ with sync_playwright() as p:
         kontrol("G7[%s] JS hatası yok"%tema, not errs, errs); b.close()
     pg,errs,c,b=ac(p,"2026-10-06T10:00:00Z",w=1100,tema="acik"); bugun(pg); pg.screenshot(path=OUT+"tahmin-bugun-1100-acik.png")
     kontrol("G8[acik 1100] taşma 0, kart var", tasma(pg)==0 and pg.locator("#tp-bugun .tp-kart").count()==1); b.close()
+    # ===== V4) gizli önizleme: kısa tahmin kartı YARIŞ HAFTASI › PROGRAM'da (v4.0 Aşama 3) =====
+    pg,errs,c,b=ac(p,"2026-10-06T10:00:00Z")
+    bugun(pg)                                     # veri v3 akışıyla yüklendi (kart BUGÜN'de çizildi)
+    pg.evaluate("document.documentElement.setAttribute('data-v4','1'); NavV4._yeniden(); AnaV4.kur(); HaftaV4.kur();"); ilerle(pg,2)   # aynı sayfada önizleme kabukları kurulur (fikstür yeniden yüklenmez)
+    pg.click("#nv4-hafta"); ilerle(pg,4); beklekart(pg,"#tp-bugun .tp-kart",14)
+    kontrol("V4a önizleme: kart PROGRAM'ın ek kabında (#sekme-hafta-v4) ve çizildi", pg.evaluate("document.getElementById('tp-bugun').closest('[id^=sekme-]').id")=="sekme-hafta-v4" and pg.locator("#tp-bugun .tp-kart").count()==1, (pg.evaluate("[document.documentElement.dataset.v4, (document.getElementById('tp-bugun').closest('[id^=sekme-]')||{}).id, document.getElementById('tp-bugun').innerHTML.length, [...document.querySelectorAll('[id^=sekme-]')].filter(e=>!e.hidden).map(e=>e.id), Object.keys(TahminUI._durum.sonuc||{})]")))
+    kontrol("V4b önizleme: kart görünür, ana sayfada yok", pg.evaluate("document.querySelector('#tp-bugun .tp-kart').checkVisibility()") and not pg.evaluate("!!document.querySelector('#sekme-sezon #tp-bugun')"))
+    kontrol("V4c önizleme: JS hatası yok", not errs, errs[:3]); b.close()
     # ===== H) kaynak güvenliği =====
     src=open("/home/claude/f1-takip/prediction-ui.js").read()
     kontrol("H1 prediction-ui.js: setInterval/rAF/WebSocket YOK; localStorage yazımı yalnız tahmin arşivi (tek nokta)", not re.search(r"setInterval|requestAnimationFrame|WebSocket|EventSource",src) and src.count("localStorage.setItem")==1 and "f1-tahmin-arsiv-v1:" in src)

@@ -1,6 +1,6 @@
 /* UI v4 — AKILLI ANA SAYFA (v4.0 Aşama 2). YALNIZ gizli önizlemede (html[data-v4="1"]) etkin; bayrak yoksa hiçbir şey yapmaz.
    ANA SAYFA = mevcut #sekme-sezon + BUGÜN özeti (#bg-kok) üst durum kartı olarak. Mevcut DOM düğümleri TAŞINIR (kopya yok, kimlikler aynı):
-     #av4-durum   : #bg-kok (BUGÜN akıllı durum kartı, 5 durum) + #tp-bugun (kısa yarış tahmini; Aşama 3'te PROGRAM'a gider)
+     #av4-durum   : #bg-kok (BUGÜN akıllı durum kartı, 5 durum). Kısa yarış tahmini (#tp-bugun) Aşama 3'te PROGRAM'a taşındı (hafta-v4.js)
      #av4-son     : SON YARIŞ — SezonTakvim'in zaten yüklediği modelden (kazanan/podyum/pole/sprint); yeni istek yok
      #av4-puan    : pilot + takım puan durumu (mevcut tablolar)
      #av4-senaryo : SENARYO — mevcut şampiyonluk hesaplayıcı; SampiyonlukDurumu "belli" iken otomatik gizlenir
@@ -35,7 +35,6 @@
     var son = $("sonraki"); sz.insertBefore(av, son ? son.nextSibling : sz.firstChild);
     // durum kartı + kısa tahmin
     $("av4-durum").appendChild(kok);
-    var tp = $("tp-bugun"); if (tp) { $("av4-durum").appendChild(tp); }
     $("av4-durum").setAttribute("aria-label", "Durum");
     // puan durumu: iki tablo yan yana (masaüstü)
     var pg = $("pilot-govde"), tg = $("takim-govde");

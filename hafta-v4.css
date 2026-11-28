@@ -1,0 +1,206 @@
+/* UI v4 — YARIŞ HAFTASI + HAVA (v4.0 Aşama 3). Yalnız html[data-v4="1"]; bayrak yoksa #sekme-hafta-v4 / .hv4 hiç oluşmaz.
+   Renk dili: kırmızı yalnız doğrulanmış LIVE/kritik · amber TAHMİN/tahmini canlı · seçim ve "sıradaki" NÖTR.
+   Hava ikonları: güneş sarı, yağış mavi, bulut gri (meteoroloji uygulamalarının alışılmış kodu; glow yok). */
+
+/* ================= PROGRAM: görsel hiyerarşi ================= */
+html[data-v4="1"] #sekme-hafta > h1 { margin-bottom:8px; }
+html[data-v4="1"] #sekme-hafta .h-prog { margin:18px 0 8px; }
+html[data-v4="1"] #sekme-hafta .h-prog-bas, html[data-v4="1"] .hf4-b { display:flex; align-items:center; gap:10px; margin:0 0 12px; font-family:var(--f-sayi); font-size:.66rem; font-weight:700; letter-spacing:.16em; color:var(--soluk); }
+html[data-v4="1"] #sekme-hafta .h-prog-bas::before, html[data-v4="1"] .hf4-b::before { content:""; width:16px; height:1px; background:currentColor; }
+/* seçili seans ve "sıradaki": nötr vurgu (kırmızı yalnız LIVE) */
+html[data-v4="1"] #sekme-hafta .h-cz.h-sec { border-color:var(--yazi); box-shadow:inset 0 -2px 0 var(--yazi); background:color-mix(in srgb, var(--yazi) 5%, transparent); }
+html[data-v4="1"] #sekme-hafta .h-cz.h-sec:hover { border-color:var(--yazi); }
+/* saate göre (doğrulanmamış) canlı seans: amber kesik çerçeve; doğrulanmış LIVE (hz-live) kırmızı kalır */
+html[data-v4="1"] #sekme-hafta .h-cz.h-canli:not(.hz-live):not(.hz-kirmizi) { border-color:#b45309; border-style:dashed; }
+:root[data-tema="koyu"][data-v4="1"] #sekme-hafta .h-cz.h-canli:not(.hz-live):not(.hz-kirmizi) { border-color:#f59e0b; }
+html[data-v4="1"] #sekme-hafta .h-cz .h-cz-s { font-size:1.6rem; }
+html[data-v4="1"] #sekme-hafta .h-cz.h-onem-fp .h-cz-s { font-size:1.25rem; }
+
+/* PROGRAM ek kabı */
+html[data-v4="1"] #sekme-hafta-v4 { display:flex; flex-direction:column; gap:30px; margin:26px 0 8px; }
+html[data-v4="1"] #sekme-hafta-v4[hidden], html[data-v4="1"] #sekme-hafta-v4 > [hidden] { display:none !important; }
+html[data-v4="1"] #hf4-tahmin #tp-bugun { margin:0; }
+html[data-v4="1"] #hf4-bilmen #a43-bilmen { margin:0; }
+html[data-v4="1"] #hf4-bilmen:not(:has(#a43-bilmen:not([hidden]))) { display:none; }
+html[data-v4="1"] #hf4-tahmin:not(:has(#tp-bugun > *)) { display:none; }
+
+/* CANLI: eski tek satırlık hava metni yerine yeni kart (öğe DOM'da kalır; "yağmur riski" rozeti onu okur) */
+html[data-v4="1"] #sekme-gun #gun-hava { display:none !important; }
+html[data-v4="1"] #hv4-canli { margin:14px 0 16px; }
+/* CANLI okunabilirlik: Race Feed satırları biraz daha büyük ve ferah */
+html[data-v4="1"] #gun-notlar-bolum { font-size:1rem; }
+html[data-v4="1"] #gun-notlar-bolum li, html[data-v4="1"] #gun-notlar-bolum .not-satir { line-height:1.45; }
+
+/* ================= HAVA KARTI ================= */
+.hv4 { --hv-sari:#d99a06; --hv-mavi:#2f7fd1; --hv-gri:var(--soluk); --hv-amber:#b45309; color:var(--yazi); }
+:root[data-tema="koyu"] .hv4 { --hv-sari:#f2c14e; --hv-mavi:#5aa9e6; --hv-amber:#f59e0b; }
+.hv4 .hv-vitrin { padding:18px 18px 16px; background:var(--kart); border:1px solid var(--cizgi); border-radius:8px; }
+.hv4 .hv-vitrin.hv-vit-canli { border-color:var(--hv-amber); }
+.hv4 .hv-vit-ust { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin:0 0 14px; }
+.hv4 .hv-ses { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; margin:0; }
+.hv4 .hv-ses b { font-family:var(--f-sayi); font-size:.8rem; letter-spacing:.12em; }
+.hv4 .hv-ses span { font-family:var(--f-sayi); font-size:.78rem; color:var(--soluk); }
+.hv4 .hv-ses small { font-size:.62rem; }
+.hv4 .hv-canli { padding:1px 6px; font-size:.6rem !important; font-weight:700; letter-spacing:.1em; color:var(--hv-amber) !important; border:1px dashed currentColor; border-radius:3px; }
+.hv4 .hv-et { display:inline-flex; align-items:center; height:20px; padding:0 7px; font-family:var(--f-sayi); font-size:.58rem; font-weight:700; letter-spacing:.12em; border-radius:3px; white-space:nowrap; }
+.hv4 .hv-et-tahmin { color:var(--hv-amber); border:1px solid var(--hv-amber); }
+.hv4 .hv-et-olcum { color:var(--kart); background:var(--yazi); border:1px solid var(--yazi); }
+
+.hv4 .hv-vit-g { display:grid; grid-template-columns:minmax(0,1fr); gap:18px; }
+.hv4 .hv-ana { display:flex; align-items:center; gap:14px; }
+.hv4 .hv-sic { margin:0; font-family:var(--f-sayi); font-size:3rem; font-weight:700; line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
+.hv4 .hv-sic span { font-size:1.1rem; font-weight:600; color:var(--soluk); margin-left:2px; vertical-align:top; }
+.hv4 .hv-kos { margin:6px 0 0; font-size:.95rem; font-weight:600; }
+.hv4 .hv-aralik { margin:4px 0 0; font-size:.76rem; color:var(--soluk); }
+.hv4 .hv-ik-yok { font-size:2rem; color:var(--soluk); }
+
+.hv4 .hv-metrik { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px 18px; align-content:start; }
+.hv4 .hv-m { min-width:0; }
+.hv4 .hv-m-nem { display:flex; align-items:center; gap:10px; }
+.hv4 .hv-m-ad { margin:0 0 4px; font-family:var(--f-sayi); font-size:.6rem; font-weight:700; letter-spacing:.14em; color:var(--soluk); }
+.hv4 .hv-m-d { margin:0; font-family:var(--f-sayi); font-size:1.25rem; font-weight:700; font-variant-numeric:tabular-nums; }
+.hv4 .hv-m-d small { font-family:inherit; font-size:.72rem; font-weight:500; color:var(--soluk); }
+.hv4 .hv-bar { display:block; height:8px; margin-top:8px; background:color-mix(in srgb, var(--hv-mavi) 16%, transparent); border-radius:4px; overflow:hidden; }
+.hv4 .hv-bar i { display:block; height:100%; background:var(--hv-mavi); border-radius:4px; }
+.hv4 .hv-halka { flex:0 0 auto; }
+.hv4 .hv-halka-z { fill:none; stroke:color-mix(in srgb, var(--hv-mavi) 16%, transparent); stroke-width:5; }
+.hv4 .hv-halka-d { fill:none; stroke:var(--hv-mavi); stroke-width:5; stroke-linecap:round; }
+
+.hv4 .hv-ruz { min-width:0; }
+.hv4 .hv-pist { display:block; width:100%; max-width:300px; height:auto; margin:0 0 8px; }
+.hv4 .hv-pist-yol { fill:none; stroke:var(--soluk); stroke-width:3; stroke-linejoin:round; opacity:.55; }
+.hv4 .hv-ok { stroke:var(--yazi); stroke-width:4; stroke-linecap:round; }
+.hv4 .hv-uc { fill:var(--yazi); }
+.hv4 .hv-kuzey circle { fill:none; stroke:var(--cizgi); stroke-width:1.5; }
+.hv4 .hv-kuzey line { stroke:var(--soluk); stroke-width:2; stroke-linecap:round; }
+.hv4 .hv-kuzey text { font-family:var(--f-sayi); font-size:11px; font-weight:700; fill:var(--soluk); }
+.hv4 .hv-not, .hv4 .hv-yok { margin:6px 0 0; font-size:.78rem; color:var(--soluk); }
+.hv4 .hv-yok { font-size:.88rem; }
+.hv4 .hv-btn { display:inline-flex; align-items:center; min-height:40px; margin:14px 0 0; padding:0 14px; font-family:var(--f-sayi); font-size:.7rem; font-weight:700; letter-spacing:.08em; color:var(--yazi); background:transparent; border:1px solid var(--cizgi); border-radius:6px; cursor:pointer; text-transform:none; box-shadow:none; }
+.hv4 .hv-btn:hover { border-color:var(--soluk); }
+
+/* ikon renkleri */
+.hv4 .hv-ik { flex:0 0 auto; stroke:var(--hv-gri); }
+.hv4 .hv-g { fill:color-mix(in srgb, var(--hv-sari) 30%, transparent); stroke:var(--hv-sari); }
+.hv4 .hv-g-c { stroke:var(--hv-sari); }
+.hv4 .hv-ay { fill:color-mix(in srgb, var(--hv-gri) 18%, transparent); stroke:var(--hv-gri); }
+.hv4 .hv-b { fill:color-mix(in srgb, var(--hv-gri) 18%, transparent); stroke:var(--hv-gri); }
+.hv4 .hv-b-koyu { fill:color-mix(in srgb, var(--hv-gri) 34%, transparent); }
+.hv4 .hv-y { stroke:var(--hv-mavi); stroke-width:1.9; }
+.hv4 .hv-k { stroke:var(--hv-mavi); }
+.hv4 .hv-sis { stroke:var(--hv-gri); }
+.hv4 .hv-sim { stroke:var(--hv-sari); stroke-width:1.9; }
+
+/* seans şeridi */
+.hv4 .hv-serit { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(96px, 1fr); gap:8px; margin:12px 0 0; padding:0 0 2px; list-style:none; overflow-x:auto; scrollbar-width:none; }
+.hv4 .hv-serit::-webkit-scrollbar { display:none; }
+.hv4 .hv-sk { display:grid; justify-items:start; gap:3px; width:100%; min-height:132px; margin:0; padding:10px 10px 9px; text-align:left; font:inherit; color:var(--yazi); background:transparent; border:1px solid var(--cizgi); border-radius:6px; cursor:pointer; text-transform:none; box-shadow:none; }
+.hv4 .hv-sk:hover { border-color:var(--soluk); }
+.hv4 .hv-sk.hv-sk-on { border-color:var(--yazi); background:var(--kart); box-shadow:inset 0 -2px 0 var(--yazi); }
+.hv4 .hv-sk.hv-sk-bitti { opacity:.82; }
+.hv4 .hv-sk:focus-visible { outline:2px solid var(--yazi); outline-offset:2px; }
+.hv4 .hv-sk-ad { font-family:var(--f-sayi); font-size:.7rem; font-weight:700; letter-spacing:.1em; }
+.hv4 .hv-sk-z { font-family:var(--f-sayi); font-size:.64rem; color:var(--soluk); white-space:nowrap; }
+.hv4 .hv-sk-ik { min-height:26px; color:var(--soluk); }
+.hv4 .hv-sk-t { font-family:var(--f-sayi); font-size:1.15rem; font-weight:700; }
+.hv4 .hv-sk-y { display:block; width:100%; height:5px; background:color-mix(in srgb, var(--hv-mavi) 16%, transparent); border-radius:3px; overflow:hidden; }
+.hv4 .hv-sk-y i { display:block; height:100%; background:var(--hv-mavi); }
+.hv4 .hv-sk-yp { font-family:var(--f-sayi); font-size:.62rem; color:var(--soluk); min-height:1em; }
+.hv4 .hv-sk-k { font-family:var(--f-sayi); font-size:.52rem; font-weight:700; letter-spacing:.12em; color:var(--soluk); }
+.hv4 .hv-kaynak { display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; margin:12px 0 0; font-size:.72rem; line-height:1.5; color:var(--soluk); }
+.hv4 .hv-kaynak b { color:var(--yazi); }
+
+/* kısa (CANLI) */
+.hv4.hv4-kisa .hv-vitrin { padding:14px 14px 12px; }
+.hv4.hv4-kisa .hv-sic { font-size:2.3rem; }
+.hv4.hv4-kisa .hv-pist { max-width:220px; }
+
+@media (min-width:860px) {
+  .hv4 .hv-vitrin { padding:22px 24px 20px; }
+  .hv4 .hv-vit-g { grid-template-columns:minmax(0,1.1fr) minmax(0,1.2fr) minmax(0,1fr); align-items:center; gap:28px; }
+  .hv4 .hv-sic { font-size:3.6rem; }
+  .hv4.hv4-kisa .hv-vit-g { grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,.9fr); }
+}
+@media (max-width:600px) {
+  .hv4 .hv-vit-ust { flex-wrap:wrap; }
+  .hv4 .hv-ruz { display:grid; grid-template-columns:minmax(0,1fr); }
+  .hv4 .hv-pist { max-width:100%; }
+}
+/* CANLI sırası (Aşama 3.1): durum özeti → RACE FEED → kompakt hava → sonuç. Race Feed öncelikli. */
+html[data-v4="1"] #sekme-gun > #gun-notlar-bolum { order:3; }
+html[data-v4="1"] #sekme-gun > #hv4-canli { order:4; margin:4px 0 14px; }
+
+/* ================= AŞAMA 3.1 REVİZE ================= */
+/* koyu tema: değer kontrastı (sıcaklık, yağış, nem, rüzgâr, şerit) */
+:root[data-tema="koyu"] .hv4 { --hv-deger:#f4f7fb; --hv-etiket:#b9c6d6; }
+:root[data-tema="acik"] .hv4, .hv4 { --hv-deger:var(--yazi); --hv-etiket:var(--soluk); }
+:root[data-tema="koyu"] .hv4 { --hv-deger:#f4f7fb; --hv-etiket:#b9c6d6; }
+.hv4 .hv-sic, .hv4 .hv-m-d, .hv4 .hv-sk-t, .hv4 .hv-kos, .hv4 .hk-sic, .hv4 .hk-m b { color:var(--hv-deger); }
+.hv4 .hv-m-ad, .hv4 .hv-ses span, .hv4 .hv-m-d small, .hv4 .hv-sk-z, .hv4 .hv-sk-yp, .hv4 .hv-sic span, .hv4 .hk-m small, .hv4 .hk-ust span { color:var(--hv-etiket); }
+:root[data-tema="koyu"] .hv4 .hv-pist-yol { stroke:#93a4b8; opacity:.7; }
+:root[data-tema="koyu"] .hv4 .hv-ok { stroke:#f4f7fb; }
+:root[data-tema="koyu"] .hv4 .hv-uc { fill:#f4f7fb; }
+:root[data-tema="koyu"] .hv4 .hv-bar, :root[data-tema="koyu"] .hv4 .hv-sk-y { background:color-mix(in srgb, var(--hv-mavi) 24%, transparent); }
+:root[data-tema="koyu"] .hv4 .hv-halka-z { stroke:color-mix(in srgb, var(--hv-mavi) 24%, transparent); }
+
+/* eski (güncel olmayan) tahmin uyarısı */
+.hv4 .hv-eski { margin:0 0 12px; padding:8px 10px; font-size:.8rem; line-height:1.45; color:var(--hv-deger); border:1px dashed var(--hv-amber); border-radius:6px; background:color-mix(in srgb, var(--hv-amber) 8%, transparent); }
+.hv4 .hv-eski b { color:var(--hv-amber); }
+.hv4 .hv-et-eski { border-style:dashed; }
+
+/* seans şeridi: tam adlar + belirgin yatay kaydırma */
+.hv4 .hv-serit-ust { display:flex; align-items:center; justify-content:space-between; margin:16px 0 0; }
+.hv4 .hv-serit-b { margin:0; font-family:var(--f-sayi); font-size:.6rem; font-weight:700; letter-spacing:.14em; color:var(--hv-etiket); }
+.hv4 .hv-kaydir { display:none; align-items:center; gap:6px; font-family:var(--f-sayi); font-size:.62rem; font-weight:700; letter-spacing:.1em; color:var(--hv-etiket); }
+.hv4 .hv-kaydir i { font-style:normal; font-size:.9rem; }
+.hv4 .hv-serit-ust[data-tasma="1"] .hv-kaydir { display:inline-flex; }
+.hv4 .hv-serit-sar { position:relative; }
+.hv4 .hv-serit-sar[data-tasma="1"]:not([data-son="1"])::after { content:""; position:absolute; top:0; right:0; bottom:2px; width:44px; pointer-events:none; background:linear-gradient(90deg, transparent, var(--zemin)); }
+.hv4 .hv-serit { margin-top:8px; grid-auto-columns:minmax(118px, 1fr); scroll-snap-type:x proximity; scroll-padding:0 12px; }
+.hv4 .hv-serit > li { scroll-snap-align:start; }
+.hv4 .hv-sk-ad { font-family:inherit; font-size:.76rem; font-weight:700; letter-spacing:0; line-height:1.2; min-height:2.4em; }
+
+/* mobil: daha kısa kart (pist ~%30 küçük, sıkı boşluklar) */
+@media (max-width:600px) {
+  .hv4 .hv-vitrin { padding:14px 14px 12px; }
+  .hv4 .hv-vit-ust { margin-bottom:10px; }
+  .hv4 .hv-vit-g { gap:12px; }
+  .hv4 .hv-sic { font-size:2.5rem; }
+  .hv4 .hv-ana { gap:10px; }
+  .hv4 .hv-ana .hv-ik { width:50px; height:50px; }
+  .hv4 .hv-metrik { gap:10px 14px; }
+  .hv4 .hv-ruz { grid-template-columns:minmax(0,7fr) minmax(0,3fr); align-items:end; column-gap:10px; }
+  .hv4 .hv-ruz .hv-pist { grid-row:1 / span 2; width:100%; max-width:none; margin:0; }
+  .hv4 .hv-ruz .hv-m-d { font-size:1.1rem; }
+  .hv4 .hv-ruz .hv-m-d small { display:block; margin-top:2px; }
+  .hv4 .hv-serit { grid-auto-columns:minmax(112px, 38%); }
+}
+
+/* CANLI: kompakt tek satır */
+.hv4 .hv-kompakt { padding:10px 12px; background:var(--kart); border:1px solid var(--cizgi); border-radius:8px; }
+.hv4 .hv-kompakt.hv-vit-canli { border-color:color-mix(in srgb, var(--hv-amber) 60%, var(--cizgi)); }
+.hv4 .hk-ust { display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; margin:0 0 6px; font-family:var(--f-sayi); font-size:.66rem; letter-spacing:.1em; }
+.hv4 .hk-ust .hv-et { height:18px; font-size:.54rem; }
+.hv4 .hk-g { display:flex; flex-wrap:wrap; align-items:center; gap:6px 16px; }
+.hv4 .hk-ana { display:inline-flex; align-items:center; gap:6px; }
+.hv4 .hk-ana small { font-size:.72rem; color:var(--hv-etiket); }
+.hv4 .hk-sic { font-family:var(--f-sayi); font-size:1.45rem; font-weight:700; }
+.hv4 .hk-m { display:inline-flex; flex-direction:column; gap:1px; min-width:0; }
+.hv4 .hk-m small { font-family:var(--f-sayi); font-size:.54rem; font-weight:700; letter-spacing:.12em; }
+.hv4 .hk-m b { font-family:var(--f-sayi); font-size:.95rem; }
+.hv4 .hk-m em { font-style:normal; font-family:var(--f-sayi); font-size:.66rem; color:var(--hv-etiket); margin-left:4px; }
+.hv4 .hk-bar { display:block; width:48px; height:4px; margin-top:2px; background:color-mix(in srgb, var(--hv-mavi) 20%, transparent); border-radius:2px; overflow:hidden; }
+.hv4 .hk-bar i { display:block; height:100%; background:var(--hv-mavi); }
+.hv4 .hk-ruz { flex-direction:row; align-items:center; gap:6px; }
+.hv4 .hk-pist .hv-pist { width:64px; max-width:64px; height:auto; margin:0; }
+.hv4 .hk-pist .hv-kuzey text { font-size:16px; }
+.hv4 .hv-kompakt .hv-eski { margin:4px 0 6px; padding:5px 8px; font-size:.72rem; }
+.hv4 .hv-kompakt .hv-yok { margin:0; font-size:.8rem; }
+
+/* sabit alt menü: içerik altında güvenli boşluk (mobil) */
+@media (max-width:600px) { html[data-v4="1"] body { padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px)); } }
+.hv4 .hk-ruz > span:last-child { display:flex; flex-direction:column; gap:1px; }
+.hv4 .hk-ruz > span:last-child b { display:flex; align-items:baseline; gap:4px; }
+/* "seans saatinde" vurgusu nötr: doğrulanmış LIVE kırmızısı / tahmini canlı amberi yalnız durum rozetlerinde */
+.hv4 .hv-vitrin.hv-vit-canli, .hv4 .hv-kompakt.hv-vit-canli { border-color:color-mix(in srgb, var(--yazi) 45%, var(--cizgi)); }
+.hv4 .hv-canli { color:var(--hv-deger) !important; border-style:solid; }

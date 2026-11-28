@@ -1,5 +1,5 @@
 {
- "surum": "v4.0 Aşama 2",
+ "surum": "v4.0 Aşama 3.1",
  "aciklama": "Mevcut her özelliğin eski konumu (v3.3.1, yayındaki düzen) ve v4.0'daki planlanan yeni konumu. nav_v4_guvenlik_test.py bu dosyayı okur: 'eski_ekran' + 'secici' her aşamada var olmalı; 'kuresel' adı verilen modül yüklü olmalı. Bir özellik taşındığında yalnız 'yeni_*' alanları ve ilgili aşamanın testi güncellenir; kayıt SİLİNMEZ.",
  "yeni_ana_sekmeler": [
   "ANA SAYFA",
@@ -46,7 +46,7 @@
    "kuresel": "TahminUI",
    "yeni_yol": "YARIŞ HAFTASI › PROGRAM",
    "asama": 3,
-   "not": "Aşama 2 (önizleme): geçici olarak ana sayfada durum kartının altında; Aşama 3'te PROGRAM'a."
+   "not": "Aşama 3 (önizleme): YARIŞ HAFTASI › PROGRAM (#sekme-hafta-v4, data-sekme=hafta)."
   },
   {
    "id": "bugun-gecmis-sampiyon",
@@ -125,7 +125,8 @@
    "secici": "#sekme-hafta .h-prog",
    "kuresel": "YarisHaftasi",
    "yeni_yol": "YARIŞ HAFTASI › PROGRAM",
-   "asama": 3
+   "asama": 3,
+   "not": "Aşama 3 (önizleme): PROGRAM; seçili/sıradaki seans nötr, saate göre canlı amber kesik çerçeve."
   },
   {
    "id": "hafta-bilmen",
@@ -135,7 +136,7 @@
    "secici": "#a43-bilmen",
    "yeni_yol": "YARIŞ HAFTASI › PROGRAM",
    "asama": 3,
-   "not": "Yarış haftası dışında gizli; varlığı denetlenir."
+   "not": "Aşama 3 (önizleme): PROGRAM ek kabında (BU HAFTA SONU)."
   },
   {
    "id": "sprint",
@@ -154,7 +155,8 @@
    "secici": "#gun-v3-ozet",
    "kuresel": "GunV3",
    "yeni_yol": "YARIŞ HAFTASI › CANLI",
-   "asama": 3
+   "asama": 3,
+   "not": "Aşama 3 (önizleme): YARIŞ HAFTASI › CANLI; ham İngilizce durum etiketleri Türkçe."
   },
   {
    "id": "gun-geri-sayim",
@@ -172,7 +174,8 @@
    "eski_yol": "HAFTA SONU › GÜN",
    "secici": "#gun-hava",
    "yeni_yol": "YARIŞ HAFTASI › PROGRAM ve CANLI (yeni hava kartı)",
-   "asama": 3
+   "asama": 3,
+   "not": "Aşama 3.1 (önizleme): PROGRAM'da seans bazlı hava (tam seans adları, kaydırma ipucu), CANLI'da Race Feed'in altında kompakt kart; son başarılı tahmin f1-hava4-<sezon>-<tur> (yalnız seans saatleri), servis yoksa 'GÜNCEL DEĞİL' uyarısıyla."
   },
   {
    "id": "race-feed",
@@ -182,7 +185,7 @@
    "secici": "#gun-notlar-bolum",
    "yeni_yol": "YARIŞ HAFTASI › CANLI",
    "asama": 3,
-   "not": "Motor (notlar-motor.js, feed-canli.js) değişmez."
+   "not": "Aşama 3 (önizleme): CANLI'da aynen; motor değişmedi."
   },
   {
    "id": "gun-sonuc",
