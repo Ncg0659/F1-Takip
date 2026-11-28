@@ -78,14 +78,34 @@
   function utcGun(ms) { return new Date(ms).toISOString().slice(0, 10); }
 
   // ---------------- Open-Meteo (tahmin) ----------------
+  // Son başarılı tahmin: yalnız seans saatlerinin satırları (≤ 7 satır, birkaç yüz bayt) cihazda saklanır. Amaç: (1) sayfa yeniden
+  // açıldığında 30 dk dolmadan TEKRAR istek atmamak, (2) servis yanıt vermezse son başarılı tahmini "GÜNCEL DEĞİL" uyarısıyla göstermek.
+  // Anahtar: f1-hava4-<sezon>-<tur> (yalnız v4 önizlemesi yazar). Ölçüm (OpenF1) burada tutulmaz; eski tahmin asla ÖLÇÜLEN gösterilmez.
+  var ILERI_GUN = 15 * 86400000;                                   // Open-Meteo tahmin ufku ~16 gün: daha uzaktaki hafta için istek atılmaz
+  function depoAnahtar(h) { return "f1-hava4-" + h.sezon + "-" + h.tur; }
+  function depoOku(h) { try { var x = JSON.parse(localStorage.getItem(depoAnahtar(h)) || "null"); return x && x.hourly && Array.isArray(x.hourly.time) && x.alinma ? x : null; } catch (e) { return null; } }
+  function depoYaz(h, hourly, alinma) {
+    try {
+      var saatler = h.seanslar.map(function (s) { return Math.floor(s.baslangic.getTime() / 3600000) * 3600000; }), kisa = {};
+      Object.keys(hourly).forEach(function (k) { kisa[k] = []; });
+      hourly.time.forEach(function (t, i) {
+        if (saatler.indexOf(Date.parse(String(t).replace(/Z?$/, "Z"))) < 0) { return; }
+        Object.keys(hourly).forEach(function (k) { if (Array.isArray(hourly[k])) { kisa[k].push(hourly[k][i]); } });
+      });
+      localStorage.setItem(depoAnahtar(h), JSON.stringify({ alinma: alinma, hourly: kisa }));
+    } catch (e) { /* depolama dolu / kapalı: yalnız bellek önbelleği */ }
+  }
   function tahminAl(h, zorla) {
     var k = konum(h); if (!k || !h.seanslar || !h.seanslar.length) { return Promise.resolve({ durum: "konum-yok" }); }
-    var bas = h.seanslar[0].baslangic.getTime(), son = h.seanslar[h.seanslar.length - 1].baslangic.getTime();
+    var bas = h.seanslar[0].baslangic.getTime(), son = h.seanslar[h.seanslar.length - 1].baslangic.getTime(), now = Date.now();
     var url = "https://api.open-meteo.com/v1/forecast?latitude=" + k.lat + "&longitude=" + k.lon +
       "&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,wind_speed_10m,wind_direction_10m,is_day" +
       "&timezone=GMT&start_date=" + utcGun(bas) + "&end_date=" + utcGun(son);
     var o = S.onb[url];
-    if (o && !zorla && Date.now() - o.t < TAZE) { return Promise.resolve(o.v); }
+    if (o && !zorla && now - o.t < TAZE) { return Promise.resolve(o.v); }
+    var d = depoOku(h);
+    if (d && !zorla && now - d.alinma < TAZE) { var dv = { durum: "ok", hourly: d.hourly, alinma: d.alinma, depodan: true }; S.onb[url] = { t: d.alinma, v: dv }; return Promise.resolve(dv); }
+    if (bas - now > ILERI_GUN) { return Promise.resolve({ durum: "erken" }); }       // tahmin henüz yayımlanmaz: istek yok
     if (S.bekleyen[url]) { return S.bekleyen[url]; }
     var ctl = typeof AbortController === "function" ? new AbortController() : null, tm = null;
     if (ctl) { tm = setTimeout(function () { ctl.abort(); }, ZAMAN_ASIMI); }
@@ -93,8 +113,14 @@
       if (!r.ok) { throw new Error("HTTP " + r.status); } return r.json();
     }).then(function (j) {
       var v = j && j.hourly && Array.isArray(j.hourly.time) ? { durum: "ok", hourly: j.hourly, alinma: Date.now() } : { durum: "bos" };
+      if (v.durum === "ok") { depoYaz(h, j.hourly, v.alinma); }
       S.onb[url] = { t: Date.now(), v: v }; return v;
-    }, function () { return { durum: "hata" }; }).then(function (v) { if (tm) { clearTimeout(tm); } delete S.bekleyen[url]; return v; });
+    }, function () {
+      var e = depoOku(h);                                            // servis yok → son başarılı tahmin (varsa) GÜNCEL DEĞİL olarak
+      var v = e ? { durum: "eski", hourly: e.hourly, alinma: e.alinma } : { durum: "hata" };
+      S.onb[url] = { t: Date.now() - TAZE + 5 * 60 * 1000, v: v };   // hata sonrası 5 dk yeniden deneme yok (istek fırtınası olmasın)
+      return v;
+    }).then(function (v) { if (tm) { clearTimeout(tm); } delete S.bekleyen[url]; return v; });
     return S.bekleyen[url];
   }
 
@@ -111,7 +137,7 @@
   function model(h, t, now) {
     return h.seanslar.map(function (s) {
       var d = seansDurum(h, s, now), bitti = now >= s.bitis.getTime();
-      return { s: s, durum: d, bitti: bitti, canli: d === "canli", tahmin: t && t.durum === "ok" ? HV.seansTahmini(t.hourly, s.baslangic.getTime()) : null, olcum: bitti ? olcumOku(h, s) : null };
+      return { s: s, durum: d, bitti: bitti, canli: d === "canli", tahmin: t && (t.durum === "ok" || t.durum === "eski") ? HV.seansTahmini(t.hourly, s.baslangic.getTime()) : null, olcum: bitti ? olcumOku(h, s) : null };
     });
   }
   function seciliBul(m) {
@@ -160,9 +186,16 @@
   // ---------------- çizim ----------------
   function etiket(r) {
     if (r.olcum) { return "<span class='hv-et hv-et-olcum'>ÖLÇÜLEN</span>"; }
-    if (r.tahmin) { return "<span class='hv-et hv-et-tahmin'>TAHMİN</span>"; }
+    if (r.tahmin) { return S.servis === "eski" ? "<span class='hv-et hv-et-tahmin hv-et-eski'>TAHMİN · GÜNCEL DEĞİL</span>" : "<span class='hv-et hv-et-tahmin'>TAHMİN</span>"; }
     return "";
   }
+  function eskiUyari() {
+    if (S.servis !== "eski" || !S.son || !S.son.t || !S.son.t.alinma) { return ""; }
+    var a = S.son.t.alinma;
+    return "<p class='hv-eski' role='status'><b>Güncel değil.</b> Hava servisine şu an ulaşılamıyor; son başarılı tahmin gösteriliyor (" + esc(gunTR(a) + " " + saatTR(a)) + " TR'de alındı).</p>";
+  }
+  var SEANS_AD = { FirstPractice: "Antrenman 1", SecondPractice: "Antrenman 2", ThirdPractice: "Antrenman 3", SprintQualifying: "Sprint Sıralaması", Sprint: "Sprint", Qualifying: "Sıralama", Race: "Yarış" };
+  function seansAd(s) { return SEANS_AD[s.anahtar] || s.ad || s.kisa || ""; }
   function degerler(r) {                       // ölçüm varsa ölçüm, yoksa tahmin; alan alan (karıştırma yok: kaynak etiketi tek)
     var o = r.olcum, t = r.tahmin;
     if (o) { return { kaynak: "olcum", sicaklik: o.sicaklik, nem: o.nem, ruzgar: o.ruzgar, ruzgarYon: o.ruzgarYon, yagisOl: null, yagis: o.yagis, pist: o.pist, kosul: null, havaAralik: o.havaAralik, pistAralik: o.pistAralik }; }
@@ -172,9 +205,10 @@
   function vitrin(h, r, kisa) {
     var d = degerler(r), s = r.s, zaman = gunTR(s.baslangic.getTime()) + " · " + saatTR(s.baslangic.getTime());
     var bas = "<div class='hv-vit-ust'><p class='hv-ses'><b>" + esc(String(s.ad).toLocaleUpperCase("tr").replace(/SPRİNT/g, "SPRINT")) + "</b><span>" + esc(zaman) + " <small>TR</small></span>" +
-      (r.canli ? "<span class='hv-canli'>SEANS SÜRÜYOR</span>" : "") + "</p>" + etiket(r) + "</div>";
+      (r.canli ? "<span class='hv-canli'>SEANS SAATİNDE</span>" : "") + "</p>" + etiket(r) + "</div>";
     if (!d) {
       var neden = S.servis === "hata" ? "Tahmin servisine şu an ulaşılamıyor; hava değeri gösterilmiyor." :
+        S.servis === "erken" ? "Bu hafta için tahmin henüz yayımlanmadı (Open-Meteo en fazla ~16 gün öncesini tahmin eder)." :
         (r.bitti ? "Bu seans için ölçülen hava verisi yüklenmedi; tahmin de yok." : "Bu seans için henüz hava tahmini yok (tahmin en fazla ~2 hafta öncesinden yayımlanır).");
       return bas + "<p class='hv-yok'>" + esc(neden) + "</p>" + olcumDugme(h, r);
     }
@@ -204,16 +238,48 @@
     return "<button type='button' class='hv-btn' data-hv-olcum='" + esc(r.s.anahtar) + "'>Ölçülen hava verisini getir (OpenF1)</button>";
   }
   function serit(m, sec) {
-    return "<ol class='hv-serit' aria-label='Seans bazlı hava'>" + m.map(function (r) {
+    return "<div class='hv-serit-ust'><p class='hv-serit-b'>SEANSLARA GÖRE</p><span class='hv-kaydir' aria-hidden='true'>Kaydır <i>→</i></span></div>" +
+      "<div class='hv-serit-sar'><ol class='hv-serit' aria-label='Seans bazlı hava (yatay kaydırılabilir)'>" + m.map(function (r) {
       var d = degerler(r), k = d && d.kosul, ac = r === sec;
       return "<li><button type='button' class='hv-sk" + (ac ? " hv-sk-on" : "") + (r.bitti ? " hv-sk-bitti" : "") + "' data-hv-sec='" + esc(r.s.anahtar) + "' aria-pressed='" + (ac ? "true" : "false") + "'>" +
-        "<span class='hv-sk-ad'>" + esc(r.s.kisa || r.s.ad) + "</span><span class='hv-sk-z'>" + esc(gunTR(r.s.baslangic.getTime()).split(" ")[0] + " " + saatTR(r.s.baslangic.getTime())) + "</span>" +
+        "<span class='hv-sk-ad' title='" + esc(seansAd(r.s)) + "'>" + esc(seansAd(r.s)) + "</span><span class='hv-sk-z'>" + esc(gunTR(r.s.baslangic.getTime()).split(" ")[0] + " " + saatTR(r.s.baslangic.getTime())) + "</span>" +
         "<span class='hv-sk-ik'>" + (k ? ikon(k, 26) : "<i aria-hidden='true'>—</i>") + "</span>" +
         "<span class='hv-sk-t'>" + (d && d.sicaklik != null ? yuvar(d.sicaklik) + "°" : "—") + "</span>" +
         (d && d.yagisOl != null ? "<span class='hv-sk-y'><i style='width:" + Math.max(0, Math.min(100, d.yagisOl)) + "%'></i></span><span class='hv-sk-yp'>%" + yuvar(d.yagisOl) + "</span>" : "<span class='hv-sk-yp'>" + (d && d.kaynak === "olcum" ? "ölçüm" : "") + "</span>") +
-        "<span class='hv-sk-k'>" + (d ? (d.kaynak === "olcum" ? "ÖLÇÜLEN" : "TAHMİN") : "") + "</span></button></li>";
-    }).join("") + "</ol>";
+        "<span class='hv-sk-k'>" + (d ? (d.kaynak === "olcum" ? "ÖLÇÜLEN" : (S.servis === "eski" ? "ESKİ TAHMİN" : "TAHMİN")) : "") + "</span></button></li>";
+    }).join("") + "</ol></div>";
   }
+  // CANLI: tek satırlık kompakt hava (Race Feed öncelikli). Ok için küçük pist çizimi korunur; ölçüm/tahmin etiketi aynı kural.
+  function kompakt(h, r) {
+    if (!r) { return ""; }
+    var d = degerler(r), s = r.s, y = d ? HV.yon8(d.ruzgarYon) : null;
+    var bas = "<p class='hk-ust'><b>" + esc(seansAd(s).toLocaleUpperCase("tr")) + "</b> <span>" + esc(saatTR(s.baslangic.getTime())) + " TR</span> " + etiket(r) + "</p>";
+    if (!d) {
+      var nd = S.servis === "hata" ? "Hava servisine şu an ulaşılamıyor." : (r.bitti ? "Bu seans için ölçülen hava yüklenmedi." : "Bu seans için henüz hava tahmini yok.");
+      return "<div class='hv-kompakt'>" + bas + "<p class='hv-yok'>" + esc(nd) + "</p></div>";
+    }
+    var svg = d.ruzgarYon != null ? ruzgarSvg(h.pistId, d.ruzgarYon, d.ruzgar) : "";
+    var parca = [];
+    parca.push("<span class='hk-ana'>" + (d.kosul ? ikon(d.kosul, 30) : "") + "<b class='hk-sic'>" + (d.sicaklik != null ? yuvar(d.sicaklik) + "°" : "—") + "</b>" + (d.kosul ? "<small>" + esc(d.kosul.ad) + "</small>" : "") + "</span>");
+    if (d.yagisOl != null) { parca.push("<span class='hk-m'><small>YAĞIŞ</small><b>%" + yuvar(d.yagisOl) + "</b><i class='hk-bar'><i style='width:" + Math.max(0, Math.min(100, d.yagisOl)) + "%'></i></i></span>"); }
+    if (d.nem != null) { parca.push("<span class='hk-m'><small>NEM</small><b>%" + yuvar(d.nem) + "</b></span>"); }
+    if (d.pist != null) { parca.push("<span class='hk-m'><small>PİST</small><b>" + d.pist.toFixed(1) + "°</b></span>"); }
+    if (d.ruzgar != null || y) { parca.push("<span class='hk-m hk-ruz'>" + (svg ? "<span class='hk-pist'>" + svg + "</span>" : "") + "<span><small>RÜZGÂR</small><b>" + (d.ruzgar != null ? yuvar(d.ruzgar) + " km/sa" : "—") + (y ? "<em>" + esc(y.ad) + "dan</em>" : "") + "</b></span></span>"); }
+    return "<div class='hv-kompakt" + (r.canli ? " hv-vit-canli" : "") + "'>" + bas + eskiUyari() + "<div class='hk-g'>" + parca.join("") + "</div></div>";
+  }
+  function kaydirmaDurumu(kap) {
+    var sr = kap.querySelector(".hv-serit"), sar = kap.querySelector(".hv-serit-sar"); if (!sr || !sar) { return; }
+    var tasar = sr.scrollWidth - sr.clientWidth > 4;
+    sar.setAttribute("data-tasma", tasar ? "1" : "0");
+    sar.setAttribute("data-son", tasar && sr.scrollLeft + sr.clientWidth >= sr.scrollWidth - 4 ? "1" : "0");
+    var ust = kap.querySelector(".hv-serit-ust"); if (ust) { ust.setAttribute("data-tasma", tasar ? "1" : "0"); }
+  }
+  document.addEventListener("scroll", function (e) {                // yatay kaydırma: sona gelince kenar gölgesi / ipucu söner
+    var t = e.target; if (!t || !t.classList || !t.classList.contains("hv-serit")) { return; }
+    var k = t.closest(".hv4"); if (k) { kaydirmaDurumu(k); }
+  }, true);
+  window.addEventListener("resize", function () { var k = $("hv4-program"); if (k) { kaydirmaDurumu(k); } });
+
   function ciz(kapId, kisa) {
     var kap = $(kapId), h = hafta(); if (!kap) { return; }
     if (!h || !h.seanslar || !h.seanslar.length) { yaz(kapId, kap, "<p class='hv-yok'>Hafta programı yüklenince hava bilgisi gösterilir.</p>"); return; }
@@ -221,8 +287,9 @@
     var m = model(h, t, now), sec = kisa ? (m.filter(function (r) { return r.canli; })[0] || m.filter(function (r) { return !r.bitti; })[0] || m[m.length - 1]) : seciliBul(m);
     var kaynakNot = "<p class='hv-kaynak'><span class='hv-et hv-et-tahmin'>TAHMİN</span> Open-Meteo model tahmini, seans başlangıç saatine göre · <span class='hv-et hv-et-olcum'>ÖLÇÜLEN</span> OpenF1 seans ölçümü (seans bitince yayımlanır)" +
       (t && t.durum === "hata" ? " · <b>Tahmin servisine şu an ulaşılamıyor.</b>" : "") + "</p>";
-    var html = "<div class='hv-vitrin" + (sec && sec.canli ? " hv-vit-canli" : "") + "'>" + vitrin(h, sec, kisa) + "</div>" + (kisa ? "" : serit(m, sec)) + kaynakNot;
+    var html = kisa ? kompakt(h, sec) : "<div class='hv-vitrin" + (sec && sec.canli ? " hv-vit-canli" : "") + "'>" + eskiUyari() + vitrin(h, sec, false) + "</div>" + serit(m, sec) + kaynakNot;
     yaz(kapId, kap, html);
+    if (!kisa) { kaydirmaDurumu(kap); }
   }
   function yaz(id, kap, html) { if (S.imza[id] !== html) { S.imza[id] = html; kap.innerHTML = html; } }
   function yenile(zorla) {

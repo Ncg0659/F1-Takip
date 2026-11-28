@@ -35,8 +35,10 @@ def om_yanit(u, hata=False):
             H["wind_direction_10m"].append((i * 41) % 360); H["is_day"].append(1 if 4 <= h < 15 else 0); i += 1
         d += datetime.timedelta(days=1)
     return 200, {"hourly": H}
+OM_SAYAC = []
 def om_rota(hata=False):
     def f(r):
+        if "start_date" in r.request.url: OM_SAYAC.append(r.request.url)
         st, o = om_yanit(r.request.url, hata)
         r.fulfill(status=st, content_type="application/json", headers={"access-control-allow-origin": "*"}, body=json.dumps(o))
     return f
@@ -115,6 +117,56 @@ with sync_playwright() as p:
         pg.locator("#hf4-hava").screenshot(path=OUT + "hava4-katar-%s.png" % e)
         b.close()
 
+    # ===== P3.1) revize: tam adlar, kaydırma ipucu, mobil boy, koyu kontrast, alt menü, eski tahmin, istek azaltma =====
+    for w, tema in ((390, "koyu"), (1100, "koyu"), (390, "acik")):
+        e = "%d-%s" % (w, tema)
+        pg, errs, c, b = ac(p, KATAR_HS, w=w, tema=tema); tik(pg, "#nv4-hafta", 12)
+        ads = pg.evaluate("[...document.querySelectorAll('#hv4-program .hv-sk-ad')].map(e=>e.textContent)")
+        kontrol("R1 %s şerit seans adları açık: Antrenman 1–3, Sıralama, Yarış (FP1/Q/R kısaltması yok)" % e, ads == ["Antrenman 1", "Antrenman 2", "Antrenman 3", "Sıralama", "Yarış"], ads)
+        kd = pg.evaluate("(()=>{const s=document.querySelector('#hv4-program .hv-serit'),sar=s.parentElement,ip=document.querySelector('#hv4-program .hv-kaydir');return {t:sar.dataset.tasma,son:sar.dataset.son,ip:ip.checkVisibility(),golge:getComputedStyle(sar,'::after').content}})()")
+        if w == 390:
+            kontrol("R2 %s mobil: şerit taşıyor → 'Kaydır →' ipucu ve sağ kenar gölgesi görünür" % e, kd["t"] == "1" and kd["ip"] and kd["golge"] not in ("none", "normal") and kd["son"] == "0", kd)
+            pg.evaluate("(()=>{const s=document.querySelector('#hv4-program .hv-serit');s.scrollLeft=s.scrollWidth;})()"); ilerle(pg, 1)
+            kd2 = pg.evaluate("(()=>{const sar=document.querySelector('#hv4-program .hv-serit-sar');return {son:sar.dataset.son,golge:getComputedStyle(sar,'::after').content}})()")
+            kontrol("R3 %s sona kaydırınca gölge kalkar" % e, kd2["son"] == "1" and kd2["golge"] in ("none", "normal"), kd2)
+            ol = pg.evaluate("(()=>{const v=document.querySelector('#hv4-program .hv-vitrin'),p=v.querySelector('.hv-pist');return {vw:v.clientWidth,pw:p?p.getBoundingClientRect().width:null,h:Math.round(v.getBoundingClientRect().height)}})()")
+            kontrol("R4 %s mobil: pist çizimi ~%%30 küçük (vitrin genişliğinin ≤ %%72'si) ve vitrin ≤ 620 px" % e, ol["pw"] is not None and ol["pw"] <= ol["vw"] * 0.72 and ol["h"] <= 620, ol)
+            alt = pg.evaluate("(()=>{window.scrollTo(0,document.documentElement.scrollHeight);const n=document.getElementById('nav-v4').getBoundingClientRect(),son=document.getElementById('nv4-cikis').getBoundingClientRect(),hv=document.getElementById('hf4-hava').getBoundingClientRect();return {nav:Math.round(n.top),son:Math.round(son.bottom)}})()")
+            kontrol("R5 %s sabit alt menü içeriği örtmüyor (sayfa sonu öğesi menünün üstünde)" % e, alt["son"] <= alt["nav"], alt)
+        else:
+            kontrol("R2 %s masaüstü: 5 seans sığıyor → kaydırma ipucu yok" % e, kd["t"] == "0" and not kd["ip"], kd)
+        if tema == "koyu":
+            ct = pg.evaluate(r"""(()=>{const L=c=>{const m=c.match(/\d+(\.\d+)?/g).map(Number).slice(0,3).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*m[0]+.7152*m[1]+.0722*m[2]};
+              const bg=getComputedStyle(document.querySelector('#hv4-program .hv-vitrin')).backgroundColor, oran=s=>{const e=document.querySelector(s);if(!e)return null;const a=L(getComputedStyle(e).color),b=L(bg);return +((Math.max(a,b)+.05)/(Math.min(a,b)+.05)).toFixed(2)};
+              return {sic:oran('#hv4-program .hv-sic'),yag:oran('#hv4-program .hv-m-yagis .hv-m-d'),nem:oran('#hv4-program .hv-m-nem .hv-m-d'),ruz:oran('#hv4-program .hv-ruz .hv-m-d'),et:oran('#hv4-program .hv-m-ad')}})()""")
+            kontrol("R6 %s koyu tema kontrastı: değerler ≥ 12:1, etiketler ≥ 7:1" % e, all(ct[k] and ct[k] >= 12 for k in ("sic", "yag", "nem", "ruz")) and ct["et"] >= 7, ct)
+        kontrol("R7 %s taşma 0, hata yok" % e, tasma(pg) == 0 and not errs, (tasma(pg), errs[:3]))
+        pg.evaluate("window.scrollTo(0,0)"); pg.locator("#hf4-hava").screenshot(path=OUT + "hava41-katar-%s.png" % e)
+        b.close()
+    # istek azaltma + eski tahmin
+    OM_SAYAC.clear()
+    pg, errs, c, b = ac(p, KATAR_HS); tik(pg, "#nv4-hafta", 12)
+    n1 = len(OM_SAYAC); depo = pg.evaluate("Object.keys(localStorage).filter(k=>k.startsWith('f1-hava4-'))")
+    boy = pg.evaluate("(localStorage.getItem('f1-hava4-2026-22')||'').length")
+    kontrol("R8 ilk açılış: tek tahmin isteği; son başarılı tahmin küçük kayıt olarak saklandı (yalnız seans saatleri)", n1 == 1 and depo == ["f1-hava4-2026-22"] and 0 < boy < 2000, (n1, depo, boy))
+    pg.goto(URL); ilerle(pg, 10); tik(pg, "#nv4-hafta", 12)
+    kontrol("R9 30 dk içinde yeniden açılış: yeni istek YOK, kart aynı veriyle dolu", len(OM_SAYAC) == n1 and pg.locator("#hv4-program .hv-sic").count() == 1, len(OM_SAYAC))
+    pg.evaluate("(()=>{const k='f1-hava4-2026-22',o=JSON.parse(localStorage.getItem(k));o.alinma-=3*3600*1000;localStorage.setItem(k,JSON.stringify(o));})()")
+    pg.unroute(re.compile(r"api\.open-meteo\.com")); pg.route(re.compile(r"api\.open-meteo\.com"), om_rota(True))
+    pg.goto(URL); ilerle(pg, 10); tik(pg, "#nv4-hafta", 12)
+    es = pg.evaluate("(()=>{const k=document.getElementById('hv4-program');return {uy:(k.querySelector('.hv-eski')||{}).textContent||'',et:[...k.querySelectorAll('.hv-vitrin .hv-et')].map(x=>x.textContent),sk:[...k.querySelectorAll('.hv-sk-k')].map(x=>x.textContent),sic:!!k.querySelector('.hv-sic'),olc:!!k.querySelector('.hv-vitrin .hv-et-olcum')}})()")
+    kontrol("R10 servis yok + önbellekte eski tahmin: 'Güncel değil' uyarısı ve alınma zamanı, etiket 'TAHMİN · GÜNCEL DEĞİL', şerit 'ESKİ TAHMİN', ölçüm gibi gösterilmez", "Güncel değil." in es["uy"] and "TR'de alındı" in es["uy"] and es["et"] == ["TAHMİN · GÜNCEL DEĞİL"] and set(es["sk"]) <= {"ESKİ TAHMİN", ""} and es["sic"] and not es["olc"], es)
+    tik(pg, "#cx4-canli", 10)
+    kontrol("R11 CANLI kompakt kartta da güncel değil uyarısı", "Güncel değil." in pg.inner_text("#hv4-canli"), pg.inner_text("#hv4-canli")[:200])
+    kontrol("R12 hata yok", not errs, errs[:3]); b.close()
+    OM_SAYAC.clear()
+    pg, errs, c, b = ac(p, "2026-10-01T10:00:00Z"); pg.evaluate("YarisHaftasi._durum.tur=22"); pg.evaluate("sekmeAc('hafta')"); ilerle(pg, 6)
+    OM_SAYAC.clear()                                    # o anki haftanın (Ekim) isteği sayılmaz; yalnız Katar seçimi ölçülür
+    pg.select_option("#sekme-hafta select", "22") if pg.locator("#sekme-hafta select").count() else None; ilerle(pg, 10)
+    hh = pg.evaluate("(YarisHaftasi._durum.hafta||{}).tur")
+    kontrol("R13 ~2 ay sonraki hafta (Katar, 1 Ekim'de): tahmin isteği atılmaz, 'henüz yayımlanmadı' açıklaması", hh == 22 and len(OM_SAYAC) == 0 and "henüz yayımlanmadı" in pg.inner_text("#hv4-program"), (hh, len(OM_SAYAC), pg.inner_text("#hv4-program")[:160]))
+    b.close()
+
     # tahmin servisi hatası → uydurma yok
     pg, errs, c, b = ac(p, KATAR_HS, om_hata=True); tik(pg, "#nv4-hafta", 12)
     t = pg.inner_text("#hv4-program")
@@ -123,7 +175,8 @@ with sync_playwright() as p:
 
     # sprint haftası (Singapur): SPRINT alt menüsü
     pg, errs, c, b = ac(p, SINGAPUR, tur=17); tik(pg, "#nv4-hafta", 12)
-    kontrol("P16 Singapur (sprint haftası): PROGRAM·SPRINT·CANLI; şeritte 5 seans (SQ + SPR dahil)", ctx(pg) == ["PROGRAM", "SPRINT", "CANLI"] and pg.locator("#hv4-program .hv-sk").count() == 5 and "SPR" in pg.inner_text("#hv4-program .hv-serit"), ctx(pg))
+    ads = pg.evaluate("[...document.querySelectorAll('#hv4-program .hv-sk-ad')].map(e=>e.textContent)")
+    kontrol("P16 Singapur (sprint haftası): PROGRAM·SPRINT·CANLI; şeritte 5 seans, tam adlarla (Sprint Sıralaması, Sprint)", ctx(pg) == ["PROGRAM", "SPRINT", "CANLI"] and len(ads) == 5 and "Sprint Sıralaması" in ads and "Sprint" in ads, (ctx(pg), ads))
     kontrol("P17 Singapur ok marina_bay çiziminde", vis(pg, "#hv4-program .hv-vitrin line.hv-ok") or pg.locator("#hv4-program .hv-vitrin .hv-ruz").count() == 1)
     b.close()
 
@@ -135,8 +188,11 @@ with sync_playwright() as p:
         kontrol("C1 %s Katar yarışı, Race Feed doğruladı: menü göstergesi kırmızı LIVE" % e, "nv4-live" in d["c"] and d["t"] == "LIVE", d)
         tik(pg, "#nv4-hafta", 10)
         kontrol("C2 %s tek dokunuş → CANLI" % e, sekme(pg) == ["gun"] and ctxa(pg) == ["canli"], sekme(pg))
-        kc = pg.evaluate("(()=>{const k=document.getElementById('hv4-canli');return k?{v:k.checkVisibility(),et:[...k.querySelectorAll('.hv-et')].map(x=>x.textContent),ses:(k.querySelector('.hv-ses b')||{}).textContent,canli:!!k.querySelector('.hv-canli'),serit:k.querySelectorAll('.hv-sk').length}:null})()")
-        kontrol("C3 %s CANLI'da kısa hava kartı: YARIŞ, 'SEANS SÜRÜYOR', TAHMİN etiketi, şerit yok" % e, bool(kc) and kc["v"] and kc["ses"] == "YARIŞ" and kc["canli"] and "TAHMİN" in kc["et"] and kc["serit"] == 0, kc)
+        kc = pg.evaluate("(()=>{const k=document.getElementById('hv4-canli');if(!k)return null;const r=k.getBoundingClientRect();return {v:k.checkVisibility(),h:Math.round(r.height),et:[...k.querySelectorAll('.hv-et')].map(x=>x.textContent),ses:(k.querySelector('.hk-ust b')||{}).textContent,canli:!!k.querySelector('.hv-kompakt.hv-vit-canli'),serit:k.querySelectorAll('.hv-sk').length,ok:!!k.querySelector('.hk-pist line.hv-ok')}})()")
+        kontrol("C3 %s CANLI'da kompakt hava: YARIŞ, canlı çerçeve, TAHMİN etiketi, şerit yok, küçük pist üzerinde ok" % e, bool(kc) and kc["v"] and kc["ses"] == "YARIŞ" and kc["canli"] and "TAHMİN" in kc["et"] and kc["serit"] == 0 and kc["ok"], kc)
+        kontrol("C3b %s kompakt kart kısa (yükseklik ≤ %d px)" % (e, 170 if w == 390 else 110), bool(kc) and kc["h"] <= (170 if w == 390 else 110), kc)
+        sira = pg.evaluate("(()=>{const f=document.getElementById('gun-notlar-bolum').getBoundingClientRect(),h=document.getElementById('hv4-canli').getBoundingClientRect();return [Math.round(f.top),Math.round(h.top)]})()")
+        kontrol("C3c %s Race Feed öncelikli: hava kartı Race Feed'in altında" % e, sira[0] < sira[1], sira)
         kontrol("C4 %s eski tek satırlık hava gizli, Race Feed görünür" % e, not vis(pg, "#gun-hava") and vis(pg, "#gun-notlar-bolum") and "yarış başladı" in pg.inner_text("#gun-notlar-bolum").lower())
         kontrol("C5 %s ticker canlıda görünür, ham İngilizce etiket yok (CANLI + ticker)" % e, vis(pg, "#a45-git") and ham(pg, "#sekme-gun") == [] and ham(pg, "#rc-bar") == [], (ham(pg, "#sekme-gun"), ham(pg, "#rc-bar")))
         kontrol("C6 %s taşma 0, hata yok" % e, tasma(pg) == 0 and not errs, (tasma(pg), errs[:3]))
@@ -150,6 +206,6 @@ with sync_playwright() as p:
     kontrol("C9 hata yok", not errs, errs[:3]); b.close()
 
     src = open('/home/claude/f1-takip/hafta-v4.js', encoding='utf-8').read()
-    kontrol("K1 hafta-v4.js: setInterval / WebSocket / localStorage yazımı / rAF yok; tek ağ çağrısı Open-Meteo", not re.search(r"setInterval|WebSocket|localStorage\.setItem|requestAnimationFrame|EventSource", src) and len(re.findall(r"\bfetch\s*\(", src)) == 1 and "api.open-meteo.com" in src)
+    kontrol("K1 hafta-v4.js: setInterval / WebSocket / rAF yok; tek ağ çağrısı Open-Meteo; localStorage yazımı yalnız f1-hava4 anahtarında", not re.search(r"setInterval|WebSocket|requestAnimationFrame|EventSource", src) and len(re.findall(r"localStorage\.setItem", src)) == 1 and "f1-hava4-" in src and len(re.findall(r"\bfetch\s*\(", src)) == 1 and "api.open-meteo.com" in src)
     kontrol("K2 hava-v4-hesap.js saf (DOM / ağ yok)", not re.search(r"document\.|fetch\s*\(|localStorage", open('/home/claude/f1-takip/hava-v4-hesap.js', encoding='utf-8').read()))
 print("TOPLAM %d/%d" % (sum(L.SONUC), len(L.SONUC)))

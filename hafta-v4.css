@@ -126,6 +126,81 @@ html[data-v4="1"] #gun-notlar-bolum li, html[data-v4="1"] #gun-notlar-bolum .not
   .hv4 .hv-ruz { display:grid; grid-template-columns:minmax(0,1fr); }
   .hv4 .hv-pist { max-width:100%; }
 }
-/* CANLI sırası: durum özeti → hava → Race Feed (masaüstü); mobilde v3 gibi sonuç bölümünün ardından */
-html[data-v4="1"] #sekme-gun > #hv4-canli { order:4; }
-@media (max-width:760px) { html[data-v4="1"] #sekme-gun > #hv4-canli { order:7; } }
+/* CANLI sırası (Aşama 3.1): durum özeti → RACE FEED → kompakt hava → sonuç. Race Feed öncelikli. */
+html[data-v4="1"] #sekme-gun > #gun-notlar-bolum { order:3; }
+html[data-v4="1"] #sekme-gun > #hv4-canli { order:4; margin:4px 0 14px; }
+
+/* ================= AŞAMA 3.1 REVİZE ================= */
+/* koyu tema: değer kontrastı (sıcaklık, yağış, nem, rüzgâr, şerit) */
+:root[data-tema="koyu"] .hv4 { --hv-deger:#f4f7fb; --hv-etiket:#b9c6d6; }
+:root[data-tema="acik"] .hv4, .hv4 { --hv-deger:var(--yazi); --hv-etiket:var(--soluk); }
+:root[data-tema="koyu"] .hv4 { --hv-deger:#f4f7fb; --hv-etiket:#b9c6d6; }
+.hv4 .hv-sic, .hv4 .hv-m-d, .hv4 .hv-sk-t, .hv4 .hv-kos, .hv4 .hk-sic, .hv4 .hk-m b { color:var(--hv-deger); }
+.hv4 .hv-m-ad, .hv4 .hv-ses span, .hv4 .hv-m-d small, .hv4 .hv-sk-z, .hv4 .hv-sk-yp, .hv4 .hv-sic span, .hv4 .hk-m small, .hv4 .hk-ust span { color:var(--hv-etiket); }
+:root[data-tema="koyu"] .hv4 .hv-pist-yol { stroke:#93a4b8; opacity:.7; }
+:root[data-tema="koyu"] .hv4 .hv-ok { stroke:#f4f7fb; }
+:root[data-tema="koyu"] .hv4 .hv-uc { fill:#f4f7fb; }
+:root[data-tema="koyu"] .hv4 .hv-bar, :root[data-tema="koyu"] .hv4 .hv-sk-y { background:color-mix(in srgb, var(--hv-mavi) 24%, transparent); }
+:root[data-tema="koyu"] .hv4 .hv-halka-z { stroke:color-mix(in srgb, var(--hv-mavi) 24%, transparent); }
+
+/* eski (güncel olmayan) tahmin uyarısı */
+.hv4 .hv-eski { margin:0 0 12px; padding:8px 10px; font-size:.8rem; line-height:1.45; color:var(--hv-deger); border:1px dashed var(--hv-amber); border-radius:6px; background:color-mix(in srgb, var(--hv-amber) 8%, transparent); }
+.hv4 .hv-eski b { color:var(--hv-amber); }
+.hv4 .hv-et-eski { border-style:dashed; }
+
+/* seans şeridi: tam adlar + belirgin yatay kaydırma */
+.hv4 .hv-serit-ust { display:flex; align-items:center; justify-content:space-between; margin:16px 0 0; }
+.hv4 .hv-serit-b { margin:0; font-family:var(--f-sayi); font-size:.6rem; font-weight:700; letter-spacing:.14em; color:var(--hv-etiket); }
+.hv4 .hv-kaydir { display:none; align-items:center; gap:6px; font-family:var(--f-sayi); font-size:.62rem; font-weight:700; letter-spacing:.1em; color:var(--hv-etiket); }
+.hv4 .hv-kaydir i { font-style:normal; font-size:.9rem; }
+.hv4 .hv-serit-ust[data-tasma="1"] .hv-kaydir { display:inline-flex; }
+.hv4 .hv-serit-sar { position:relative; }
+.hv4 .hv-serit-sar[data-tasma="1"]:not([data-son="1"])::after { content:""; position:absolute; top:0; right:0; bottom:2px; width:44px; pointer-events:none; background:linear-gradient(90deg, transparent, var(--zemin)); }
+.hv4 .hv-serit { margin-top:8px; grid-auto-columns:minmax(118px, 1fr); scroll-snap-type:x proximity; scroll-padding:0 12px; }
+.hv4 .hv-serit > li { scroll-snap-align:start; }
+.hv4 .hv-sk-ad { font-family:inherit; font-size:.76rem; font-weight:700; letter-spacing:0; line-height:1.2; min-height:2.4em; }
+
+/* mobil: daha kısa kart (pist ~%30 küçük, sıkı boşluklar) */
+@media (max-width:600px) {
+  .hv4 .hv-vitrin { padding:14px 14px 12px; }
+  .hv4 .hv-vit-ust { margin-bottom:10px; }
+  .hv4 .hv-vit-g { gap:12px; }
+  .hv4 .hv-sic { font-size:2.5rem; }
+  .hv4 .hv-ana { gap:10px; }
+  .hv4 .hv-ana .hv-ik { width:50px; height:50px; }
+  .hv4 .hv-metrik { gap:10px 14px; }
+  .hv4 .hv-ruz { grid-template-columns:minmax(0,7fr) minmax(0,3fr); align-items:end; column-gap:10px; }
+  .hv4 .hv-ruz .hv-pist { grid-row:1 / span 2; width:100%; max-width:none; margin:0; }
+  .hv4 .hv-ruz .hv-m-d { font-size:1.1rem; }
+  .hv4 .hv-ruz .hv-m-d small { display:block; margin-top:2px; }
+  .hv4 .hv-serit { grid-auto-columns:minmax(112px, 38%); }
+}
+
+/* CANLI: kompakt tek satır */
+.hv4 .hv-kompakt { padding:10px 12px; background:var(--kart); border:1px solid var(--cizgi); border-radius:8px; }
+.hv4 .hv-kompakt.hv-vit-canli { border-color:color-mix(in srgb, var(--hv-amber) 60%, var(--cizgi)); }
+.hv4 .hk-ust { display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; margin:0 0 6px; font-family:var(--f-sayi); font-size:.66rem; letter-spacing:.1em; }
+.hv4 .hk-ust .hv-et { height:18px; font-size:.54rem; }
+.hv4 .hk-g { display:flex; flex-wrap:wrap; align-items:center; gap:6px 16px; }
+.hv4 .hk-ana { display:inline-flex; align-items:center; gap:6px; }
+.hv4 .hk-ana small { font-size:.72rem; color:var(--hv-etiket); }
+.hv4 .hk-sic { font-family:var(--f-sayi); font-size:1.45rem; font-weight:700; }
+.hv4 .hk-m { display:inline-flex; flex-direction:column; gap:1px; min-width:0; }
+.hv4 .hk-m small { font-family:var(--f-sayi); font-size:.54rem; font-weight:700; letter-spacing:.12em; }
+.hv4 .hk-m b { font-family:var(--f-sayi); font-size:.95rem; }
+.hv4 .hk-m em { font-style:normal; font-family:var(--f-sayi); font-size:.66rem; color:var(--hv-etiket); margin-left:4px; }
+.hv4 .hk-bar { display:block; width:48px; height:4px; margin-top:2px; background:color-mix(in srgb, var(--hv-mavi) 20%, transparent); border-radius:2px; overflow:hidden; }
+.hv4 .hk-bar i { display:block; height:100%; background:var(--hv-mavi); }
+.hv4 .hk-ruz { flex-direction:row; align-items:center; gap:6px; }
+.hv4 .hk-pist .hv-pist { width:64px; max-width:64px; height:auto; margin:0; }
+.hv4 .hk-pist .hv-kuzey text { font-size:16px; }
+.hv4 .hv-kompakt .hv-eski { margin:4px 0 6px; padding:5px 8px; font-size:.72rem; }
+.hv4 .hv-kompakt .hv-yok { margin:0; font-size:.8rem; }
+
+/* sabit alt menü: içerik altında güvenli boşluk (mobil) */
+@media (max-width:600px) { html[data-v4="1"] body { padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px)); } }
+.hv4 .hk-ruz > span:last-child { display:flex; flex-direction:column; gap:1px; }
+.hv4 .hk-ruz > span:last-child b { display:flex; align-items:baseline; gap:4px; }
+/* "seans saatinde" vurgusu nötr: doğrulanmış LIVE kırmızısı / tahmini canlı amberi yalnız durum rozetlerinde */
+.hv4 .hv-vitrin.hv-vit-canli, .hv4 .hv-kompakt.hv-vit-canli { border-color:color-mix(in srgb, var(--yazi) 45%, var(--cizgi)); }
+.hv4 .hv-canli { color:var(--hv-deger) !important; border-style:solid; }

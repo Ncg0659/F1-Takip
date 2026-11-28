@@ -1,5 +1,5 @@
 {
- "surum": "v4.0 Aşama 3",
+ "surum": "v4.0 Aşama 3.1",
  "aciklama": "Mevcut her özelliğin eski konumu (v3.3.1, yayındaki düzen) ve v4.0'daki planlanan yeni konumu. nav_v4_guvenlik_test.py bu dosyayı okur: 'eski_ekran' + 'secici' her aşamada var olmalı; 'kuresel' adı verilen modül yüklü olmalı. Bir özellik taşındığında yalnız 'yeni_*' alanları ve ilgili aşamanın testi güncellenir; kayıt SİLİNMEZ.",
  "yeni_ana_sekmeler": [
   "ANA SAYFA",
@@ -175,7 +175,7 @@
    "secici": "#gun-hava",
    "yeni_yol": "YARIŞ HAFTASI › PROGRAM ve CANLI (yeni hava kartı)",
    "asama": 3,
-   "not": "Aşama 3 (önizleme): yeni hava kartı (PROGRAM: seans bazlı + vitrin; CANLI: kısa). Eski satır DOM'da gizli (yağmur riski rozeti okur)."
+   "not": "Aşama 3.1 (önizleme): PROGRAM'da seans bazlı hava (tam seans adları, kaydırma ipucu), CANLI'da Race Feed'in altında kompakt kart; son başarılı tahmin f1-hava4-<sezon>-<tur> (yalnız seans saatleri), servis yoksa 'GÜNCEL DEĞİL' uyarısıyla."
   },
   {
    "id": "race-feed",
